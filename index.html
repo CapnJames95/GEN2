@@ -1,0 +1,2786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Gen 2 eGuide — Gold, Silver, Crystal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="shortcut icon" href="assets/favicon.svg">
+</head>
+<body>
+<header>
+  <a class="hub-back" href="https://pkmnguide.com/" title="Back to pkmnguide.com" aria-label="Back to pkmnguide.com">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+  <div class="header-logo" onclick="resetHome()" title="Reset to home" style="cursor:pointer">GEN2<br><span>eGUIDE</span></div>
+  <div class="header-title">
+    <p>The complete Gen 2 companion</p>
+    <p><span style="color:#E5B928">Gold</span> · <span style="color:#B0BEC5">Silver</span> · <span style="color:#7FB8E0">Crystal</span></p>
+  </div>
+  <div class="game-badges" id="headerGameBadges">
+    <button class="gbadge gbadge-all active-game-badge" id="hbadge-all" onclick="setGameFromHeader('all',this)" title="All Games">ALL</button>
+    <button class="gbadge gbadge-fr" id="hbadge-fr" onclick="setGameFromHeader('FR',this)" title="Gold">G</button>
+    <button class="gbadge gbadge-lg" id="hbadge-lg" onclick="setGameFromHeader('LG',this)" title="Silver">S</button>
+    <button class="gbadge gbadge-e" id="hbadge-e" onclick="setGameFromHeader('E',this)" title="Crystal">C</button>
+  </div>
+  <select id="gameSwitcherMobile" class="game-switcher-mobile" onchange="setGameFromHeader(this.value,null)">
+    <option value="all">✦ All Games</option>
+    <option value="FR">🌕 Gold</option>
+    <option value="LG">🪙 Silver</option>
+    <option value="E">💎 Crystal</option>
+  </select>
+  <div id="header-sprites"></div>
+  <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0">
+    <button id="searchTrigger" onclick="openSearch()" title="Search everything (/)">
+      🔍 <span class="search-label">Search</span> <kbd class="search-label">/</kbd>
+    </button>
+    <button id="featuresBtn" onclick="toggleFeaturesOverlay()" title="All features of this tool">✨ Features</button>
+    <button id="settingsBtn" onclick="openSettingsOverlay()" title="Settings, backup and sync"><span class="cog-icon">⚙</span><span class="settings-label"> Settings</span></button>
+    <button id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light theme">🌙</button>
+    <button id="authChip" data-pgauth-chip title="Sign in with Google" style="display:inline-flex"></button>
+  </div>
+</header>
+
+<!-- FEATURES OVERLAY -->
+<div id="featuresOverlay" class="features-overlay" onclick="if(event.target===this)closeFeaturesOverlay()">
+  <div class="features-modal">
+    <div class="features-header">
+      <span class="features-title">✨ Features</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button class="feature-shortcuts-btn" onclick="openShortcutsOverlay('master')">⌨ Shortcuts</button>
+        <button class="features-close" onclick="closeFeaturesOverlay()">✕</button>
+      </div>
+    </div>
+    <div class="features-body">
+
+      <div class="feat-section">
+        <div class="feat-section-title">Pokédex</div>
+        <ul>
+          <li>All 386 Pokémon with real encounter rates across all 5 GBA games</li>
+          <li>Per-game or All-Games view — toggle between Gold, Silver, Ruby, Sapphire &amp; Crystal</li>
+          <li>Filter by encounter method: Wild, Surf, Fish, Dive, Rock Smash, Safari, Trade, Breed, Fossil, Swarm, Event &amp; more</li>
+          <li>Filter by type (up to 2 types simultaneously)</li>
+          <li>Full-text search — searches names, types and locations</li>
+          <li>Evolution chain grouping — shows chain members alongside search results</li>
+          <li>Sortable columns: #, Name, Type, Method, Location, Level, Rate</li>
+          <li>Resizable columns by dragging headers</li>
+          <li>Row density toggle (compact / normal / spacious)</li>
+          <li>Expandable Pokémon rows showing stats, moves, abilities &amp; learnsets</li>
+          <li>Regional Dex / National Dex number toggle</li>
+          <li>Quick +team button to add any Pokémon directly to the Team Builder</li>
+          <li>"Also available in…" section shows search matches not in the selected game</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Guide</div>
+        <ul>
+          <li>Game-aware walkthrough — switches between Kanto (FR/LG) and Johto (RSE) content</li>
+          <li>Full GSC walkthrough: 24 sections from Pallet Town to Sevii Islands</li>
+          <li>Full RSE walkthrough: 29 sections from Littleroot to Battle Frontier</li>
+          <li>Gym leader rematches (VS Seeker / Crystal) with full team lists</li>
+          <li>Pickup tables (Meowth / Zigzagoon / Linoone) with level-based item chances</li>
+          <li>Repel cheat-sheets by route with max wild Pokémon levels</li>
+          <li>Berry tree locations — Kanto routes, Sevii Islands, Johto, Berry Master wife phrases</li>
+          <li>RSE weather mechanics — permanent rain, sandstorm, Castform forms</li>
+          <li>Legendary locations, missables &amp; event items</li>
+          <li>Sidebar table of contents with smooth scroll navigation</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Moves, Items &amp; TM/HM</div>
+        <ul>
+          <li>Move Dex — all 354 Gen 2 moves with Power, Accuracy, PP, Type, Category &amp; Contest data</li>
+          <li>Contest category filter hidden automatically for FR/LG (no contests)</li>
+          <li>Item Dex — comprehensive item list with category filters and location data</li>
+          <li>TM/HM Locator — find every TM and HM across all 5 games</li>
+          <li>Held Item Reference — 50+ battle &amp; utility items with locations and effects</li>
+          <li>Trade Evolution Helper — all Gen 2 trade evos with held item requirements and locations</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Exclusives</div>
+        <ul>
+          <li>Side-by-side version exclusive comparisons: R vs S, R vs E, S vs E, FR vs LG</li>
+          <li>Crystal Unique — Pokémon only available in Crystal (Safari Zone expansions, etc.)</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Pokédex Tracker</div>
+        <ul>
+          <li>Track your caught Pokémon per save file (FR, LG, Ruby, Sapphire, Crystal)</li>
+          <li>National Dex or regional Regional Dex ordering</li>
+          <li>Filter: All, Caught, Missing</li>
+          <li>Shiny tracking — right-click or long-press any Pokémon to toggle shiny status (gold border + ✨ shiny sprite)</li>
+          <li>Nuzlocke mode — right-click or long-press switches to marking Pokémon as fainted (greyscale + skull)</li>
+          <li>Fainted / Alive filter when Nuzlocke mode is active</li>
+          <li>Completion percentage counters</li>
+          <li>Progress saved in browser localStorage per game</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Calculators</div>
+        <ul>
+          <li><strong>Team Builder</strong> — build a 6-Pokémon team, view type coverage matrix, weakness chart &amp; speed tiers</li>
+          <li><strong>Damage Calculator</strong> — Gen 2 formula with weather, held items, critical hits and all 386 Pokémon</li>
+          <li><strong>IV / EV Calculator</strong> — IV finder, EV planner, stat calculations at any level, Pokérus support, Hidden Power type &amp; power calculator</li>
+          <li><strong>Stat Calculator</strong> — enter any Pokémon, level, nature, IVs &amp; EVs to compute all six final stats using the Gen 2 formula</li>
+          <li><strong>Safari Zone Calculator</strong> — step &amp; ball tracker, per-strategy catch probability (ball/rock/bait), Pokémon by area for FR/LG and RSE</li>
+          <li><strong>Pokémon Comparison</strong> — compare two Pokémon side-by-side: stats, abilities, moves, contest data &amp; breeding</li>
+          <li><strong>Breeding Calculator</strong> — egg move compatibility, hatch steps, Everstone nature mechanics, chain-breeding hints</li>
+          <li><strong>Catch Rate Calc</strong> — all Gen 2 balls with exact catch probability and status multipliers</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Battle Reference</div>
+        <ul>
+          <li><strong>Elite Four &amp; Champion</strong> — full team rosters, levels &amp; type weaknesses for every E4 member across FR/LG, RS and Crystal; click any Pokémon to jump straight to its Pokédex entry</li>
+          <li><strong>Rematch Trainers</strong> — VS Seeker (FR/LG) and Trainer's Eye (Crystal) trainers curated for EV training and EXP grinding, with EV yield notes</li>
+          <li><strong>Speed Tiers</strong> — full Gen 2 speed tier chart for competitive reference</li>
+          <li><strong>Optimizer</strong> — find optimal Pokémon for specific roles from your filtered team pool</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Maps &amp; Locations</div>
+        <ul>
+          <li><strong>Route Browser</strong> — location-first Pokémon lookup; select any area to see every available Pokémon with encounter method and types; click a Pokémon to jump to its full Pokédex entry</li>
+          <li><strong>Kanto Map</strong> — interactive pixel-art map with clickable zones showing wild Pokémon</li>
+          <li><strong>Crystal Map</strong> — interactive Johto pixel-art map with clickable zones</li>
+          <li><strong>Encounters</strong> — full encounter table browser across all areas and methods</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Contests &amp; Training</div>
+        <ul>
+          <li><strong>Pokéblock Optimizer</strong> — best berry blends per contest condition (Cool/Beauty/Cute/Clever/Tough), full berry flavor table, nature preference guide and blending mechanics</li>
+          <li><strong>Contests Guide</strong> — contest mechanics, move category chart, appeal &amp; jam values</li>
+          <li><strong>Happiness Tracker</strong> — track friendship-evolution candidates per save file, happiness methods &amp; held items</li>
+          <li><strong>Nature Chart</strong> — all 25 natures with stat bonuses and Pokéblock flavor preferences</li>
+          <li><strong>Berry Farming</strong> — berry regrowth timers, mutation combos and optimal farming routes</li>
+        </ul>
+      </div>
+
+      <div class="feat-section">
+        <div class="feat-section-title">Quality of Life</div>
+        <ul>
+          <li>Dark / Light theme toggle, persisted in localStorage</li>
+          <li>Game selector in header syncs all tabs simultaneously</li>
+          <li>Universal quick-search (press <kbd>/</kbd>) with keyboard shortcut</li>
+          <li>Print mode for clean paper output</li>
+          <li>Fully self-contained single HTML file — works offline with no internet</li>
+          <li>Mobile-responsive layout</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="shortcutsOverlay" class="shortcuts-overlay" onclick="if(event.target===this)closeShortcutsOverlay()">
+  <div class="shortcuts-modal">
+    <div class="shortcuts-header">
+      <span class="shortcuts-title">⌨ Shortcuts</span>
+      <div class="shortcuts-header-actions">
+        <button class="shortcuts-toggle" id="shortcutsScopeToggle" onclick="toggleShortcutsScope()">Show All</button>
+        <button class="shortcuts-close" onclick="closeShortcutsOverlay()">✕</button>
+      </div>
+    </div>
+    <div class="shortcuts-body" id="shortcutsBody"></div>
+  </div>
+</div>
+
+<div id="settingsOverlay" class="settings-overlay" onclick="if(event.target===this)closeSettingsOverlay()">
+  <div class="settings-modal">
+    <div class="settings-header">
+      <span class="settings-title">⚙ Settings</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="settings-action-btn" onclick="openShortcutsOverlay('master')" style="font-size:10px;padding:4px 10px">⌨ All Shortcuts</button>
+        <button class="shortcuts-close" onclick="closeSettingsOverlay()">✕</button>
+      </div>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-section-title">Google Drive</div>
+
+        <!-- Connected state -->
+        <div id="driveConnected" style="display:none">
+          <div class="drive-connected-badge">
+            <span class="drive-connected-icon">✓</span>
+            <span class="drive-connected-text">Google Drive linked</span>
+            <button class="settings-action-btn" onclick="settingsSignOutGoogle()">Sign out</button>
+          </div>
+          <div class="settings-copy" style="margin-top:8px">Your tracker progress, completion marks, theme and guide progress sync to a private folder in your Google Drive. Sign in here once and you'll be signed in across <strong>pkmnguide.com</strong>, <strong>gen2.pkmnguide.com</strong>, and <strong>gen4.pkmnguide.com</strong>.</div>
+        </div>
+
+        <!-- Sign-in -->
+        <div id="driveSetup">
+          <div class="settings-copy" style="margin-bottom:12px">Sign in with Google to sync your saved data across devices — and across all <strong>pkmnguide.com</strong> sites with a single login.</div>
+          <button class="settings-action-btn export" onclick="settingsSignInWithGoogle()" style="font-size:12px;padding:10px 16px">Sign in with Google</button>
+          <div class="settings-copy" style="margin-top:10px;font-size:10px;color:var(--muted)">We only request the <code style="font-size:9px">drive.appdata</code> scope — a private per-app folder Google itself can't see. We never read your other files. Hidden site origin: <code id="driveOriginDisplay" class="drive-origin-code" style="font-size:9px">—</code></div>
+        </div>
+
+        <div id="settingsDriveStatus" class="settings-note" style="margin-top:8px"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Backup &amp; Sync</div>
+        <div class="settings-copy">Export or import your full site data, including tracker progress, completion marks, theme, selected game, and Bulba guide progress. Google Drive sync uses your private app data storage.</div>
+        <div class="settings-grid" style="margin-bottom:12px">
+          <div class="settings-field">
+            <label class="settings-label" for="settingsExportMode">Backup Format</label>
+            <select id="settingsExportMode" class="settings-select" onchange="settingsSaveBackupPrefs()">
+              <option value="site">Full Site Backup</option>
+              <option value="tracker">Tracker Only</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="settingsDriveMode">Drive Sync Style</label>
+            <select id="settingsDriveMode" class="settings-select" onchange="settingsSaveBackupPrefs()">
+              <option value="manual">Manual only</option>
+              <option value="remind">Show save reminder</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-actions">
+          <button class="settings-action-btn export" onclick="settingsRunExport()">⤓ Export Backup</button>
+          <button class="settings-action-btn import" onclick="settingsRunImport()">⤒ Import Backup</button>
+          <button class="settings-action-btn export" onclick="gen2SaveToDrive()">☁ Save to Google Drive</button>
+          <button class="settings-action-btn import" onclick="gen2LoadFromDrive()">☁ Load from Google Drive</button>
+          <button class="settings-action-btn" onclick="settingsRestoreRestorePoint()">↺ Restore Last Restore Point</button>
+        </div>
+        <div id="settings-status" class="trk-status" style="margin-top:12px">Backups now include tracker progress, shinies, Nuzlocke fainted marks, theme, selected game, and Bulba guide progress.</div>
+        <input id="trk-import-file" type="file" accept="application/json,.json" style="display:none" onchange="gen2HandleImportFile(event)">
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Startup Defaults</div>
+        <div class="settings-grid">
+          <div class="settings-field">
+            <label class="settings-label" for="settingsBootMode">Boot Screen</label>
+            <select id="settingsBootMode" class="settings-select" onchange="settingsSaveBootMode()">
+              <option value="session">Once per session</option>
+              <option value="always">Every refresh</option>
+              <option value="first">First visit only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="settings-section" id="settingsIosBarSection">
+        <div class="settings-section-title">Mobile Bottom Bar</div>
+        <div class="settings-copy">Customise the 4 shortcut tabs on the bottom nav bar (phones &amp; small tablets). Home is always Tab 1.</div>
+        <div class="ios-bar-settings-preview" id="iosBarSettingsPreview">
+          <span class="ios-bsp-tab ios-bsp-fixed">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Home
+          </span>
+          <span class="ios-bsp-sep">·</span>
+          <span class="ios-bsp-tab" id="iosBspTab2"></span>
+          <span class="ios-bsp-sep">·</span>
+          <span class="ios-bsp-tab" id="iosBspTab3"></span>
+          <span class="ios-bsp-sep">·</span>
+          <span class="ios-bsp-tab" id="iosBspTab4"></span>
+          <span class="ios-bsp-sep">·</span>
+          <span class="ios-bsp-tab" id="iosBspTab5"></span>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-field">
+            <label class="settings-label" for="iosBarTab2">Tab 2</label>
+            <select id="iosBarTab2" class="settings-select" onchange="saveIosBarSettings()"></select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="iosBarTab3">Tab 3</label>
+            <select id="iosBarTab3" class="settings-select" onchange="saveIosBarSettings()"></select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="iosBarTab4">Tab 4</label>
+            <select id="iosBarTab4" class="settings-select" onchange="saveIosBarSettings()"></select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="iosBarTab5">Tab 5</label>
+            <select id="iosBarTab5" class="settings-select" onchange="saveIosBarSettings()"></select>
+          </div>
+        </div>
+        <div class="settings-inline" style="margin-top:10px">
+          <button class="settings-action-btn" onclick="resetIosBarSettings()">Reset to defaults</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Layout &amp; Display</div>
+        <div class="settings-copy">Choose default panel visibility and sprite display for the parts of the site that already remember their own layout state.</div>
+        <label class="settings-check"><input id="settingsShinySprites" type="checkbox" onchange="settingsSaveLayoutPrefs()"> Use shiny sprites in the main Pokedex by default</label>
+        <label class="settings-check"><input id="settingsDexFiltersVisible" type="checkbox" onchange="settingsSaveLayoutPrefs()"> Show Pokedex filters by default</label>
+        <label class="settings-check"><input id="settingsBulbaSidebarVisible" type="checkbox" onchange="settingsSaveLayoutPrefs()"> Show Bulba Guide sidebar by default</label>
+        <label class="settings-check"><input id="settingsTeamSidebarVisible" type="checkbox" onchange="settingsSaveLayoutPrefs()"> Show Team Builder sidebar by default</label>
+        <label class="settings-check"><input id="settingsTrackerSidebarVisible" type="checkbox" onchange="settingsSaveLayoutPrefs()"> Show Tracker sidebar by default</label>
+        <label class="settings-check"><input id="settingsMascotOff" type="checkbox" onchange="settingsSaveMascotPref()"> Hide the Pokémon tip mascot</label>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Search Preferences</div>
+        <div class="settings-copy">Choose how search should behave when the site opens and whether Evo Chain starts on.</div>
+        <label class="settings-check"><input id="settingsOpenSearchOnLoad" type="checkbox" onchange="settingsSaveSearchPrefs()"> Open universal search on page load</label>
+        <label class="settings-check"><input id="settingsDefaultEvoChain" type="checkbox" onchange="settingsSaveSearchPrefs()"> Start with Evo Chain enabled</label>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Pokedex Defaults</div>
+        <div class="settings-copy">Set how the main Pokedex should look when the page first loads.</div>
+        <div class="settings-grid">
+          <div class="settings-field">
+            <label class="settings-label" for="settingsDexNumbering">Dex Numbering</label>
+            <select id="settingsDexNumbering" class="settings-select" onchange="settingsSaveDexPrefs()">
+              <option value="national">National Dex</option>
+              <option value="game">Regional Dex</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="settingsBestRateMode">Encounter Rate View</label>
+            <select id="settingsBestRateMode" class="settings-select" onchange="settingsSaveDexPrefs()">
+              <option value="off">All Rates</option>
+              <option value="best">Best Only</option>
+              <option value="ties">Best + Ties</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Easy Dex Defaults</div>
+        <div class="settings-copy">Choose the default Easy Dex view and whether caught Pokemon start hidden.</div>
+        <div class="settings-grid">
+          <div class="settings-field">
+            <label class="settings-label" for="settingsEasyDexTab">Default Tab</label>
+            <select id="settingsEasyDexTab" class="settings-select" onchange="settingsSaveEasyDexPrefs()">
+              <option value="catch">Best Catches</option>
+              <option value="trade">In-Game Trades</option>
+              <option value="linktrade">Link Trades</option>
+              <option value="evolve">Evolution-Only</option>
+              <option value="special">Special / Gift</option>
+            </select>
+          </div>
+        </div>
+        <label class="settings-check"><input id="settingsEasyDexHideCaught" type="checkbox" onchange="settingsSaveEasyDexPrefs()"> Hide caught Pokemon by default</label>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Tracker Defaults</div>
+        <div class="settings-copy">Set the default Tracker filter, mark mode, and whether it should follow the selected game automatically.</div>
+        <div class="settings-grid">
+          <div class="settings-field">
+            <label class="settings-label" for="settingsTrackerFilter">Default Filter</label>
+            <select id="settingsTrackerFilter" class="settings-select" onchange="settingsSaveTrackerPrefs()">
+              <option value="all">All Pokemon</option>
+              <option value="caught">Caught</option>
+              <option value="uncaught">Not Yet Caught</option>
+              <option value="shiny">Shiny</option>
+              <option value="trade">Needs Trade</option>
+              <option value="native">Regional Dex</option>
+              <option value="national">National Dex</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" for="settingsTrackerMarkMode">Default Mark Mode</label>
+            <select id="settingsTrackerMarkMode" class="settings-select" onchange="settingsSaveTrackerPrefs()">
+              <option value="caught">Caught</option>
+              <option value="seen">Seen</option>
+              <option value="evolved">Evolved</option>
+              <option value="bred">Bred</option>
+              <option value="traded">Traded</option>
+              <option value="held">Held Farmed</option>
+              <option value="legendary">Legendary</option>
+            </select>
+          </div>
+        </div>
+        <label class="settings-check"><input id="settingsTrackerAutoFollow" type="checkbox" onchange="settingsSaveTrackerPrefs()"> Tracker follows the selected game automatically</label>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Accessibility</div>
+        <div class="settings-copy">Extra readability controls for contrast, motion, and focus visibility.</div>
+        <label class="settings-check"><input id="settingsHighContrast" type="checkbox" onchange="settingsSaveAccessibilityPrefs()"> High contrast mode</label>
+        <label class="settings-check"><input id="settingsReducedMotion" type="checkbox" onchange="settingsSaveAccessibilityPrefs()"> Reduced motion</label>
+        <label class="settings-check"><input id="settingsStrongFocus" type="checkbox" onchange="settingsSaveAccessibilityPrefs()"> Strong focus outlines</label>
+      </div>
+
+
+      <div class="settings-section">
+        <div class="settings-section-title">Data Management</div>
+        <div class="settings-copy">See what the site is storing locally, when backups last ran, and clear only the categories you choose.</div>
+        <div class="settings-kv" id="settingsDataSummary"></div>
+        <div class="settings-divider"></div>
+        <div class="settings-grid" style="margin-top:10px;margin-bottom:10px;">
+          <label class="settings-check"><input id="settingsClearCatProgress" type="checkbox" checked> Tracker, ribbons, happiness, missables, and other progress</label>
+          <label class="settings-check"><input id="settingsClearCatMaps" type="checkbox" checked> Map marks and map-specific saved state</label>
+          <label class="settings-check"><input id="settingsClearCatSettings" type="checkbox" checked> Settings, startup defaults, theme, layout, and UI preferences</label>
+          <label class="settings-check"><input id="settingsClearCatNotes" type="checkbox" checked> Notes</label>
+          <label class="settings-check"><input id="settingsClearCatGuide" type="checkbox" checked> Bulba Guide progress and guide UI state</label>
+          <label class="settings-check"><input id="settingsClearCatTeams" type="checkbox" checked> Team Builder saved team</label>
+          <label class="settings-check"><input id="settingsClearCatBackups" type="checkbox" checked> Backup metadata, restore points, and Drive link info</label>
+        </div>
+        <div class="settings-inline" style="margin-top:10px">
+          <button class="settings-action-btn" onclick="settingsRefreshDataSummary()">Refresh Summary</button>
+          <button class="settings-action-btn" onclick="settingsRefreshSiteCaches()">Rebuild UI / caches</button>
+          <button class="settings-action-btn" onclick="settingsResetUiLayout()">Reset UI Layout</button>
+          <button class="settings-action-btn" onclick="settingsSelectAllClearCategories(true)">Select All</button>
+          <button class="settings-action-btn" onclick="settingsSelectAllClearCategories(false)">Select None</button>
+          <button class="settings-action-btn" onclick="settingsClearSiteData()">Clear Selected Data</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="page-nav-scroll-wrap">
+  <div class="page-nav" id="pageNav">
+    <button class="page-nav-btn" id="navDex" onclick="showPage('dex',this)">POKÉDEX</button>
+    <button class="page-nav-btn" id="navBulba" onclick="showPage('bulba',this);if(!window._bulbaBuilt){buildBulbaGuide();window._bulbaBuilt=true;} bulbaAutoSelectGame();">BULBA GUIDE</button>
+    <button class="page-nav-btn" id="navTracker" onclick="showPage('tracker',this);buildTracker();window._trackerBuilt=true;">TRACKER</button>
+    <button class="page-nav-btn" id="navNotes" onclick="showPage('notes',this)">NOTES</button>
+
+    <div class="page-nav-dropdown" id="navPokeDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navPokeGroup" onclick="toggleNavDropdown(event,'navPokeDropdown')">POKÉMON ▾</button>
+      <div class="page-nav-dropdown-menu" id="navPokeMenu">
+        <button class="page-nav-dropdown-item" id="navEasydex" onclick="closeNavDropdown('navPokeDropdown');showPage('easydex',document.getElementById('navEasydex'));renderEasyDexPage();window._easyDexBuilt=true;">Easy Dex</button>
+        <button class="page-nav-dropdown-item" id="navExcl" onclick="closeNavDropdown('navPokeDropdown');showPage('excl',document.getElementById('navExcl'));if(!window._exclBuilt){buildExcl();window._exclBuilt=true;}">Exclusives</button>
+        <button class="page-nav-dropdown-item" id="navTradeEvo" onclick="closeNavDropdown('navPokeDropdown');showPage('tradeevo',document.getElementById('navTradeEvo'));if(!window._tradevoBuilt){renderTradeEvoPage();window._tradevoBuilt=true;}">Trade Evos</button>
+        <button class="page-nav-dropdown-item" id="navNpcTrades" onclick="closeNavDropdown('navPokeDropdown');showPage('npctrades',document.getElementById('navNpcTrades'));if(!window._npcTradesBuilt){buildNpcTradesPage();window._npcTradesBuilt=true;}">NPC Trades</button>
+        <button class="page-nav-dropdown-item" id="navAbilities" onclick="return openPage('abilities','navAbilities','navPokeDropdown')">Abilities</button>
+        <button class="page-nav-dropdown-item" id="navLearnsets" onclick="return openPage('learnsets','navLearnsets','navPokeDropdown')">Learnsets</button>
+        <button class="page-nav-dropdown-item" id="navEncounters" onclick="return openPage('encounters','navEncounters','navPokeDropdown')">Encounters</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navMovesItemsDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navMovesItemsGroup" onclick="toggleNavDropdown(event,'navMovesItemsDropdown')">MOVES &amp; ITEMS ▾</button>
+      <div class="page-nav-dropdown-menu" id="navMovesItemsMenu">
+        <button class="page-nav-dropdown-item" id="navMoves" onclick="closeNavDropdown('navMovesItemsDropdown');showPage('moves',document.getElementById('navMoves'));if(!window._movesBuilt){buildMoveDex();window._movesBuilt=true;}">Moves Dex</button>
+        <button class="page-nav-dropdown-item" id="navTutors" onclick="return openPage('tutors','navTutors','navMovesItemsDropdown')">Tutors</button>
+        <button class="page-nav-dropdown-item" id="navItems" onclick="closeNavDropdown('navMovesItemsDropdown');showPage('items',document.getElementById('navItems'));if(!window._itemsBuilt){buildItemDex();window._itemsBuilt=true;}">Items Dex</button>
+        <button class="page-nav-dropdown-item" id="navHeld" onclick="closeNavDropdown('navMovesItemsDropdown');showPage('held',document.getElementById('navHeld'));if(!window._heldBuilt){buildHeldItems();window._heldBuilt=true;}">Held Items</button>
+        <button class="page-nav-dropdown-item" id="navTmhm" onclick="closeNavDropdown('navMovesItemsDropdown');showPage('tmhm',document.getElementById('navTmhm'));if(!window._tmhmBuilt){buildTmhmLocator();window._tmhmBuilt=true;}">TM/HM Locator</button>
+        <button class="page-nav-dropdown-item" id="navItemLocs" onclick="return openPage('itemlocs','navItemLocs','navMovesItemsDropdown')">Item Locations</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navMapsDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navMapsGroup" onclick="toggleNavDropdown(event,'navMapsDropdown')">MAPS ▾</button>
+      <div class="page-nav-dropdown-menu" id="navMapsMenu">
+        <button class="page-nav-dropdown-item" data-games="FR,LG" id="navKantoMapView" onclick="closeNavDropdown('navMapsDropdown');showPage('kantomapview',document.getElementById('navKantoMapView'));if(!window._kantomapviewBuilt){buildKantoMapView();window._kantomapviewBuilt=true;}">Kanto Map</button>
+        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navCrystalMapView" onclick="closeNavDropdown('navMapsDropdown');showPage('emeraldmapview',document.getElementById('navCrystalMapView'));if(!window._emeraldmapviewBuilt){buildCrystalMapView();window._emeraldmapviewBuilt=true;}">Crystal Map</button>
+        <button class="page-nav-dropdown-item" data-games="FR,LG" id="navGSCSidebarMap" onclick="closeNavDropdown('navMapsDropdown');window.open('./GSCIronmonMap/index.html','_blank')">GSC Sidebar Map</button>
+        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navCrystalSidebarMap" onclick="closeNavDropdown('navMapsDropdown');window.open('./CrystalIronmonMap/index.html','_blank')">Crystal Sidebar Map</button>
+        <button class="page-nav-dropdown-item" id="navRouteBrowser" onclick="return openPage('routebrowser','navRouteBrowser','navMapsDropdown')">Route Browser</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navBattleDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navBattleGroup" onclick="toggleNavDropdown(event,'navBattleDropdown')">BATTLE ▾</button>
+      <div class="page-nav-dropdown-menu" id="navBattleMenu">
+        <button class="page-nav-dropdown-item" id="navTeam" onclick="closeNavDropdown('navBattleDropdown');showPage('team',document.getElementById('navTeam'));if(!window._teamBuilt){window._teamBuilt=true;tbApplyRestore();}">Team Builder</button>
+        <button class="page-nav-dropdown-item" id="navTypeChart" onclick="closeNavDropdown('navBattleDropdown');showPage('typechart',document.getElementById('navTypeChart'));if(!window._typeChartBuilt){buildTypePage();window._typeChartBuilt=true;}">Type Chart</button>
+        <button class="page-nav-dropdown-item" id="navCalc" onclick="closeNavDropdown('navBattleDropdown');showPage('calc',document.getElementById('navCalc'));">Damage Calculator</button>
+        <button class="page-nav-dropdown-item" id="navSpeedTiers" onclick="closeNavDropdown('navBattleDropdown');showPage('speedtiers',document.getElementById('navSpeedTiers'));if(!window._speedtiersBuilt){buildSpeedTiersPage();window._speedtiersBuilt=true;}">Speed Tiers</button>
+        <button class="page-nav-dropdown-item" id="navCompare" onclick="closeNavDropdown('navBattleDropdown');showPage('compare',document.getElementById('navCompare'));">Pokémon Comparison</button>
+        <button class="page-nav-dropdown-item" id="navOpt" onclick="closeNavDropdown('navBattleDropdown');showPage('opt',document.getElementById('navOpt'));renderOptimizerPage();window._optBuilt=true;">Optimizer</button>
+        <button class="page-nav-dropdown-item" id="navE4Ref" onclick="return openPage('e4ref','navE4Ref','navBattleDropdown')">Elite Four &amp; Champion</button>
+        <button class="page-nav-dropdown-item" id="navRematches" onclick="return openPage('rematches','navRematches','navBattleDropdown')">Rematch Trainers</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navTrainingDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navTrainingGroup" onclick="toggleNavDropdown(event,'navTrainingDropdown')">TRAINING ▾</button>
+      <div class="page-nav-dropdown-menu" id="navTrainingMenu">
+        <button class="page-nav-dropdown-item" id="navIvev" onclick="closeNavDropdown('navTrainingDropdown');showPage('ivev',document.getElementById('navIvev'));">IV / EV Calculator</button>
+        <button class="page-nav-dropdown-item" id="navNatures" onclick="closeNavDropdown('navTrainingDropdown');showPage('natures',document.getElementById('navNatures'));if(!window._naturesBuilt){buildNaturesPage();window._naturesBuilt=true;}">Nature Chart</button>
+        <button class="page-nav-dropdown-item" id="navExpCalc" onclick="closeNavDropdown('navTrainingDropdown');showPage('expcalc',document.getElementById('navExpCalc'));ensureExpCalcPage();">EXP Calculator</button>
+        <button class="page-nav-dropdown-item" id="navBreed" onclick="closeNavDropdown('navTrainingDropdown');showPage('breed',document.getElementById('navBreed'));if(!window._breedBuilt){buildBreedCalc();window._breedBuilt=true;}">Breeding Calculator</button>
+        <button class="page-nav-dropdown-item" id="navCatchCalc" onclick="closeNavDropdown('navTrainingDropdown');showPage('catchcalc',document.getElementById('navCatchCalc'));if(!window._catchCalcBuilt){buildCatchCalcPage();window._catchCalcBuilt=true;}">Catch Rate Calc</button>
+        <button class="page-nav-dropdown-item" id="navHappiness" onclick="closeNavDropdown('navTrainingDropdown');showPage('happiness',document.getElementById('navHappiness'));if(!window._happinessBuilt){buildHappinessPage();window._happinessBuilt=true;}">Happiness Tracker</button>
+        <button class="page-nav-dropdown-item" id="navSafariZone" onclick="return openPage('safarizone','navSafariZone','navTrainingDropdown')">Safari Zone Calc</button>
+        <button class="page-nav-dropdown-item" id="navStatCalc" onclick="return openPage('statcalc','navStatCalc','navTrainingDropdown')">Stat Calculator</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navProgressDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navProgressGroup" onclick="toggleNavDropdown(event,'navProgressDropdown')">PROGRESS ▾</button>
+      <div class="page-nav-dropdown-menu" id="navProgressMenu">
+        <button class="page-nav-dropdown-item" id="navDexDash" onclick="closeNavDropdown('navProgressDropdown');showPage('dexdash',document.getElementById('navDexDash'));buildDexDashPage();">Dex Dashboard</button>
+        <button class="page-nav-dropdown-item" id="navRibbons" onclick="closeNavDropdown('navProgressDropdown');showPage('ribbons',document.getElementById('navRibbons'));buildRibbonPage();window._ribbonsBuilt=true;">Ribbon Tracker</button>
+        <button class="page-nav-dropdown-item" id="navMissables" onclick="closeNavDropdown('navProgressDropdown');showPage('missables',document.getElementById('navMissables'));buildMissablesPage();window._missablesBuilt=true;">Missables</button>
+        <button class="page-nav-dropdown-item" id="navDistributions" onclick="return openPage('distributions','navDistributions','navProgressDropdown')">Distributions</button>
+      </div>
+    </div>
+
+    <div class="page-nav-dropdown" id="navGuidesDropdown">
+      <button class="page-nav-btn page-nav-dropdown-trigger" id="navGuidesGroup" onclick="toggleNavDropdown(event,'navGuidesDropdown')">GUIDES ▾</button>
+      <div class="page-nav-dropdown-menu" id="navGuidesMenu">
+        <button class="page-nav-dropdown-item" id="navEssentials" onclick="closeNavDropdown('navGuidesDropdown');showPage('essentials',document.getElementById('navEssentials'));buildEssentialsPage();window._essentialsBuilt=true;">Essentials</button>
+        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navContests" onclick="closeNavDropdown('navGuidesDropdown');showPage('contests',document.getElementById('navContests'));buildContestsPage();window._contestsBuilt=true;">Contests</button>
+        <button class="page-nav-dropdown-item" data-games="E" id="navFrontier" onclick="closeNavDropdown('navGuidesDropdown');showPage('frontier',document.getElementById('navFrontier'));buildFrontierPage();window._frontierBuilt=true;">Battle Frontier</button>
+        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navBerries" onclick="closeNavDropdown('navGuidesDropdown');showPage('berries',document.getElementById('navBerries'));buildBerriesPage();window._berriesBuilt=true;">Berry Farming</button>
+        <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">RNG Guide</button>
+        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navPokeblock" onclick="return openPage('pokeblock','navPokeblock','navGuidesDropdown')">Pokéblock Optimizer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-home" class="page main">
+  <div class="home-scroll">
+    <div id="home-content" class="home-content-shell"></div>
+  </div>
+</div>
+
+<div id="page-notes" class="page main">
+  <div id="notes-page-host" class="notes-page-host"></div>
+</div>
+
+<div id="page-dex" class="page main">
+  <div class="controls">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="dex-filter-toggle" onclick="dexToggleFilters()" title="Toggle filters"
+        style="font-size:11px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:all 0.12s;"
+        onmouseover="var _gc=gameColor();this.style.borderColor=_gc;this.style.color=_gc"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">☰</button>
+      <div class="search-bar" style="flex:1;"><input type="text" id="searchInput" placeholder="Search Pokémon name or location…" oninput="updateSearchClear(this)"/><button class="search-bar-clear" id="searchClear" onclick="clearSearch()" title="Clear search">✕</button></div>
+      <button class="evo-toggle" id="evoToggle" onclick="toggleEvoChain(this)" title="Include evolution chain in search results">Evo Chain</button>
+      <button class="dex-toggle" id="dexToggle" onclick="toggleDexMode(this)" title="Switch between National and Regional dex number" style="min-width:90px;text-align:center;">
+        #<span class="dex-lbl-nat">National</span><span class="dex-lbl-game">Regional</span>
+      </button>
+      <button class="type-filter-toggle" id="typeFilterToggle" onclick="toggleTypeFilterRow()" style="flex-shrink:0;">🎨 Types</button>
+      <button class="type-filter-toggle" id="bestRateToggle" onclick="cycleBestRateMode(this)" style="flex-shrink:0;">📍 All Rates</button>
+    </div>
+    <div id="dex-filter-panel">
+    <div class="filter-btns">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('wild',this)">🌿 Wild</button>
+      <button class="filter-btn" onclick="setFilter('surf',this)">🌊 Surf</button>
+      <button class="filter-btn" onclick="setFilter('fish',this)">🎣 Fish</button>
+      <button class="filter-btn" id="diveFilterBtn" onclick="setFilter('dive',this)">🤿 Dive</button>
+      <button class="filter-btn" onclick="setFilter('rocksmash',this)">🔨 Rock Smash</button>
+      <button class="filter-btn" onclick="setFilter('safari',this)">🌳 Safari</button>
+      <button class="filter-btn" onclick="setFilter('evolve',this)">⬆ Evolve</button>
+      <button class="filter-btn" onclick="setFilter('trade',this)">🔄 Trade</button>
+      <button class="filter-btn" onclick="setFilter('breed',this)">🥚 Breed</button>
+      <button class="filter-btn" onclick="setFilter('fossil',this)">🦴 Fossil</button>
+      <button class="filter-btn" onclick="setFilter('swarm',this)">✦ Swarm</button>
+      <button class="filter-btn" onclick="setFilter('event',this)">🎫 Event</button>
+      <button class="filter-btn" onclick="setFilter('special',this)">⭐ Special</button>
+    </div>
+    </div><!-- /dex-filter-panel -->
+  </div>
+  <div class="type-filter-row" id="typeFilterBtns">
+      <button class="type-btn type-btn-normal" data-type="normal" onclick="toggleTypeFilter('normal',this)" title="Normal">Normal</button>
+      <button class="type-btn type-btn-fire" data-type="fire" onclick="toggleTypeFilter('fire',this)" title="Fire">Fire</button>
+      <button class="type-btn type-btn-water" data-type="water" onclick="toggleTypeFilter('water',this)" title="Water">Water</button>
+      <button class="type-btn type-btn-grass" data-type="grass" onclick="toggleTypeFilter('grass',this)" title="Grass">Grass</button>
+      <button class="type-btn type-btn-electric" data-type="electric" onclick="toggleTypeFilter('electric',this)" title="Electric">Electric</button>
+      <button class="type-btn type-btn-ice" data-type="ice" onclick="toggleTypeFilter('ice',this)" title="Ice">Ice</button>
+      <button class="type-btn type-btn-fighting" data-type="fighting" onclick="toggleTypeFilter('fighting',this)" title="Fighting">Fighting</button>
+      <button class="type-btn type-btn-poison" data-type="poison" onclick="toggleTypeFilter('poison',this)" title="Poison">Poison</button>
+      <button class="type-btn type-btn-ground" data-type="ground" onclick="toggleTypeFilter('ground',this)" title="Ground">Ground</button>
+      <button class="type-btn type-btn-flying" data-type="flying" onclick="toggleTypeFilter('flying',this)" title="Flying">Flying</button>
+      <button class="type-btn type-btn-psychic" data-type="psychic" onclick="toggleTypeFilter('psychic',this)" title="Psychic">Psychic</button>
+      <button class="type-btn type-btn-bug" data-type="bug" onclick="toggleTypeFilter('bug',this)" title="Bug">Bug</button>
+      <button class="type-btn type-btn-rock" data-type="rock" onclick="toggleTypeFilter('rock',this)" title="Rock">Rock</button>
+      <button class="type-btn type-btn-ghost" data-type="ghost" onclick="toggleTypeFilter('ghost',this)" title="Ghost">Ghost</button>
+      <button class="type-btn type-btn-dragon" data-type="dragon" onclick="toggleTypeFilter('dragon',this)" title="Dragon">Dragon</button>
+      <button class="type-btn type-btn-dark" data-type="dark" onclick="toggleTypeFilter('dark',this)" title="Dark">Dark</button>
+      <button class="type-btn type-btn-steel" data-type="steel" onclick="toggleTypeFilter('steel',this)" title="Steel">Steel</button>
+      <button onclick="clearTypeFilter()" style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:3px;border:2px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;margin-left:6px;font-family:'Nunito',sans-serif;" title="Clear type filter">✕ Clear</button>
+  </div>
+  <div class="game-tabs">
+    <button class="game-tab active-all" onclick="setGame('all',this)"><span class="gt-full">✦ ALL GAMES</span><span class="gt-short">✦ ALL</span></button>
+    <button class="game-tab" onclick="setGame('FR',this)"><span class="gt-full">🔥 FIRERED</span><span class="gt-short">🔥 FR</span></button>
+    <button class="game-tab" onclick="setGame('LG',this)"><span class="gt-full">🌿 LEAFGREEN</span><span class="gt-short">🌿 LG</span></button>
+    <button class="game-tab" onclick="setGame('R',this)"><span class="gt-full">🔴 RUBY</span><span class="gt-short">🔴 R</span></button>
+    <button class="game-tab" onclick="setGame('S',this)"><span class="gt-full">🔷 SAPPHIRE</span><span class="gt-short">🔷 S</span></button>
+    <button class="game-tab" onclick="setGame('E',this)"><span class="gt-full">💚 EMERALD</span><span class="gt-short">💚 E</span></button>
+    <div class="game-tabs-extras">
+      <button id="shinyToggle" class="shiny-toggle" onclick="toggleShinyMode(this)" title="Show shiny sprites">✨ Shiny</button>
+      <span id="dex-poke-count" class="section-count"></span>
+    </div>
+  </div>
+  <div class="table-panel" id="tablePanel">
+    <div id="tableContent"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE PAGE                                                         -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════ BULBAPEDIA GUIDE PAGE ═══════════════ -->
+<div id="page-bulba" class="page" style="flex-direction:row;height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px) - var(--page-bottom, 24px));overflow:hidden;">
+
+  <!-- Sidebar -->
+  <div id="bulba-sidebar" style="width:220px;flex-shrink:0;background:var(--darker);border-right:2px solid var(--border);overflow-y:auto;padding:12px 0;display:flex;flex-direction:column;">
+    <div style="font-family:'Press Start 2P',monospace;font-size:6px;color:var(--bulba-accent,#5D9C00);padding:8px 16px 12px;letter-spacing:1px;">BULBAPEDIA GUIDE</div>
+    <!-- FR/LG sidebar -->
+    <div id="bulba-toc-frlg">
+    <div class="bulba-toc-subhead">Main Storyline</div>
+    <a class="bulba-toc-item active" id="btoc-index" onclick="bulbaLoadIndex()">Contents</a>
+    <a class="bulba-toc-item" id="btoc-1" onclick="bulbaLoadPart(1,'Introduction, Pallet Town')">Part 1 — Pallet Town</a>
+    <a class="bulba-toc-item" id="btoc-2" onclick="bulbaLoadPart(2,'Route 1, Viridian City, Route 2')">Part 2 — Viridian City</a>
+    <a class="bulba-toc-item" id="btoc-3" onclick="bulbaLoadPart(3,'Viridian Forest, Pewter City')">Part 3 — Pewter City</a>
+    <a class="bulba-toc-item" id="btoc-4" onclick="bulbaLoadPart(4,'Route 3, Mt. Moon, Route 4')">Part 4 — Mt. Moon</a>
+    <a class="bulba-toc-item" id="btoc-5" onclick="bulbaLoadPart(5,'Cerulean City, Routes 24-25')">Part 5 — Cerulean City</a>
+    <a class="bulba-toc-item" id="btoc-6" onclick="bulbaLoadPart(6,'Vermilion City, S.S. Anne')">Part 6 — Vermilion City</a>
+    <a class="bulba-toc-item" id="btoc-7" onclick="bulbaLoadPart(7,'Route 11, Diglett's Cave, Route 9')">Part 7 — East Kanto</a>
+    <a class="bulba-toc-item" id="btoc-8" onclick="bulbaLoadPart(8,'Rock Tunnel, Lavender Town')">Part 8 — Lavender Town</a>
+    <a class="bulba-toc-item" id="btoc-9" onclick="bulbaLoadPart(9,'Celadon City, Rocket Hideout')">Part 9 — Celadon City</a>
+    <a class="bulba-toc-item" id="btoc-10" onclick="bulbaLoadPart(10,'Routes 12-15, Fuchsia City')">Part 10 — Fuchsia City</a>
+    <a class="bulba-toc-item" id="btoc-11" onclick="bulbaLoadPart(11,'Saffron City, Silph Co.')">Part 11 — Saffron City</a>
+    <a class="bulba-toc-item" id="btoc-12" onclick="bulbaLoadPart(12,'Seafoam Islands')">Part 12 — Seafoam Islands</a>
+    <a class="bulba-toc-item" id="btoc-13" onclick="bulbaLoadPart(13,'Cinnabar Island')">Part 13 — Cinnabar Island</a>
+    <a class="bulba-toc-item" id="btoc-14" onclick="bulbaLoadPart(14,'Sevii Islands I (1-3)')">Part 14 — Sevii I (1–3)</a>
+    <a class="bulba-toc-item" id="btoc-15" onclick="bulbaLoadPart(15,'Route 21, Power Plant, Viridian Gym')">Part 15 — Viridian Gym</a>
+    <a class="bulba-toc-item" id="btoc-16" onclick="bulbaLoadPart(16,'Routes 22-23, Victory Road')">Part 16 — Victory Road</a>
+    <a class="bulba-toc-item" id="btoc-17" onclick="bulbaLoadPart(17,'Indigo Plateau')">Part 17 — Elite Four</a>
+
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Post-Game</div>
+    <a class="bulba-toc-item" id="btoc-18" onclick="bulbaLoadPart(18,'Sevii Islands II (4, 6)')">Part 18 — Sevii II (4, 6)</a>
+    <a class="bulba-toc-item" id="btoc-19" onclick="bulbaLoadPart(19,'Sevii Islands III (5, 7)')">Part 19 — Sevii III (5, 7)</a>
+    <a class="bulba-toc-item" id="btoc-20" onclick="bulbaLoadPart(20,'Cerulean Cave, League Round 2')">Part 20 — Cerulean Cave</a>
+    <a class="bulba-toc-item" id="btoc-21" onclick="bulbaLoadPart(21,'Birth Island, Navel Rock')">Part 21 — Event Islands ✦</a>
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Guide Extras</div>
+    <a class="bulba-toc-item" id="btoc-extra-frlg-sevii" onclick="bulbaLoadExtra('frlg-sevii','Sevii Islands Guide')">Sevii Guide</a>
+    <a class="bulba-toc-item" id="btoc-extra-frlg-legends" onclick="bulbaLoadExtra('frlg-legends','Legendary Checklist')">Legends</a>
+    <a class="bulba-toc-item" id="btoc-extra-frlg-safari" onclick="bulbaLoadExtra('frlg-safari','Safari Zone Guide')">Safari Zone</a>
+    </div><!-- end frlg toc -->
+
+    <!-- RS sidebar -->
+    <div id="bulba-toc-rs" style="display:none">
+    <div class="bulba-toc-subhead">Main Storyline</div>
+    <a class="bulba-toc-item active" id="btoc-rs-index" onclick="bulbaLoadIndex()">Contents</a>
+    <a class="bulba-toc-item" id="btoc-rs-1" onclick="bulbaLoadPart(1,'Littleroot Town, Route 101')">Part 1 — Littleroot Town</a>
+    <a class="bulba-toc-item" id="btoc-rs-2" onclick="bulbaLoadPart(2,'Oldale Town, Petalburg City')">Part 2 — Petalburg City</a>
+    <a class="bulba-toc-item" id="btoc-rs-3" onclick="bulbaLoadPart(3,'Rustboro City')">Part 3 — Rustboro City</a>
+    <a class="bulba-toc-item" id="btoc-rs-4" onclick="bulbaLoadPart(4,'Dewford Town, Slateport City')">Part 4 — Dewford &amp; Slateport</a>
+    <a class="bulba-toc-item" id="btoc-rs-5" onclick="bulbaLoadPart(5,'Mauville City')">Part 5 — Mauville City</a>
+    <a class="bulba-toc-item" id="btoc-rs-6" onclick="bulbaLoadPart(6,'Verdanturf Town, Fallarbor Town')">Part 6 — Verdanturf &amp; Fallarbor</a>
+    <a class="bulba-toc-item" id="btoc-rs-7" onclick="bulbaLoadPart(7,'Route 111, Lavaridge Town')">Part 7 — Lavaridge Town</a>
+    <a class="bulba-toc-item" id="btoc-rs-8" onclick="bulbaLoadPart(8,'Petalburg Gym, Fortree City')">Part 8 — Petalburg &amp; Fortree</a>
+    <a class="bulba-toc-item" id="btoc-rs-9" onclick="bulbaLoadPart(9,'Mt. Chimney, Route 112')">Part 9 — Mt. Chimney</a>
+    <a class="bulba-toc-item" id="btoc-rs-10" onclick="bulbaLoadPart(10,'New Mauville, Route 110')">Part 10 — New Mauville</a>
+    <a class="bulba-toc-item" id="btoc-rs-11" onclick="bulbaLoadPart(11,'Fortree City, Route 120')">Part 11 — Fortree City</a>
+    <a class="bulba-toc-item" id="btoc-rs-12" onclick="bulbaLoadPart(12,'Mossdeep City, Space Center')">Part 12 — Mossdeep City</a>
+    <a class="bulba-toc-item" id="btoc-rs-13" onclick="bulbaLoadPart(13,'Seafloor Cavern, Sootopolis')">Part 13 — Sootopolis City</a>
+    <a class="bulba-toc-item" id="btoc-rs-14" onclick="bulbaLoadPart(14,'Ever Grande City, Victory Road')">Part 14 — Victory Road</a>
+    <a class="bulba-toc-item" id="btoc-rs-15" onclick="bulbaLoadPart(15,'Elite Four')">Part 15 — Elite Four</a>
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Post-Game</div>
+    <a class="bulba-toc-item" id="btoc-rs-16" onclick="bulbaLoadPart(16,'Sealed Chamber, Regis')">Part 16 — Sealed Chamber</a>
+    <a class="bulba-toc-item" id="btoc-rs-17" onclick="bulbaLoadPart(17,'Southern Island, Lati@s')">Part 17 — Southern Island</a>
+    <a class="bulba-toc-item" id="btoc-rs-18" onclick="bulbaLoadPart(18,'Routes 129-134')">Part 18 — East Ocean</a>
+    <a class="bulba-toc-item" id="btoc-rs-19" onclick="bulbaLoadPart(19,'Sky Pillar, Rayquaza')">Part 19 — Sky Pillar</a>
+    <a class="bulba-toc-item" id="btoc-rs-20" onclick="bulbaLoadPart(20,'Abandoned Ship, Desert Ruins')">Part 20 — Regi Trio</a>
+    <a class="bulba-toc-item" id="btoc-rs-21" onclick="bulbaLoadPart(21,'Battle Tower')">Part 21 — Battle Tower</a>
+    <a class="bulba-toc-item" id="btoc-rs-22" onclick="bulbaLoadPart(22,'Pokémon League Round 2')">Part 22 — League Round 2</a>
+    <a class="bulba-toc-item" id="btoc-rs-23" onclick="bulbaLoadPart(23,'Misc Post-Game')">Part 23 — Post-Game</a>
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Guide Extras</div>
+    <a class="bulba-toc-item" id="btoc-extra-rs-features" onclick="bulbaLoadExtra('rs-features','RSE Features')">RSE Features</a>
+    <a class="bulba-toc-item" id="btoc-extra-rs-legends" onclick="bulbaLoadExtra('rs-legends','Legendary Checklist')">Legends</a>
+    <a class="bulba-toc-item" id="btoc-extra-rs-safari" onclick="bulbaLoadExtra('rs-safari','Safari Zone Guide')">Safari Zone</a>
+    </div><!-- end rs toc -->
+
+    <!-- Crystal sidebar -->
+    <div id="bulba-toc-e" style="display:none">
+    <div class="bulba-toc-subhead">Main Storyline</div>
+    <a class="bulba-toc-item active" id="btoc-e-index" onclick="bulbaLoadIndex()">Contents</a>
+    <a class="bulba-toc-item" id="btoc-e-1" onclick="bulbaLoadPart(1,'Littleroot Town, Route 101')">Part 1 — Littleroot Town</a>
+    <a class="bulba-toc-item" id="btoc-e-2" onclick="bulbaLoadPart(2,'Rustboro City')">Part 2 — Rustboro City</a>
+    <a class="bulba-toc-item" id="btoc-e-3" onclick="bulbaLoadPart(3,'Dewford Town, Slateport City')">Part 3 — Dewford &amp; Slateport</a>
+    <a class="bulba-toc-item" id="btoc-e-4" onclick="bulbaLoadPart(4,'Mauville City')">Part 4 — Mauville City</a>
+    <a class="bulba-toc-item" id="btoc-e-5" onclick="bulbaLoadPart(5,'Verdanturf, Fallarbor, Meteor Falls')">Part 5 — Fallarbor Town</a>
+    <a class="bulba-toc-item" id="btoc-e-6" onclick="bulbaLoadPart(6,'Route 111, Lavaridge Town')">Part 6 — Lavaridge Town</a>
+    <a class="bulba-toc-item" id="btoc-e-7" onclick="bulbaLoadPart(7,'Mt. Chimney, Jagged Pass')">Part 7 — Mt. Chimney</a>
+    <a class="bulba-toc-item" id="btoc-e-8" onclick="bulbaLoadPart(8,'Petalburg Gym, Fortree City')">Part 8 — Fortree City</a>
+    <a class="bulba-toc-item" id="btoc-e-9" onclick="bulbaLoadPart(9,'Route 120, Lilycove City')">Part 9 — Lilycove City</a>
+    <a class="bulba-toc-item" id="btoc-e-10" onclick="bulbaLoadPart(10,'Team Aqua Hideout, Seafloor Cavern')">Part 10 — Aqua Hideout</a>
+    <a class="bulba-toc-item" id="btoc-e-11" onclick="bulbaLoadPart(11,'Sootopolis City')">Part 11 — Sootopolis City</a>
+    <a class="bulba-toc-item" id="btoc-e-12" onclick="bulbaLoadPart(12,'Mt. Pyre, Magma Hideout')">Part 12 — Mt. Pyre</a>
+    <a class="bulba-toc-item" id="btoc-e-13" onclick="bulbaLoadPart(13,'Slateport, Lilycove, Aqua Hideout')">Part 13 — Aqua Hideout</a>
+    <a class="bulba-toc-item" id="btoc-e-14" onclick="bulbaLoadPart(14,'Mossdeep City, Space Center')">Part 14 — Mossdeep City</a>
+    <a class="bulba-toc-item" id="btoc-e-15" onclick="bulbaLoadPart(15,'Seafloor Cavern, Sootopolis')">Part 15 — Cave of Origin</a>
+    <a class="bulba-toc-item" id="btoc-e-16" onclick="bulbaLoadPart(16,'Ever Grande City, Victory Road')">Part 16 — Victory Road</a>
+    <a class="bulba-toc-item" id="btoc-e-17" onclick="bulbaLoadPart(17,'Elite Four')">Part 17 — Elite Four</a>
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Post-Game</div>
+    <a class="bulba-toc-item" id="btoc-e-18" onclick="bulbaLoadPart(18,'Sky Pillar, Rayquaza')">Part 18 — Sky Pillar</a>
+    <a class="bulba-toc-item" id="btoc-e-19" onclick="bulbaLoadPart(19,'Battle Frontier')">Part 19 — Battle Frontier</a>
+    <a class="bulba-toc-item" id="btoc-e-20" onclick="bulbaLoadPart(20,'Sealed Chamber, Regi Trio')">Part 20 — Regi Trio</a>
+    <a class="bulba-toc-item" id="btoc-e-21" onclick="bulbaLoadPart(21,'Pokémon League Round 2')">Part 21 — League Round 2</a>
+    <div class="bulba-toc-subhead" style="margin-top:8px;">Guide Extras</div>
+    <a class="bulba-toc-item" id="btoc-extra-e-features" onclick="bulbaLoadExtra('e-features','RSE Features')">RSE Features</a>
+    <a class="bulba-toc-item" id="btoc-extra-e-legends" onclick="bulbaLoadExtra('e-legends','Legendary Checklist')">Legends</a>
+    <a class="bulba-toc-item" id="btoc-extra-e-safari" onclick="bulbaLoadExtra('e-safari','Safari Zone Guide')">Safari Zone</a>
+    </div><!-- end emerald toc -->
+
+  </div>
+
+  <!-- Main content -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <!-- Topbar -->
+    <div style="padding:8px 14px;background:var(--panel);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;">
+      <button id="bulba-sidebar-toggle" onclick="bulbaToggleSidebar()" title="Toggle sidebar"
+        style="font-size:11px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:all 0.12s;"
+        onmouseover="var _c=getComputedStyle(document.documentElement).getPropertyValue('--bulba-accent').trim()||'#5D9C00';this.style.borderColor=_c;this.style.color=_c"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">☰</button>
+      <span id="bulba-game-label" style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--bulba-accent,#5D9C00);letter-spacing:0.5px;">BULBAPEDIA GUIDE</span>
+      <span id="bulba-breadcrumb" style="font-size:11px;color:var(--muted);margin-left:4px;"></span>
+      <button id="bulba-sidebar-note-btn" style="display:none;margin-left:auto;font-size:10px;padding:3px 8px;border:1px solid var(--border);border-radius:3px;background:color-mix(in srgb,var(--bulba-accent,var(--gold)) 8%,transparent);color:var(--bulba-accent,var(--gold));cursor:pointer;text-align:left;transition:all 0.12s;">+ Note</button>
+      <a id="bulba-ext-link" href="https://bulbapedia.bulbagarden.net/wiki/Walkthrough:Pok%C3%A9mon_Gold_and_Silver" target="_blank" rel="noopener"
+        style="font-size:10px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;transition:all 0.12s;"
+        onmouseover="var _c=getComputedStyle(document.documentElement).getPropertyValue('--bulba-accent').trim()||'#5D9C00';this.style.borderColor=_c;this.style.color=_c"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↗ View on Bulbapedia</a>
+    </div>
+
+    <!-- Content area -->
+    <div id="bulba-content" style="flex:1;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#ffffff;color:#202122;">
+      <!-- Index page renders here or fetched content -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MOVE DEX PAGE ═══════════════ -->
+<div id="page-moves" class="page"></div>
+
+<!-- ═══════════════ ITEM DEX PAGE ═══════════════ -->
+<div id="page-items" class="page item-page">
+  <div class="item-controls">
+    <div style="position:relative;display:flex;align-items:center;flex:1;min-width:180px;max-width:320px;"><input type="text" id="itSearch" class="item-search-inp" placeholder="Search item name, effect, or location…" oninput="updateItClear(this);filterItemDex()" style="max-width:none;flex:1;padding-right:28px"><button class="search-bar-clear" id="itClear" onclick="clearItSearch()" title="Clear search">✕</button></div>
+    <div class="item-cat-btns">
+      <button class="item-cat-btn active" style="background:var(--card);color:var(--text)" onclick="setItemCat('All',this)">All</button>
+      <button class="item-cat-btn" style="background:#E8501A;color:#fff" onclick="setItemCat('Ball',this)">Ball</button>
+      <button class="item-cat-btn" style="background:#E91E63;color:#fff" onclick="setItemCat('Medicine',this)">Medicine</button>
+      <button class="item-cat-btn" style="background:#B83020;color:#fff" onclick="setItemCat('Battle',this)">Battle</button>
+      <button class="item-cat-btn" style="background:#9C27B0;color:#fff" onclick="setItemCat('Vitamin',this)">Vitamin</button>
+      <button class="item-cat-btn" style="background:#1B8FE8;color:#fff" onclick="setItemCat('Hold',this)">Hold</button>
+      <button class="item-cat-btn" style="background:#78C850;color:#fff" onclick="setItemCat('Evolution',this)">Evolution</button>
+      <button class="item-cat-btn" style="background:#D4A800;color:#fff" onclick="setItemCat('Key',this)">Key</button>
+      <button class="item-cat-btn" style="background:#60C8C8;color:#fff" onclick="setItemCat('TM/HM',this)">TM/HM</button>
+      <button class="item-cat-btn" style="background:#4CAF50;color:#fff" onclick="setItemCat('Berry',this)">Berry</button>
+      <button class="item-cat-btn" style="background:#607D8B;color:#fff" onclick="setItemCat('Other',this)">Other</button>
+      
+    </div>
+    <span id="itCountLabel" style="font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap"></span>
+  </div>
+  <div class="item-tbl-wrap">
+    <table class="item-table">
+      <thead><tr>
+        <th onclick="itSort('name')" id="itth-name">Item</th>
+        <th onclick="itSort('cat')" id="itth-cat">Type</th>
+        <th>Effect</th>
+        <th id="itth-loc">Location / How to get</th>
+      </tr></thead>
+      <tbody id="itTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+<!-- ── Notes slide-out tab ── -->
+<button class="notes-panel-tab" id="notesPanelTab" onclick="toggleNotesPanel()" title="Notes">NOTES<span id="notes-tab-badge" class="notes-tab-badge"></span></button>
+<button class="map-panel-tab" id="mapPanelTab" onclick="toggleMapPanel()" title="Map">MAP</button>
+
+
+
+
+<!-- EXCLUSIVES PAGE -->
+<div id="page-excl" class="page main">
+  <div class="excl-header">
+    <h2>VERSION EXCLUSIVES</h2>
+    <div class="excl-mode-btns">
+      <button class="excl-mode-btn active" onclick="setExclMode('RS',this)">R vs S</button>
+      <button class="excl-mode-btn" onclick="setExclMode('RE',this)">R vs E</button>
+      <button class="excl-mode-btn" onclick="setExclMode('SE',this)">S vs E</button>
+      <button class="excl-mode-btn" onclick="setExclMode('E_ONLY',this)">E UNIQUE</button>
+      <button class="excl-mode-btn" onclick="setExclMode('FR_LG',this)">FR vs LG</button>
+    </div>
+  </div>
+  <div class="excl-body" id="exclBody"></div>
+</div>
+
+
+
+<!-- ══ TEAM BUILDER PAGE ══ -->
+<div id="page-team" class="page main">
+  <div class="tb-topbar">
+    <button id="tb-sidebar-toggle" onclick="tbToggleSidebar()" title="Toggle sidebar" style="font-size:11px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:all 0.12s;" onmouseover="var _gc=gameColor();this.style.borderColor=_gc;this.style.color=_gc" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">☰</button>
+    <span id="tb-page-title" style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">TEAM BUILDER</span>
+    <div style="display:flex;gap:4px;" id="tb-game-btns">
+      <button class="tb-game-btn active-all" onclick="tbSetGame('all',this)">ALL</button>
+      <button class="tb-game-btn" onclick="tbSetGame('FR',this)">FR</button>
+      <button class="tb-game-btn" onclick="tbSetGame('LG',this)">LG</button>
+      <button class="tb-game-btn" onclick="tbSetGame('R',this)">R</button>
+      <button class="tb-game-btn" onclick="tbSetGame('S',this)">S</button>
+      <button class="tb-game-btn" onclick="tbSetGame('E',this)">E</button>
+    </div>
+    <button onclick="tbClear()" style="margin-left:auto;font-size:10px;font-weight:800;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="this.style.color='var(--fire)';this.style.borderColor='var(--fire)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">✕ CLEAR</button>
+  </div>
+  <div class="tb-layout">
+    <div class="tb-sidebar">
+      <div class="tb-search-wrap">
+        <input class="tb-search-inp" id="tb-search" type="text" placeholder="Search to add Pokémon…" oninput="tbSearch(this.value)" autocomplete="off">
+        <div class="tb-dropdown" id="tb-dropdown"></div>
+      </div>
+      <div class="tb-slots-wrap" id="tb-slots-wrap">
+        <div id="tb-slots"></div>
+        <div id="tb-hint" style="text-align:center;padding:30px 10px;color:var(--muted);font-size:11px;line-height:1.9;">Search above or click<br>any Pokémon in the Dex<br>to add to your team.<br><br><span style="font-size:9px;opacity:0.6">Up to 6 Pokémon</span></div>
+      </div>
+    </div>
+    <div class="tb-analysis" id="tb-analysis">
+      <div class="tb-analysis-inner" id="tb-analysis-inner">
+        <div class="tb-empty"><div class="tb-empty-icon">⚔</div><div class="tb-empty-text">BUILD YOUR TEAM</div><div style="font-size:11px;margin-top:12px;line-height:1.8;">Add Pokémon to see type coverage,<br>weaknesses, speed tiers and more.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ POKÉDEX TRACKER PAGE ══ -->
+<div id="page-tracker" class="page main">
+  <div class="trk-topbar">
+    <button id="trk-sidebar-toggle" onclick="trkToggleSidebar()" title="Toggle sidebar" style="font-size:11px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:all 0.12s;" onmouseover="var _tc=getComputedStyle(document.getElementById('page-tracker')||document.documentElement).getPropertyValue('--trk-color').trim()||gameColor();this.style.borderColor=_tc;this.style.color=_tc" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">☰</button>
+    <span class="trk-title">POKÉDEX TRACKER</span>
+    <span style="font-size:10px;color:var(--trk-color,var(--muted));" id="trk-mode-hint">Left-click = caught · Right-click = shiny · Data saved locally per save file</span>
+    <button onclick="openProgressModal()" style="font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 12px;background:transparent;border:1px solid color-mix(in srgb,var(--trk-color,var(--gold)) 35%,transparent);border-radius:4px;color:color-mix(in srgb,var(--trk-color,var(--gold)) 65%,transparent);cursor:pointer;letter-spacing:0.5px;">📊 PROGRESS</button>
+    <button id="trk-nuzlocke-btn" onclick="toggleNuzlockeMode()" style="font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);cursor:pointer;letter-spacing:0.5px;">💀 NUZLOCKE</button>
+    <div id="trk-nuzlocke-legend" style="display:none;align-items:center;gap:12px;font-size:10px;color:var(--muted);">
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:rgba(255,107,53,0.4);border-radius:2px;display:inline-block;"></span>Fainted</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:#44DD88;border-radius:2px;display:inline-block;"></span>Alive</span>
+      <span style="font-style:italic;">Right-click = mark fainted</span>
+    </div>
+  </div>
+  <div class="trk-save-tabs" id="trk-save-tabs">
+    <button class="trk-save-tab active" onclick="trkSetSave('FR',this)"><span class="gt-full">🔥 Gold</span><span class="gt-short">🔥 FR</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('LG',this)"><span class="gt-full">🌿 Silver</span><span class="gt-short">🌿 LG</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('R',this)"><span class="gt-full">🔴 Ruby</span><span class="gt-short">🔴 R</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('S',this)"><span class="gt-full">🔷 Sapphire</span><span class="gt-short">🔷 S</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('E',this)"><span class="gt-full">🟢 Crystal</span><span class="gt-short">🟢 E</span></button>
+  </div>
+  <div class="trk-body">
+    <div class="trk-sidebar">
+      <div class="trk-progress-ring-wrap">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="none" stroke="var(--border)" stroke-width="10"/>
+          <circle id="trk-ring" cx="55" cy="55" r="46" fill="none" stroke="var(--emerald)" stroke-width="10"
+            stroke-dasharray="289" stroke-dashoffset="289" stroke-linecap="round"
+            transform="rotate(-90 55 55)" style="transition:stroke-dashoffset 0.5s ease"/>
+        </svg>
+        <div style="margin-top:-68px;text-align:center;z-index:1;position:relative;">
+          <div id="trk-pct" style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--emerald);">0%</div>
+          <div id="trk-fraction" style="font-size:10px;color:var(--muted);margin-top:2px;">0 / 0</div>
+        </div>
+        <div style="margin-top:52px;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;" id="trk-save-label">Gold Save</div>
+      </div>
+
+      <div class="trk-stats-grid" id="trk-stats-grid">
+        <div class="trk-stat-box" onclick="trkSetFilter('caught',this)" title="Show caught"><div class="trk-stat-num" id="trk-s-caught">0</div><div class="trk-stat-label">Caught</div></div>
+        <div class="trk-stat-box" onclick="trkSetFilter('uncaught',this)" title="Show remaining"><div class="trk-stat-num" id="trk-s-seen">0</div><div class="trk-stat-label">Remaining</div></div>
+        <div class="trk-stat-box" onclick="trkSetFilter('native',this)" title="Show regional dex"><div class="trk-stat-num" id="trk-s-native">0</div><div class="trk-stat-label">Regional</div></div>
+        <div class="trk-stat-box" onclick="trkSetFilter('trade',this)" title="Show trade-only"><div class="trk-stat-num" id="trk-s-trade">0</div><div class="trk-stat-label">Need Trade</div></div>
+        <div class="trk-stat-box" onclick="trkSetFilter('shiny',this)" style="grid-column:1/-1;border-color:rgba(255,215,0,0.4);" title="Show shinies"><div class="trk-stat-num" id="trk-s-shiny" style="color:#FFD700;">0</div><div class="trk-stat-label">✨ Shinies</div></div>
+      </div>
+
+
+      <div class="trk-sidebar-panel" id="trk-completion-panel">
+        <div class="trk-dropdown-head" onclick="trkToggleSidebarDropdown('trk-completion-panel')">
+          <div class="trk-sidebar-panel-title">Completion</div>
+          <div class="trk-dropdown-caret">▼</div>
+        </div>
+        <div class="trk-dropdown-body">
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;">
+            <div class="trk-stat-box" onclick="trkSetFilter('seen',this)" title="Show seen"><div class="trk-stat-num" id="trk-s-seen2">0</div><div class="trk-stat-label">Seen</div></div>
+            <div class="trk-stat-box" onclick="trkSetFilter('evolved',this)" title="Show evolved"><div class="trk-stat-num" id="trk-s-evolved">0</div><div class="trk-stat-label">Evolved</div></div>
+            <div class="trk-stat-box" onclick="trkSetFilter('bred',this)" title="Show bred"><div class="trk-stat-num" id="trk-s-bred">0</div><div class="trk-stat-label">Bred</div></div>
+            <div class="trk-stat-box" onclick="trkSetFilter('traded',this)" title="Show traded"><div class="trk-stat-num" id="trk-s-traded2">0</div><div class="trk-stat-label">Traded</div></div>
+            <div class="trk-stat-box" onclick="trkSetFilter('held',this)" title="Show held-item farmed"><div class="trk-stat-num" id="trk-s-held">0</div><div class="trk-stat-label">Held Farmed</div></div>
+            <div class="trk-stat-box" onclick="trkSetFilter('legendary',this)" title="Show legendaries"><div class="trk-stat-num" id="trk-s-legendary">0</div><div class="trk-stat-label">Legendary</div></div>
+            <div class="trk-stat-box" onclick="openTmChecklist()" style="grid-column:1/-1;" title="Open TM checklist"><div class="trk-stat-num" id="trk-s-tm">0</div><div class="trk-stat-label">TM/HM Collected</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trk-filter-btns">
+        <button class="trk-filter-btn active" onclick="trkSetFilter('all',this)">📋 All Pokémon</button>
+        <button class="trk-filter-btn" id="trk-filter-fainted" onclick="trkSetFilter('fainted',this)" style="display:none;">💀 Fainted</button>
+        <button class="trk-filter-btn" id="trk-filter-alive" onclick="trkSetFilter('alive',this)" style="display:none;">✅ Alive (Caught)</button>
+      </div>
+
+      <div class="trk-actions">
+        <button class="trk-action-btn" onclick="trkMarkAll()">✓ Mark All as Caught</button>
+        <button class="trk-action-btn" onclick="openExportModal()" style="border-color:rgba(255,215,0,0.3);color:rgba(255,215,0,0.6);" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,215,0,0.3)';this.style.color='rgba(255,215,0,0.6)'">🖨 Export Summary</button>
+        <button class="trk-action-btn" onclick="trkClearSave()" style="border-color:rgba(255,80,80,0.3);color:rgba(255,80,80,0.6);" onmouseover="this.style.borderColor='var(--fire)';this.style.color='var(--fire)'" onmouseout="this.style.borderColor='rgba(255,80,80,0.3)';this.style.color='rgba(255,80,80,0.6)'">✕ Reset This Save</button>
+      </div>
+
+      <div class="trk-sidebar-panel" id="trk-remaining-panel">
+        <div class="trk-sidebar-panel-title">Remaining Obtainable</div>
+        <div id="trk-remaining-body"></div>
+      </div>
+    </div>
+
+    <div class="trk-main">
+      <div class="trk-controls">
+        <div style="position:relative;display:flex;align-items:center;flex:1;min-width:160px;max-width:280px;">
+          <input class="trk-search" id="trk-search" type="text" placeholder="Search…" oninput="trkRenderGrid();updateClearBtn(this,'trk-search-clear')" style="flex:1;padding-right:28px;">
+          <button class="search-bar-clear" id="trk-search-clear" onclick="clearInp('trk-search','trk-search-clear',trkRenderGrid)" title="Clear search">✕</button>
+        </div>
+        <div class="trk-mode-btns">
+          <button class="trk-mode-btn active" onclick="trkSetMode('game',this)">Regional Dex</button>
+          <button class="trk-mode-btn" onclick="trkSetMode('national',this)">National Dex</button>
+          <button class="trk-mode-btn trk-legend-btn" onclick="trkShowLegend()" title="Tile legend">?</button>
+        </div>
+        <span id="trk-count" style="font-size:10px;color:var(--muted);margin-left:auto;"></span>
+        <div class="trk-mark-divider"></div>
+        <div class="trk-mark-mode-row">
+          <span class="trk-mark-label">CLICK MODE</span>
+          <button class="trk-mark-btn active" onclick="trkSetMarkMode('caught',this)">Caught</button>
+          <button class="trk-mark-btn" onclick="trkSetMarkMode('seen',this)">Seen</button>
+          <button class="trk-mark-btn" onclick="trkSetMarkMode('evolved',this)">Evolved</button>
+          <button class="trk-mark-btn" onclick="trkSetMarkMode('bred',this)">Bred</button>
+          <button class="trk-mark-btn" onclick="trkSetMarkMode('traded',this)">Traded</button>
+          <button class="trk-mark-btn" onclick="trkSetMarkMode('held',this)">Held</button>
+        </div>
+      </div>
+      <div class="trk-grid" id="trk-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="trkLegendOverlay" class="tmcheck-overlay" onclick="if(event.target===this)trkHideLegend()">
+  <div class="tmcheck-modal" style="max-width:560px;">
+    <div class="tmcheck-header">
+      <div class="tmcheck-title">📖 TILE LEGEND</div>
+      <button class="features-close" onclick="trkHideLegend()">✕</button>
+    </div>
+    <div class="tmcheck-body">
+
+      <div class="trk-legend-section-title">TILE STATES</div>
+      <div class="trk-legend-rows">
+        <div class="trk-legend-row">
+          <div class="trk-legend-demo trk-legend-demo--uncaught"></div>
+          <div class="trk-legend-desc"><strong>Not caught</strong> — Sprite is greyed out. Tap to mark as caught.</div>
+        </div>
+        <div class="trk-legend-row">
+          <div class="trk-legend-demo trk-legend-demo--caught"></div>
+          <div class="trk-legend-desc"><strong>Caught</strong> — Green border &amp; ✓ checkmark. Counts toward your completion total.</div>
+        </div>
+        <div class="trk-legend-row">
+          <div class="trk-legend-demo trk-legend-demo--shiny"></div>
+          <div class="trk-legend-desc"><strong>Shiny caught</strong> — Gold border &amp; ✨. Right-click (or long-press) a caught tile to toggle shiny status.</div>
+        </div>
+        <div class="trk-legend-row">
+          <div class="trk-legend-demo trk-legend-demo--trade"></div>
+          <div class="trk-legend-desc"><strong>Trade required</strong> — Orange border. This Pokémon can only be obtained via trade in the selected game. The <span class="trk-trade-badge" style="visibility:visible;position:static;display:inline-block;margin:0 2px 0 1px;">TRADE</span> badge marks the tile.</div>
+        </div>
+      </div>
+
+      <div class="trk-legend-section-title" style="margin-top:18px;">STATUS CHIPS</div>
+      <div class="trk-legend-chips">
+        <div class="trk-legend-chip-row"><span class="trk-status-chip seen on">SEEN</span><span class="trk-legend-chip-desc">Encountered in the wild or via battle</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-status-chip evolved on">EVO</span><span class="trk-legend-chip-desc">Obtained by evolving another Pokémon</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-status-chip bred on">BRD</span><span class="trk-legend-chip-desc">Hatched from an egg</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-status-chip traded on">TRD</span><span class="trk-legend-chip-desc">Received via an in-game or link trade</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-status-chip held on">HLD</span><span class="trk-legend-chip-desc">Held item sourced or tracked</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-status-chip legendary on">LEG</span><span class="trk-legend-chip-desc">Legendary — shown only on eligible Pokémon</span></div>
+      </div>
+
+      <div class="trk-legend-section-title" style="margin-top:18px;">INTERACTIONS</div>
+      <div class="trk-legend-chips">
+        <div class="trk-legend-chip-row"><span class="trk-legend-action">Left-click</span><span class="trk-legend-chip-desc">Toggle caught / not caught</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-legend-action">Right-click</span><span class="trk-legend-chip-desc">Toggle shiny (must be caught first)</span></div>
+        <div class="trk-legend-chip-row"><span class="trk-legend-action">Long-press</span><span class="trk-legend-chip-desc">Toggle shiny on mobile / touch devices</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="tmChecklistOverlay" class="tmcheck-overlay" onclick="if(event.target===this)closeTmChecklist()">
+  <div class="tmcheck-modal">
+    <div class="tmcheck-header">
+      <div>
+        <div class="tmcheck-title">💿 TM / HM Collection</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;" id="tmChecklistSub">Track collected discs for the selected save.</div>
+      </div>
+      <button class="features-close" onclick="closeTmChecklist()">✕</button>
+    </div>
+    <div class="tmcheck-body">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;">Use this to track one-off TM/HM pickups for the current save. This list is game-specific and saved with the tracker.</div>
+      <div id="tmChecklistCount" style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--trk-color,var(--gold));margin-bottom:12px;"></div>
+      <div id="tmChecklistGrid" class="tmcheck-grid"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ TM/HM LOCATOR PAGE ══ -->
+<div id="page-tmhm" class="page main">
+  <div style="padding:8px 14px;background:var(--darker);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;">
+    <span id="tmhm-page-title" style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">TM / HM LOCATOR</span>
+
+    <div style="display:flex;gap:4px;">
+      <button class="tmhm-type-btn active" onclick="tmhmSetType('all',this)">All</button>
+      <button class="tmhm-type-btn" onclick="tmhmSetType('TM',this)">TM</button>
+      <button class="tmhm-type-btn" onclick="tmhmSetType('HM',this)">HM</button>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;flex:1;min-width:160px;max-width:280px;">
+      <input id="tmhm-search" type="text" placeholder="Search move or location…" oninput="tmhmRender();updateClearBtn(this,'tmhm-search-clear')"
+        style="flex:1;min-width:0;padding-right:28px;background:var(--card);border:2px solid var(--border);color:var(--text);padding:6px 10px;font-family:'Nunito',sans-serif;font-size:12px;border-radius:5px;outline:none;transition:border-color 0.15s;"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+      <button class="search-bar-clear" id="tmhm-search-clear" onclick="clearInp('tmhm-search','tmhm-search-clear',tmhmRender)" title="Clear search">✕</button>
+    </div>
+    <span id="tmhm-count" style="font-size:10px;color:var(--muted);margin-left:auto;"></span>
+  </div>
+  <div style="flex:1;overflow-y:auto;" id="tmhm-scroll">
+    <div id="tmhm-inner" style="padding:20px 24px;max-width:1100px;margin:0 auto;"></div>
+  </div>
+</div>
+
+
+
+<!-- ══ DAMAGE CALCULATOR PAGE ══ -->
+<div id="page-calc" class="page main">
+<div class="calc-wrap">
+  <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">DAMAGE CALCULATOR</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:20px;line-height:1.7;">Gen 2 formula · Physical/Special split by <em>type</em>, not move · All 386 Pokémon · Weather effects</div>
+
+  <div class="calc-grid">
+
+    <!-- ── ATTACKER ── -->
+    <div class="calc-card">
+      <div class="calc-card-title" style="color:var(--fire);">⚔ ATTACKER</div>
+
+      <div class="calc-field">
+        <label class="calc-label">Pokémon</label>
+        <div class="calc-poke-search-wrap">
+          <input class="calc-input" id="atk-search" placeholder="Search…" autocomplete="off"
+            oninput="calcPokeSearch('atk',this.value)" onfocus="calcPokeSearch('atk',this.value)"
+            onblur="setTimeout(function(){document.getElementById('atk-dd').style.display='none'},180)">
+          <div class="calc-poke-dd" id="atk-dd"></div>
+        </div>
+        <div class="calc-poke-selected" id="atk-selected" style="display:none"></div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Level</label>
+        <input class="calc-input" id="atk-level" type="number" min="1" max="100" value="50" oninput="calcUpdate()">
+      </div>
+
+      <div class="calc-field" id="atk-stat-field">
+        <label class="calc-label">Attack stat <span id="atk-stat-type" style="color:var(--muted);font-weight:400">(Atk or SpAtk set by move type)</span></label>
+        <div class="calc-row-2">
+          <div><label class="calc-label" style="font-size:9px">Base</label><input class="calc-input" id="atk-base" type="number" min="1" max="255" value="80" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">IV (0–31)</label><input class="calc-input" id="atk-iv" type="number" min="0" max="31" value="31" oninput="calcUpdate()"></div>
+        </div>
+        <div class="calc-row-2" style="margin-top:6px">
+          <div><label class="calc-label" style="font-size:9px">EV (0–252)</label><input class="calc-input" id="atk-ev" type="number" min="0" max="252" value="0" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">Nature</label>
+            <select class="calc-select" id="atk-nature" onchange="calcUpdate()">
+              <option value="1">Neutral (×1.0)</option>
+              <option value="1.1">+ Atk nature (×1.1)</option>
+              <option value="0.9">− Atk nature (×0.9)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:8px;padding:6px 10px;background:var(--darker);border-radius:5px;font-size:11px;color:var(--muted);">
+          Calculated stat: <strong id="atk-calc-stat" style="color:var(--gold);font-size:13px">—</strong>
+        </div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Modifiers</label>
+        <div class="calc-toggle-row">
+          <button class="calc-toggle" id="atk-burn" onclick="calcToggle('atk-burn','active-r')">🔥 Burned</button>
+          <button class="calc-toggle" id="atk-badge" onclick="calcToggle('atk-badge','active')">🏅 Badge boost</button>
+          <button class="calc-toggle" id="atk-crit" onclick="calcToggle('atk-crit','active-r')">💥 Crit hit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DEFENDER ── -->
+    <div class="calc-card">
+      <div class="calc-card-title" style="color:var(--s-col,#5599FF);">🛡 DEFENDER</div>
+
+      <div class="calc-field">
+        <label class="calc-label">Pokémon</label>
+        <div class="calc-poke-search-wrap">
+          <input class="calc-input" id="def-search" placeholder="Search…" autocomplete="off"
+            oninput="calcPokeSearch('def',this.value)" onfocus="calcPokeSearch('def',this.value)"
+            onblur="setTimeout(function(){document.getElementById('def-dd').style.display='none'},180)">
+          <div class="calc-poke-dd" id="def-dd"></div>
+        </div>
+        <div class="calc-poke-selected" id="def-selected" style="display:none"></div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Level</label>
+        <input class="calc-input" id="def-level" type="number" min="1" max="100" value="50" oninput="calcUpdate()">
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Defense stat <span id="def-stat-type" style="color:var(--muted);font-weight:400">(Def or SpDef set by move type)</span></label>
+        <div class="calc-row-2">
+          <div><label class="calc-label" style="font-size:9px">Base</label><input class="calc-input" id="def-base" type="number" min="1" max="255" value="80" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">IV (0–31)</label><input class="calc-input" id="def-iv" type="number" min="0" max="31" value="31" oninput="calcUpdate()"></div>
+        </div>
+        <div class="calc-row-2" style="margin-top:6px">
+          <div><label class="calc-label" style="font-size:9px">EV (0–252)</label><input class="calc-input" id="def-ev" type="number" min="0" max="252" value="0" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">Nature</label>
+            <select class="calc-select" id="def-nature" onchange="calcUpdate()">
+              <option value="1">Neutral (×1.0)</option>
+              <option value="1.1">+ Def nature (×1.1)</option>
+              <option value="0.9">− Def nature (×0.9)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:8px;padding:6px 10px;background:var(--darker);border-radius:5px;font-size:11px;color:var(--muted);">
+          Calculated stat: <strong id="def-calc-stat" style="color:#5599FF;font-size:13px">—</strong>
+          <span id="def-hp-display" style="float:right;color:var(--muted)"></span>
+        </div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Modifiers</label>
+        <div class="calc-toggle-row">
+          <button class="calc-toggle" id="def-reflect" onclick="calcToggle('def-reflect','active-b')">🔵 Reflect</button>
+          <button class="calc-toggle" id="def-lightscreen" onclick="calcToggle('def-lightscreen','active-b')">💡 Light Screen</button>
+          <button class="calc-toggle" id="def-sand-boost" onclick="calcToggle('def-sand-boost','active-s')">🏜 Sand SpDef</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MOVE + CONDITIONS ── -->
+  <div class="calc-grid">
+    <div class="calc-card">
+      <div class="calc-card-title" style="color:var(--leaf);">💥 MOVE</div>
+
+      <div class="calc-field">
+        <label class="calc-label">Move</label>
+        <div class="calc-move-wrap">
+          <input class="calc-input" id="move-search" placeholder="Search move name…" autocomplete="off"
+            oninput="calcMoveSearch(this.value)" onfocus="calcMoveSearch(this.value)"
+            onblur="setTimeout(function(){document.getElementById('move-dd').style.display='none'},180)">
+          <div class="calc-move-dd" id="move-dd"></div>
+        </div>
+        <div id="move-selected-display" style="margin-top:6px;padding:8px 10px;background:var(--darker);border-radius:5px;display:none;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="move-sel-name" style="font-weight:800;font-size:13px"></span>
+            <span id="move-sel-type" style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase"></span>
+            <span id="move-sel-cat" style="font-size:10px;color:var(--muted)"></span>
+            <span id="move-sel-info" style="font-size:10px;color:var(--muted);margin-left:auto"></span>
+          </div>
+          <div id="move-gen2-note" style="font-size:10px;color:var(--muted);margin-top:5px;font-style:italic"></div>
+        </div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Power override <span style="font-weight:400;color:var(--muted)">(or use move default)</span></label>
+        <input class="calc-input" id="move-power" type="number" min="1" max="250" placeholder="e.g. 95" oninput="calcUpdate()">
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Move type <span style="font-weight:400;color:var(--muted)">(auto-set from move)</span></label>
+        <select class="calc-select" id="move-type" onchange="calcUpdate()">
+          <option value="">— select —</option>
+          <option>normal</option><option>fire</option><option>water</option><option>electric</option>
+          <option>grass</option><option>ice</option><option>fighting</option><option>poison</option>
+          <option>ground</option><option>flying</option><option>psychic</option><option>bug</option>
+          <option>rock</option><option>ghost</option><option>dragon</option><option>dark</option><option>steel</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-card-title" style="color:#64b4ff;">🌤 CONDITIONS</div>
+
+      <div class="calc-field">
+        <label class="calc-label">Weather</label>
+        <div class="calc-weather-grid">
+          <button class="calc-weather-btn active" id="wx-none" onclick="calcSetWeather('none',this)">☀ Clear</button>
+          <button class="calc-weather-btn" id="wx-sun" onclick="calcSetWeather('sun',this)">🌞 Harsh Sun</button>
+          <button class="calc-weather-btn" id="wx-rain" onclick="calcSetWeather('rain',this)">🌧 Rain</button>
+          <button class="calc-weather-btn" id="wx-sand" onclick="calcSetWeather('sand',this)">🌪 Sandstorm</button>
+          <button class="calc-weather-btn" id="wx-hail" onclick="calcSetWeather('hail',this)">❄ Hail</button>
+        </div>
+        <div id="wx-note" style="font-size:10px;color:var(--muted);margin-top:8px;font-style:italic;min-height:16px;overflow-wrap:break-word;word-break:break-word;max-width:100%;"></div>
+      </div>
+
+      <div class="calc-field">
+        <label class="calc-label">Other</label>
+        <div class="calc-toggle-row">
+          <button class="calc-toggle" id="cond-stab" onclick="calcToggle('cond-stab','active-g')">✦ Force STAB</button>
+          <button class="calc-toggle" id="cond-ff" onclick="calcToggle('cond-ff','active-r')">🔥 Flash Fire</button>
+          <button class="calc-toggle" id="cond-charge" onclick="calcToggle('cond-charge','active')">⚡ Charge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div class="calc-result-card" id="calc-result-card">
+    <div class="calc-result-title">DAMAGE RESULT</div>
+    <div id="calc-result-body">
+      <div class="calc-empty-state">
+        <div class="calc-empty-icon">⚡</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:1px;">SELECT MOVE + POKÉMON</div>
+        <div style="font-size:11px;margin-top:10px;line-height:1.7">Pick an attacker, defender, and move<br>to calculate damage.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /calc-wrap -->
+</div><!-- /page-calc -->
+
+
+
+<!-- ══ IV/EV CALCULATOR PAGE ══ -->
+<div id="page-ivev" class="page main">
+<div class="ivev-wrap">
+
+  <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">IV / EV CALCULATOR</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 stat formula · IV range finder · EV planner · Pokérus · Nature multipliers</div>
+
+  <!-- Pokémon selector -->
+  <div class="ivev-poke-bar">
+    <div class="ivev-poke-search-wrap">
+      <input class="ivev-poke-inp" id="ivev-search" placeholder="Search Pokémon…" autocomplete="off"
+        oninput="ivevPokeSearch(this.value)" onfocus="ivevPokeSearch(this.value)"
+        onblur="setTimeout(function(){document.getElementById('ivev-dd').style.display='none'},180)">
+      <div class="ivev-poke-dd" id="ivev-dd"></div>
+    </div>
+    <div class="ivev-poke-info" id="ivev-poke-info" style="display:none"></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <div class="ivev-ctrl-group">
+        <label class="ivev-ctrl-label">Level</label>
+        <input class="ivev-inp" id="ivev-level" type="number" min="1" max="100" value="50" style="width:52px" oninput="ivevUpdate()">
+      </div>
+      <div class="ivev-ctrl-group">
+        <label class="ivev-ctrl-label">Nature</label>
+        <select class="ivev-select" id="ivev-nature-sel" onchange="ivevUpdate()">
+          <option value="neutral">Neutral</option>
+          <optgroup label="+ Attack / − ?">
+            <option value="hardy">Hardy (+Atk −Atk)</option>
+            <option value="lonely">Lonely (+Atk −Def)</option>
+            <option value="brave">Brave (+Atk −Spe)</option>
+            <option value="adamant">Adamant (+Atk −SpA)</option>
+            <option value="naughty">Naughty (+Atk −SpD)</option>
+          </optgroup>
+          <optgroup label="+ Defense / − ?">
+            <option value="bold">Bold (+Def −Atk)</option>
+            <option value="docile">Docile (+Def −Def)</option>
+            <option value="relaxed">Relaxed (+Def −Spe)</option>
+            <option value="impish">Impish (+Def −SpA)</option>
+            <option value="lax">Lax (+Def −SpD)</option>
+          </optgroup>
+          <optgroup label="+ Sp.Atk / − ?">
+            <option value="modest">Modest (+SpA −Atk)</option>
+            <option value="mild">Mild (+SpA −Def)</option>
+            <option value="quiet">Quiet (+SpA −Spe)</option>
+            <option value="bashful">Bashful (+SpA −SpA)</option>
+            <option value="rash">Rash (+SpA −SpD)</option>
+          </optgroup>
+          <optgroup label="+ Sp.Def / − ?">
+            <option value="calm">Calm (+SpD −Atk)</option>
+            <option value="gentle">Gentle (+SpD −Def)</option>
+            <option value="sassy">Sassy (+SpD −Spe)</option>
+            <option value="careful">Careful (+SpD −SpA)</option>
+            <option value="quirky">Quirky (+SpD −SpD)</option>
+          </optgroup>
+          <optgroup label="+ Speed / − ?">
+            <option value="timid">Timid (+Spe −Atk)</option>
+            <option value="hasty">Hasty (+Spe −Def)</option>
+            <option value="jolly">Jolly (+Spe −SpA)</option>
+            <option value="naive">Naive (+Spe −SpD)</option>
+            <option value="serious">Serious (+Spe −Spe)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="ivev-ctrl-group">
+        <label class="ivev-ctrl-label" style="color:#44DD88;">Pokérus</label>
+        <button class="ivev-toggle" id="ivev-pokerus" onclick="ivevTogglePokerus(this)">OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes about Gen 2 EV system -->
+  <div id="ivev-notes-section">
+    <div class="ivev-note ivev-note-gold">
+      <strong>Gen 2 EV system:</strong> Unlike later games, Gen 2 has no per-stat cap — a Pokémon can have up to 65,535 EVs in a single stat. However, only the first 255 EVs contribute to each stat (floor(EV/4) is applied), and only the first 252 make a practical difference. The total across all stats is capped at 510. This calculator uses the standard 252 competitive limit per stat, but explains why.
+    </div>
+    <div class="ivev-note ivev-note-green">
+      <strong style="color:#44DD88;">Pokérus (RSE):</strong> A rare virus that doubles EV gain from all battles. A Pokémon with Pokérus earns 2× EVs per KO, stacking with EV items. In Ruby/Sapphire/Crystal, the only EV-boosting items are Vitamins (Protein, Iron, etc.) which add 10 EVs each and cap at 100 EVs per stat. Pokérus doubles <em>battle</em> EVs only, not Vitamin EVs.
+    </div>
+  </div>
+
+  <!-- Controls: EV total bar -->
+  <div class="ivev-ev-total" id="ivev-ev-total">
+    <span class="ivev-ev-label" style="color:var(--muted)">Total EVs:</span>
+    <div class="ivev-ev-bar-wrap">
+      <div class="ivev-ev-bar-fill" id="ivev-ev-bar" style="width:0%;background:#44DD88;"></div>
+    </div>
+    <span class="ivev-ev-label" id="ivev-ev-count" style="color:#44DD88">0 / 510</span>
+    <button onclick="ivevClearEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="this.style.borderColor='var(--fire)';this.style.color='var(--fire)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">CLEAR EVs</button>
+    <button onclick="ivevOptimalEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid color-mix(in srgb,var(--game-color,var(--gold)) 40%,transparent);background:color-mix(in srgb,var(--game-color,var(--gold)) 6%,transparent);color:var(--game-color,var(--gold));cursor:pointer;transition:all 0.12s;">AUTO 252/252</button>
+  </div>
+
+  <!-- Main stat grid -->
+  <div class="ivev-stat-grid" id="ivev-stat-grid">
+    <!-- Headers -->
+    <div class="ivev-col-header stat-h">STAT</div>
+    <div class="ivev-col-header">BASE</div>
+    <div class="ivev-col-header">IV <span style="font-weight:400;opacity:0.6">(0–31)</span></div>
+    <div class="ivev-col-header">EV <span style="font-weight:400;opacity:0.6">(0–252)</span></div>
+    <div class="ivev-col-header">NATURE</div>
+    <div class="ivev-col-header stat-h">RESULT</div>
+    <div class="ivev-col-header">RANGE</div>
+    <!-- Stat rows injected by JS -->
+  </div>
+
+  <!-- IV Finder -->
+  <div class="ivev-iv-finder">
+    <div class="ivev-iv-finder-title">🔍 IV FINDER — What IVs give a specific stat value?</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7;">Enter an observed in-game stat value to find the possible IV range. Works best at level 50 or 100.</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px;">
+      <div id="ivf-col-hp"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">HP</label><input class="ivev-inp" id="ivf-hp" type="number" placeholder="—" oninput="ivefFind()"></div>
+      <div id="ivf-col-atk"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">ATK</label><input class="ivev-inp" id="ivf-atk" type="number" placeholder="—" oninput="ivefFind()"></div>
+      <div id="ivf-col-def"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">DEF</label><input class="ivev-inp" id="ivf-def" type="number" placeholder="—" oninput="ivefFind()"></div>
+      <div id="ivf-col-spa"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.ATK</label><input class="ivev-inp" id="ivf-spa" type="number" placeholder="—" oninput="ivefFind()"></div>
+      <div id="ivf-col-spd"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.DEF</label><input class="ivev-inp" id="ivf-spd" type="number" placeholder="—" oninput="ivefFind()"></div>
+      <div id="ivf-col-spe"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SPEED</label><input class="ivev-inp" id="ivf-spe" type="number" placeholder="—" oninput="ivefFind()"></div>
+    </div>
+    <div style="margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div class="ivev-ctrl-group"><label class="ivev-ctrl-label">Level</label><input class="ivev-inp" id="ivf-level" type="number" value="50" min="1" max="100" style="width:52px" oninput="ivefFind()"></div>
+      <div class="ivev-ctrl-group"><label class="ivev-ctrl-label">EVs (each stat)</label><input class="ivev-inp" id="ivf-ev" type="number" value="0" min="0" max="252" style="width:60px" oninput="ivefFind()"></div>
+    </div>
+    <div id="ivf-results"></div>
+  </div>
+
+
+  <!-- Hidden Power Calculator -->
+  <div class="ivev-iv-finder">
+    <div class="ivev-iv-finder-title">⚡ HIDDEN POWER CALCULATOR</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
+      In Gen 2, Hidden Power's <strong>type</strong> and <strong>power</strong> are determined entirely by a Pokémon's IVs.
+      Enter IVs below (or click <em>Copy from IV Calc</em> to use the values above).
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+      <button onclick="hpCopyFromCalc()" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="var _gc=gameColor();this.style.borderColor=_gc;this.style.color=_gc" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⬆ Copy IVs from Calculator</button>
+      <button onclick="hpSetIVs(31,31,31,30,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(255,107,53,0.4);background:rgba(255,107,53,0.05);color:var(--fire);cursor:pointer;" title="Fire: 31/31/31/30/31/30">Fire preset</button>
+      <button onclick="hpSetIVs(31,31,31,31,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(27,143,232,0.4);background:rgba(27,143,232,0.05);color:#1B8FE8;cursor:pointer;" title="Ice: 31/31/31/31/31/30">Ice preset</button>
+      <button onclick="hpSetIVs(31,30,31,30,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(80,56,232,0.4);background:rgba(80,56,232,0.05);color:#5038E8;cursor:pointer;" title="Dragon: 31/30/31/30/31/30">Dragon preset</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;">
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">HP</label><input class="ivev-inp" id="hp-iv-0" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">ATK</label><input class="ivev-inp" id="hp-iv-1" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">DEF</label><input class="ivev-inp" id="hp-iv-2" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.ATK</label><input class="ivev-inp" id="hp-iv-3" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.DEF</label><input class="ivev-inp" id="hp-iv-4" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SPEED</label><input class="ivev-inp" id="hp-iv-5" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+    </div>
+    <div id="hp-result" style="padding:14px 16px;background:var(--darker);border-radius:6px;font-size:13px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <span style="color:var(--muted);font-style:italic;font-size:12px;">Enter IVs above to calculate Hidden Power type and power.</span>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7;">
+      <strong>Max power of 70</strong> requires all IVs to be odd-numbered after the bit calculation. Most competitive spreads aim for HP 70.
+      <strong>Note:</strong> In Gen 2, Hidden Power's base power ranges from 31–70 (unlike Gen 6+ which fixed it at 60).
+      The type cycles through 16 types (not Normal).
+    </div>
+  </div>
+
+  <!-- EV training guide -->
+  <div class="ivev-iv-finder">
+    <div class="ivev-iv-finder-title" style="color:#44DD88;">🌱 GEN 3 EV TRAINING REFERENCE</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Key Gen 2 EV sources. All Gen 2 games share the same EV yield system. Pokérus doubles battle EVs.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;">
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Attack EVs</div>
+        <div style="line-height:2;color:var(--muted)">Machop / Machoke (1 Atk EV)<br>Geodude / Graveler (1 Def EV)<br>Krabby → 1 Atk<br><strong style="color:var(--text)">Shuckle → 2 Def EV</strong><br>Meditite → 1 Atk</div>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Speed EVs</div>
+        <div style="line-height:2;color:var(--muted)"><strong style="color:var(--text)">Zigzagoon → 1 Spe EV</strong> (best early)<br>Zubat → 1 Spe<br>Tentacool → 1 SpD EV<br>Magikarp → 1 Spe<br>Poochyena → 1 Atk</div>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Vitamins (+10 EVs, max 100)</div>
+        <div style="line-height:2;color:var(--muted)">HP Up → HP · Protein → Atk<br>Iron → Def · Calcium → SpAtk<br>Zinc → SpDef · Carbos → Spe<br><em style="font-size:10px">Vitamins stop working once stat EVs hit 100</em></div>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Sp.Atk EVs</div>
+        <div style="line-height:2;color:var(--muted)">Gastly / Haunter → 1 SpA<br>Abra → 1 SpA<br>Ralts → 1 SpA<br><strong style="color:var(--text)">Staryu → 1 SpA EV</strong><br>Kadabra → 2 SpA</div>
+      </div>
+    </div>
+    <div class="ivev-note ivev-note-orange" style="margin-top:12px;margin-bottom:0">
+      <strong>Gen 2 EV cap quirk:</strong> In Gen 2, EVs are stored as a single byte per stat (0–255). The stat formula divides EVs by 4 (flooring), so 252 and 253 give the same result. Having 252 EVs in one stat and 252 in another uses 504 of the 510 total, leaving 6 for a third stat — which gives +1 to that stat. This is the origin of the "252/252/6" spread competitive players use in Gen 2.
+    </div>
+  </div>
+
+
+  <!-- Nature Chart Reference -->
+  <div style="margin-top:24px;">
+    <button class="nature-chart-toggle" onclick="(function(btn){var w=document.getElementById('ivev-nature-chart');var open=w.style.display!=='none';w.style.display=open?'none':'block';btn.textContent=open?'🌿 NATURE REFERENCE CHART ▼':'🌿 NATURE REFERENCE CHART ▲';})(this)">🌿 NATURE REFERENCE CHART ▼</button>
+    <div id="ivev-nature-chart" style="display:none;">
+      <div class="nature-chart-wrap">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;">A neutral nature (same stat +/−) has no effect. All others give ×1.1 to one stat and ×0.9 to another.</div>
+        <table class="nature-chart-table">
+          <thead><tr>
+            <th>NATURE</th>
+            <th>BOOSTED (+10%)</th>
+            <th>LOWERED (−10%)</th>
+            <th>LIKES FLAVOR</th>
+            <th>DISLIKES FLAVOR</th>
+          </tr></thead>
+          <tbody id="nature-chart-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /ivev-wrap -->
+</div><!-- /page-ivev -->
+
+
+
+<!-- ══ COMPARISON TOOL PAGE ══ -->
+<div id="page-compare" class="page main">
+<div class="cmp-wrap">
+
+  <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">POKÉMON COMPARISON</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">Side-by-side stats · Movepool · Abilities · Contest · Breeding</div>
+
+  <!-- Selector row -->
+  <div class="cmp-selector-row">
+    <div class="cmp-poke-slot slot-a">
+      <div class="cmp-slot-title a">POKÉMON A</div>
+      <div class="cmp-poke-search-wrap">
+        <input class="cmp-search-inp" id="cmp-a-search" placeholder="Search…" autocomplete="off"
+          oninput="cmpSearch('a',this.value)" onfocus="cmpSearch('a',this.value)"
+          onblur="setTimeout(function(){document.getElementById('cmp-a-dd').style.display='none'},180)">
+        <div class="cmp-poke-dd" id="cmp-a-dd"></div>
+      </div>
+      <div id="cmp-a-card" class="cmp-poke-card" style="display:none"></div>
+    </div>
+    <div class="cmp-vs">VS</div>
+    <div class="cmp-poke-slot slot-b">
+      <div class="cmp-slot-title b">POKÉMON B</div>
+      <div class="cmp-poke-search-wrap">
+        <input class="cmp-search-inp" id="cmp-b-search" placeholder="Search…" autocomplete="off"
+          oninput="cmpSearch('b',this.value)" onfocus="cmpSearch('b',this.value)"
+          onblur="setTimeout(function(){document.getElementById('cmp-b-dd').style.display='none'},180)">
+        <div class="cmp-poke-dd" id="cmp-b-dd"></div>
+      </div>
+      <div id="cmp-b-card" class="cmp-poke-card" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Tab nav -->
+  <div class="cmp-tabs" id="cmp-tabs">
+    <button class="cmp-tab active" onclick="cmpSetTab('stats',this)">📊 STATS</button>
+    <button class="cmp-tab" onclick="cmpSetTab('moves',this)">💥 MOVES</button>
+    <button class="cmp-tab" onclick="cmpSetTab('abilities',this)">✦ ABILITIES</button>
+    <button class="cmp-tab" onclick="cmpSetTab('contest',this)">🎀 CONTEST</button>
+    <button class="cmp-tab" onclick="cmpSetTab('breeding',this)">🥚 BREEDING</button>
+  </div>
+
+  <!-- Panel content -->
+  <div id="cmp-panel" style="width:100%;display:block;overflow:hidden;"></div>
+
+</div>
+</div>
+
+
+<div id="page-breed" class="page main">
+  <div class="breed-outer">
+    <!-- Sidebar -->
+    <div class="breed-sidebar">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:1px;padding-bottom:8px;border-bottom:1px solid var(--border);">BREEDING CALC</div>
+
+      <!-- Parent A -->
+      <div>
+        <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Parent A ♂ (or Ditto)</div>
+        <div style="position:relative;">
+          <input id="breed-a-search" type="text" placeholder="Search Pokémon…"
+            style="width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;"
+            oninput="breedSearch('a',this.value)" autocomplete="off">
+          <div id="breed-a-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:5px;max-height:180px;overflow-y:auto;z-index:50;"></div>
+        </div>
+        <div id="breed-a-card" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;"></div>
+      </div>
+
+      <!-- Parent B -->
+      <div>
+        <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Parent B ♀</div>
+        <div style="position:relative;">
+          <input id="breed-b-search" type="text" placeholder="Search Pokémon…"
+            style="width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;"
+            oninput="breedSearch('b',this.value)" autocomplete="off">
+          <div id="breed-b-dd" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:5px;max-height:180px;overflow-y:auto;z-index:50;"></div>
+        </div>
+        <div id="breed-b-card" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;"></div>
+      </div>
+
+      <!-- Everstone -->
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px;">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">⬟ Everstone Nature</div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px;">
+          <input type="checkbox" id="breed-everstone-a" onchange="breedCalc()" style="accent-color:var(--gold);">
+          <span style="font-size:11px;">Parent A holds Everstone</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="breed-everstone-b" onchange="breedCalc()" style="accent-color:var(--gold);">
+          <span style="font-size:11px;">Parent B holds Everstone</span>
+        </label>
+        <div style="margin-top:8px;font-size:10px;color:var(--muted);line-height:1.6;">
+          In Gen 2, a parent holding Everstone has a <strong style="color:var(--gold);">50% chance</strong> to pass its Nature to the offspring.
+        </div>
+      </div>
+
+      <!-- Hatch Steps display -->
+      <div id="breed-hatch-info" style="display:none;background:color-mix(in srgb,var(--game-color,var(--gold)) 7%,transparent);border:1px solid color-mix(in srgb,var(--game-color,var(--gold)) 30%,transparent);border-radius:6px;padding:10px;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--game-color,var(--gold));margin-bottom:6px;">🥚 HATCH COUNTER</div>
+        <div id="breed-hatch-steps" style="font-size:13px;font-weight:800;color:var(--game-color,var(--gold));"></div>
+        <div id="breed-hatch-cycles" style="font-size:10px;color:var(--muted);margin-top:3px;"></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6;">Steps = walking while egg is in party. Flame Body / Magma Armor halves this (get Slugma or Magcargo from Route 113).</div>
+      </div>
+
+      <button onclick="breedReset()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px;color:var(--muted);font-size:10px;cursor:pointer;margin-top:4px;">↺ Reset</button>
+    </div>
+
+    <!-- Main Results -->
+    <div class="breed-main">
+      <div id="breed-results">
+        <div style="text-align:center;color:var(--muted);margin-top:60px;">
+          <div style="font-size:32px;margin-bottom:12px;">🥚</div>
+          <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;margin-bottom:8px;">BREEDING CALCULATOR</div>
+          <div style="font-size:12px;line-height:1.8;max-width:480px;margin:0 auto;">Select two compatible parent Pokémon to see what egg moves the offspring can inherit, compatibility check, and hatch step counter.</div>
+          <div style="margin-top:16px;font-size:11px;color:var(--muted);line-height:1.8;">
+            Tip: Select <strong>Ditto</strong> as Parent A to breed with almost any Pokémon regardless of egg group.<br>
+            The offspring is always the lowest-evolution form of the ♀ parent (or non-Ditto parent).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="page-held" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">HELD ITEM REFERENCE</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Key in-game and competitive held items in Gen 2 — where to find them and what they do.</div>
+
+      <!-- Search + filter -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="position:relative;display:flex;align-items:center;flex:1;min-width:180px;">
+          <input id="held-search" type="text" placeholder="Filter items…"
+            style="flex:1;padding-right:28px;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;"
+            oninput="heldFilter();updateClearBtn(this,'held-search-clear')">
+          <button class="search-bar-clear" id="held-search-clear" onclick="clearInp('held-search','held-search-clear',heldFilter)" title="Clear search">✕</button>
+        </div>
+        <select id="held-cat-filter" onchange="heldFilter()"
+          style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;">
+          <option value="">All Categories</option>
+          <option value="battle">⚔ Battle</option>
+          <option value="healing">❤ Healing</option>
+          <option value="boost">⬆ Stat Boost</option>
+          <option value="berry">🫐 Berry</option>
+          <option value="evo">🔄 Evolution</option>
+          <option value="other">📦 Other</option>
+        </select>
+      </div>
+
+      <div class="panel" style="overflow-x:auto;padding:0;"><div id="held-table-wrap"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<div id="page-opt" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:980px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ENCOUNTER OPTIMIZER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Targeted grinding tools for Gen 2: farmable held items, EXP route picks, EV training spots, and Safari odds.</div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="opt-game-row">
+        <button type="button" class="filter-btn active" data-opt-game="AUTO" onclick="optSetGame('AUTO',this)">Auto</button>
+        <button type="button" class="filter-btn" data-opt-game="FR" onclick="optSetGame('FR',this)">FR</button>
+        <button type="button" class="filter-btn" data-opt-game="LG" onclick="optSetGame('LG',this)">LG</button>
+        <button type="button" class="filter-btn" data-opt-game="R" onclick="optSetGame('R',this)">R</button>
+        <button type="button" class="filter-btn" data-opt-game="S" onclick="optSetGame('S',this)">S</button>
+        <button type="button" class="filter-btn" data-opt-game="E" onclick="optSetGame('E',this)">E</button>
+        <button type="button" class="filter-btn" data-opt-game="all" onclick="optSetGame('all',this)">All</button>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;" id="opt-tab-row">
+        <button type="button" class="filter-btn active" data-opt-tab="items" onclick="optSetTab('items',this)">Held Hunt</button>
+        <button type="button" class="filter-btn" data-opt-tab="exp" onclick="optSetTab('exp',this)">EXP Grind</button>
+        <button type="button" class="filter-btn" data-opt-tab="ev" onclick="optSetTab('ev',this)">EV Training</button>
+        <button type="button" class="filter-btn" data-opt-tab="safari" onclick="optSetTab('safari',this)">Safari Odds</button>
+      </div>
+
+      <div id="opt-panel"></div>
+    </div>
+  </div>
+</div>
+
+
+<div id="page-easydex" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1080px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">EASY DEX ROUTE</div>
+      <div id="easyDexIntro" style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">A chronological easiest-dex route for Gold using the Bulbapedia walkthrough order. Each stop highlights the Pokémon whose absolute best direct encounter rate lands there, with separate views for in-game trades, evolution cleanup, and non-wild special pickups.</div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="easydex-tab-row">
+        <button type="button" class="filter-btn active" data-easydex-tab="catch" onclick="easyDexSetTab('catch',this)">Best Catches</button>
+        <button type="button" class="filter-btn" data-easydex-tab="trade" onclick="easyDexSetTab('trade',this)">In-Game Trades</button>
+        <button type="button" class="filter-btn" data-easydex-tab="linktrade" onclick="easyDexSetTab('linktrade',this)">Link Trades</button>
+        <button type="button" class="filter-btn" data-easydex-tab="evolve" onclick="easyDexSetTab('evolve',this)">Evolution-Only</button>
+        <button type="button" class="filter-btn" data-easydex-tab="special" onclick="easyDexSetTab('special',this)">Special / Gift</button>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="easydex-options-row">
+        <button type="button" class="filter-btn" id="easyDexCaughtToggle" onclick="easyDexToggleCaught(this)">✅ Hide Caught</button>
+      </div>
+
+      <div id="easydex-panel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABILITIES PAGE ══ -->
+<div id="page-abilities" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ABILITIES REFERENCE</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All Gen 2 abilities — effects and which Pokémon have them. Click any Pokémon to open its Pokédex entry.</div>
+      <div style="position:relative;display:flex;align-items:center;margin-bottom:20px;">
+        <input id="ab-search" type="text" placeholder="Search abilities or Pokémon…" oninput="abRender();updateClearBtn(this,'ab-search-clear')"
+          style="width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:9px 40px 9px 14px;color:var(--text);font-size:13px;outline:none;">
+        <button class="search-bar-clear" id="ab-search-clear" onclick="clearInp('ab-search','ab-search-clear',abRender)" title="Clear search">✕</button>
+      </div>
+      <div id="ab-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEARNSETS PAGE ══ -->
+<div id="page-learnsets" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">LEARNSET VIEWER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Full move learnsets by Pokémon — level-up, TM/HM, egg moves with parent lookup, and tutors.</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;position:relative;">
+        <input id="ls-search" type="text" placeholder="Search Pokémon…" oninput="lsSearchInput(this.value);updateClearBtn(this,'ls-search-clear')" autocomplete="off"
+          style="flex:1;padding-right:36px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:9px 14px;color:var(--text);font-size:13px;outline:none;">
+        <button class="search-bar-clear" id="ls-search-clear" onclick="clearInp('ls-search','ls-search-clear',function(){lsSearchInput('');document.getElementById('ls-dropdown').style.display='none';})" title="Clear search">✕</button>
+        <div id="ls-dropdown" style="display:none;position:absolute;top:100%;left:0;width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;z-index:50;max-height:220px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);"></div>
+      </div>
+      <div id="ls-content"><div style="color:var(--muted);font-size:12px;text-align:center;padding:60px 0;">Search for a Pokémon above to view its learnset.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ENCOUNTERS PAGE ══ -->
+<div id="page-encounters" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ENCOUNTER TABLES</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Wild Pokémon encounter tables by route — all methods and rates. Select a game then filter by location.</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <div id="enc-game-btns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <div style="position:relative;display:flex;align-items:center;flex:1;min-width:180px;">
+          <input id="enc-loc-search" type="text" placeholder="Filter locations…" oninput="encRender();updateClearBtn(this,'enc-search-clear')"
+            style="flex:1;padding-right:28px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;">
+          <button class="search-bar-clear" id="enc-search-clear" onclick="clearInp('enc-loc-search','enc-search-clear',encRender)" title="Clear search">✕</button>
+        </div>
+      </div>
+      <div id="enc-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ITEM LOCATIONS PAGE ══ -->
+<div id="page-itemlocs" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ITEM LOCATIONS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Browse every in-game item by location — ordered chronologically through the game.</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <div id="iloc-game-btns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <div style="position:relative;display:flex;align-items:center;flex:1;min-width:180px;">
+          <input id="iloc-search" type="text" placeholder="Search items or locations…" oninput="ilocRender();updateClearBtn(this,'iloc-search-clear')"
+            style="flex:1;padding-right:28px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;">
+          <button class="search-bar-clear" id="iloc-search-clear" onclick="clearInp('iloc-search','iloc-search-clear',ilocRender)" title="Clear search">✕</button>
+        </div>
+      </div>
+      <div id="iloc-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SPEED TIERS PAGE ══ -->
+<div id="page-speedtiers" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">SPEED TIERS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All Gen 2 Pokémon sorted by base Speed. Enter a Speed stat to see what you outspeed.</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 14px;">
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">My Speed stat:</span>
+          <input id="st-myspeed" type="number" min="1" max="500" placeholder="e.g. 200" oninput="stRender()"
+            style="width:80px;background:transparent;border:none;color:var(--text);font-size:13px;outline:none;">
+        </div>
+        <div style="position:relative;display:flex;align-items:center;flex:1;min-width:140px;">
+          <input id="st-search" type="text" placeholder="Filter Pokémon…" oninput="stRender();updateClearBtn(this,'st-search-clear')"
+            style="flex:1;padding-right:28px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;">
+          <button class="search-bar-clear" id="st-search-clear" onclick="clearInp('st-search','st-search-clear',stRender)" title="Clear search">✕</button>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;">
+          <input type="checkbox" id="st-group" onchange="stRender()" checked> Group by speed
+        </label>
+      </div>
+      <div id="st-banner" style="display:none;margin-bottom:16px;padding:10px 16px;background:rgba(255,215,0,0.08);border:1px solid var(--gold);border-radius:6px;font-size:12px;color:var(--text);"></div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
+        <div id="st-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTESTS PAGE ══ -->
+<div id="page-contests" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉMON CONTESTS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Complete guide to Pokémon Contests in Ruby, Sapphire &amp; Crystal — conditions, Pokéblocks, appeal, and ribbons.</div>
+      <div id="contests-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BATTLE FRONTIER PAGE ══ -->
+<div id="page-frontier" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BATTLE FRONTIER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Crystal's Battle Frontier — all 7 facilities, how each works, the Frontier Brain you face, and strategy tips.</div>
+      <div id="frontier-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BEGINNER ESSENTIALS PAGE ══ -->
+<div id="page-essentials" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BEGINNER ESSENTIALS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">A quick-start guide to how Gen 2 actually plays: where to heal, how encounters work, when to fish or surf, and what matters early.</div>
+      <div id="essentials-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MISSABLES PAGE ══ -->
+<div id="page-missables" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">MISSABLES &amp; ONE-TIME EVENTS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Everything you can permanently miss or only get once — check them off as you go. Progress saved locally per game.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="miss-game-btns"></div>
+      <div id="miss-progress-bar" style="margin-bottom:16px;display:none;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;">
+          <span id="miss-progress-label"></span>
+          <button onclick="missReset()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer;padding:0;">Reset</button>
+        </div>
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+          <div id="miss-progress-fill" style="height:100%;background:var(--game-color,var(--gold));transition:width 0.3s;"></div>
+        </div>
+      </div>
+      <div id="miss-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BERRY FARMING PAGE ══ -->
+<div id="page-berries" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BERRY FARMING</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Berry growth timers, yields, mutation chart, and Berry Master phrases for Ruby, Sapphire &amp; Crystal.</div>
+      <div id="berries-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RIBBON TRACKER PAGE ══ -->
+<div id="page-ribbons" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:960px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RIBBON TRACKER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All obtainable ribbons across Gen 2 GBA games. Check them off as you earn them — progress saved per-game.</div>
+      <div id="ribbon-game-btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+      <div id="ribbon-progress-bar" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;">
+          <span id="ribbon-progress-label">0 / 0 ribbons</span>
+          <button onclick="ribbonReset()" style="font-size:10px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:4px;cursor:pointer;">Reset</button>
+        </div>
+        <div style="background:var(--panel);border-radius:4px;height:6px;overflow:hidden;">
+          <div id="ribbon-progress-fill" style="height:100%;background:var(--game-color,var(--gold));transition:width 0.3s;width:0%;"></div>
+        </div>
+      </div>
+      <div id="ribbon-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPERIENCE CALCULATOR PAGE ══ -->
+<div id="page-expcalc" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:800px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">EXPERIENCE CALCULATOR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">EXP to next level, total EXP, growth group lookup, and Rare Candy planner for all 386 Gen 2 Pokémon.</div>
+      <div id="expcalc-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-npctrades" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">NPC IN-GAME TRADES</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every NPC trade across all 5 Gen 2 games — what they want, what they give, OT names, held items, and tips.</div>
+      <div id="npctrades-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-happiness" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">HAPPINESS TRACKER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Track friendship-evolution candidates and happiness methods across all Gen 2 games.</div>
+      <div id="happiness-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RNG GUIDE PAGE ══ -->
+<div id="page-rng" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RNG MANIPULATION GUIDE</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 RNG mechanics — TID/SID manipulation, Methods 1/2/4, shiny hunting, IV abuse for Ruby/Sapphire/Crystal/Gold/Silver.</div>
+      <div id="rng-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DISTRIBUTIONS PAGE ══ -->
+<div id="page-distributions" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1100px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">GEN 3 DISTRIBUTIONS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Catalog of classic Gen 2 event distribution ROMs and modern Project Wonder patches, plus a full per-game checklist for every obtainable reward.</div>
+      <div id="distributions-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-natures" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">NATURE CHART</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All 25 natures — boosted stat (+10%), lowered stat (−10%), and preferred/disliked Pokéblock flavors.</div>
+      <div id="natures-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-catchcalc" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">CATCH RATE CALCULATOR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 catch probability per ball — enter Pokémon, HP%, status condition, and battle conditions.</div>
+      <div id="catchcalc-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-dexdash" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉDEX DASHBOARD</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Pokédex completion across all Gen 2 saves — seen, caught, and shiny counts from your tracker data.</div>
+      <div id="dexdash-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-tradeevo" class="page main">
+  <div id="tradeevo-scroll" style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;overflow-x:hidden;">
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">TRADE EVOLUTION HELPER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7;">All Pokémon that evolve via trading in Gen 2, including what held item is required and where to obtain it. Pokémon that require trading can only be obtained by linking two GBA systems or using an emulator link cable.</div>
+
+      <div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;">
+        <strong style="color:var(--fire);">Link Cable Required:</strong> Gen 2 trades require two GBA systems + a Game Boy Advance Link Cable (or a GCN–GBA cable for some interactions). Alternatively, use a single emulator with two ROM instances and a virtual link cable (supported in VBA-M, mGBA, etc.).
+      </div>
+
+      <!-- Gen 2 possible trades -->
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin-bottom:12px;">POSSIBLE IN GEN 3 GBA GAMES</div>
+      <div id="tradeevo-gen2"></div>
+
+      <!-- Gen 4+ only reference -->
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:24px 0 12px;">GEN 4+ ONLY (NOT POSSIBLE IN GEN 3)</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">These trade evolutions were introduced or require Pokémon Colosseum / Gen 4 games. Listed here for reference when planning a living Dex.</div>
+      <div id="tradeevo-gen4"></div>
+
+      <!-- Item location guide -->
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:28px 0 12px;">WHERE TO FIND TRADE ITEMS</div>
+      <div id="tradeevo-items"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+
+
+<!-- Universal Search Overlay -->
+<div id="searchOverlay" onclick="if(event.target===this)closeSearch()" onkeydown="event.stopPropagation()">
+  <div id="searchBox">
+    <input id="uSearchInput" type="text" placeholder="Search Pokémon, moves, items, locations…"
+      oninput="runSearch(this.value)" onkeydown="searchNav(event)" autocomplete="off" spellcheck="false">
+    <div id="searchDivider"></div>
+    <div id="searchResults"></div>
+    <div id="searchHint">↑↓ navigate · Enter select · Esc close</div>
+  </div>
+</div>
+
+
+
+<!-- ══ KANTO MAP PAGE ══ -->
+<div id="page-kantomapview" class="page main">
+  <div id="kmc-wrap">
+    <div id="kmc-status" class="map-embed-status">Loading Kanto Map...</div>
+    <iframe
+      id="kmc-iframe"
+      title="Kanto Map"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      allowfullscreen
+    ></iframe>
+  </div>
+</div>
+
+<!-- ══ EMERALD MAP PAGE ══ -->
+<div id="page-emeraldmapview" class="page main">
+  <div id="emc-wrap">
+    <div id="emc-status" class="map-embed-status">Loading Crystal Map...</div>
+    <iframe
+      id="emc-iframe"
+      title="Crystal Map"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      allowfullscreen
+    ></iframe>
+  </div>
+</div>
+
+<!-- ══ TYPE CHART PAGE ══ -->
+<!-- ══ TYPE CHART PAGE ══ -->
+<div id="page-typechart" class="page main" style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;flex-direction:column;">
+  <div style="max-width:960px;margin:0 auto;padding:24px 20px;">
+    <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">TYPE CHART</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 · Full chart + single-type lookup</div>
+    <div class="panel" style="padding:16px 16px 20px;overflow-x:auto;"><div id="typechart-page-body"></div></div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS DASHBOARD PAGE ══ -->
+<!-- ══ PROGRESS MODAL ══ -->
+<div class="export-modal-overlay" id="progressModal" onclick="if(event.target===this)closeProgressModal()">
+  <div class="export-modal">
+    <div class="export-modal-header">
+      <div class="export-modal-title">📊 PROGRESS</div>
+      <button class="features-close" onclick="closeProgressModal()">✕</button>
+    </div>
+    <div id="progress-cards"></div>
+  </div>
+</div>
+
+<!-- ══ TUTORS PAGE ══ -->
+<div id="page-tutors" class="page main">
+  <div class="tutors-wrap">
+    <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">MOVE TUTORS</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All move tutors across Gen 2 GBA games · FR/LG tutors are one-time events · Crystal tutors require Battle Points (BP)</div>
+    <div class="panel" style="overflow:hidden;">
+      <div style="padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.7;">
+        <strong style="color:var(--game-color,var(--gold));">Ruby / Sapphire:</strong> Only two tutors — one NPC in Fallarbor Town teaches either <span class="guide-move-link" onclick="_openMoveDex('Double-Edge')">Double-Edge</span> or <span class="guide-move-link" onclick="_openMoveDex('Seismic Toss')">Seismic Toss</span> (one-time choice). These are also in the GSC list below.
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="tutors-table" id="tutors-table">
+          <thead><tr>
+            <th>MOVE</th><th>TYPE</th><th style="text-align:center;">FR</th><th style="text-align:center;">LG</th><th style="text-align:center;">EMERALD</th>
+          </tr></thead>
+          <tbody id="tutors-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPORT PROGRESS MODAL ══ -->
+<div class="export-modal-overlay" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+  <div class="export-modal">
+    <div class="export-modal-header">
+      <div class="export-modal-title">🖨 PROGRESS SUMMARY</div>
+      <div style="display:flex;gap:8px;">
+<button class="features-close" onclick="closeExportModal()">✕</button>
+      </div>
+    </div>
+    <div id="export-modal-body"></div>
+  </div>
+</div>
+
+<!-- ══ MAP PANEL ══ -->
+<div id="map-panel" class="map-panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;gap:10px;">
+    <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:#44DD88;letter-spacing:1px;white-space:nowrap;">🗺 MAP</div>
+    <select id="map-select" onchange="mapSelectRegion(this.value)" style="flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:5px 8px;font-size:12px;outline:none;cursor:pointer;">
+      <option value="kanto3">Kanto — Gold / Silver</option>
+      <option value="hoenn">Johto — Ruby / Sapphire / Crystal</option>
+    </select>
+    <button onclick="closeMapPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
+  </div>
+  <div class="map-iframe-wrap">
+    <iframe id="map-iframe" src="" allow="fullscreen"></iframe>
+  </div>
+</div>
+
+<!-- ══ NOTES PANEL ══ -->
+<div id="notes-side-host">
+<div id="notes-overlay" class="notes-overlay"></div>
+<div id="notes-panel" class="notes-panel">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;">
+    <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--mast-accent,var(--gold));letter-spacing:1px;">📝 NOTES</div>
+    <button onclick="closeNotesPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;">✕</button>
+  </div>
+
+  <div style="display:flex;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;overflow-x:auto;">
+    <button class="notes-game-tab active" data-game="ALL" onclick="notesSetGame('ALL')">ALL</button>
+    <button class="notes-game-tab" data-game="FR" onclick="notesSetGame('FR')">🔥 FR</button>
+    <button class="notes-game-tab" data-game="LG" onclick="notesSetGame('LG')">🌿 LG</button>
+    <button class="notes-game-tab" data-game="R" onclick="notesSetGame('R')">🔴 R</button>
+    <button class="notes-game-tab" data-game="S" onclick="notesSetGame('S')">🔷 S</button>
+    <button class="notes-game-tab" data-game="E" onclick="notesSetGame('E')">💚 E</button>
+  </div>
+
+  <div id="notes-list-view" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+    <div style="display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <input id="notes-search-input" type="text" placeholder="🔍 Search notes…" oninput="notesSearch(this.value)"
+        style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;">
+      <button onclick="openNoteEditorNew()"
+        style="background:var(--game-color,var(--gold));color:#000;border:none;border-radius:5px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">+ New</button>
+    </div>
+    <div id="notes-toolbar" style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;">
+      <button class="note-label-pill active" id="notes-view-active" onclick="notesSetView('active')">Active</button>
+      <button class="note-label-pill" id="notes-view-archived" onclick="notesSetView('archived')">Archived</button>
+      <button class="note-label-pill" id="notes-sort-modified" onclick="notesSetSort('modified')">Latest</button>
+      <button class="note-label-pill" id="notes-sort-created" onclick="notesSetSort('created')">Created</button>
+      <button class="note-label-pill" id="notes-sort-title" onclick="notesSetSort('title')">A-Z</button>
+      <button class="note-label-pill" id="notes-filter-checklist" onclick="notesToggleChecklistOnly()">Checklist</button>
+      <button class="note-label-pill" onclick="openQuickObjectiveNote()">Quick Objective</button>
+    </div>
+    <div id="notes-pinned-bar" style="display:none;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(255,215,0,0.04);flex-shrink:0;"></div>
+    <div id="notes-label-bar" style="display:none;gap:6px;padding:8px 12px;border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;"></div>
+    <div id="notes-list-inner" style="flex:1;overflow-y:auto;padding:10px;"></div>
+  </div>
+
+  <div id="notes-editor-view" style="display:none;flex-direction:column;flex:1;min-height:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--panel);">
+      <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--game-color,var(--gold));">EDIT NOTE</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="ne-pin" class="note-fmt-btn" onclick="neTogglePin()">📌 Pin</button>
+        <div style="position:relative;">
+          <button class="note-fmt-btn" onclick="neTemplateMenuToggle()">📋 Template</button>
+          <div id="ne-template-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--border);border-radius:8px;min-width:200px;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.55);overflow:hidden;"></div>
+        </div>
+        <button onclick="cancelNoteEditor()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;">✕</button>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+      <input id="ne-title" type="text" placeholder="Note title (optional)"
+        style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 11px;color:var(--text);font-size:13px;font-weight:600;outline:none;box-sizing:border-box;">
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">PRIMARY GAME</div>
+        <select id="ne-game" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;">
+          <option value="ALL">🌐 All Games</option>
+          <option value="FR">🔥 Gold</option>
+          <option value="LG">🌿 Silver</option>
+          <option value="R">🔴 Ruby</option>
+          <option value="S">🔷 Sapphire</option>
+          <option value="E">💚 Crystal</option>
+        </select>
+      </div>
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">ALSO SHOW IN</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="ne-tag-btn note-tag-chip" data-game="FR" onclick="this.classList.toggle('active')">🔥 FR</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="LG" onclick="this.classList.toggle('active')">🌿 LG</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="R" onclick="this.classList.toggle('active')">🔴 R</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="S" onclick="this.classList.toggle('active')">🔷 S</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="E" onclick="this.classList.toggle('active')">💚 E</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">FORMAT</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+          <button class="note-fmt-btn" onclick="neFmt('bold')"><b>B</b></button>
+          <button class="note-fmt-btn" onclick="neFmt('italic')"><i>I</i></button>
+          <button class="note-fmt-btn" onclick="neFmt('h2')">## H</button>
+          <button class="note-fmt-btn" onclick="neFmt('bullet')">• List</button>
+          <button class="note-fmt-btn" onclick="neFmt('check')">☑ Task</button>
+          <span style="font-size:9px;color:var(--muted);margin-left:2px;">· /p · /b · /d · /g · /hr · /type · /badge · /t · /n · /warn</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">COMMANDS</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('page')">Page Link</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('guide')">Guide Link</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('date')">Date</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('game')">Game</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('divider')">Divider</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('type')">Type</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('badge')">Badge</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('template')">Template</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('note')">Note</button>
+          <button class="note-fmt-btn" onmousedown="event.preventDefault()" onclick="neCommand('warn')">Warning</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div id="ne-route-wrap">
+          <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">LINKED ROUTE / PLACE</div>
+          <input id="ne-route" type="text" placeholder="e.g. Route 110, Mt. Moon, Mauville"
+            style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;">
+        </div>
+        <div id="ne-pokemon-wrap">
+          <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">LINKED POKEMON</div>
+          <input id="ne-pokemon" type="text" placeholder="e.g. Abra, Mudkip, Bagon"
+            style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;">
+        </div>
+      </div>
+
+      <textarea id="ne-content" class="note-editor-textarea" rows="10"
+        placeholder="Type your note…&#10;&#10;**bold**  *italic*  ## Heading&#10;- bullet item&#10;[ ] checkbox task&#10;&#10;/p → site page    /b → guide section    /d → date&#10;/g → game name    /hr → divider        /type → type&#10;/badge → badge    /t → template        /n → note callout&#10;/warn → warning&#10;&#10;Pokémon, item &amp; move names become clickable links on save"></textarea>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <button class="note-fmt-btn" id="ne-status-active" onclick="neSetStatus('active')">Active</button>
+        <button class="note-fmt-btn" id="ne-status-completed" onclick="neSetStatus('completed')">Completed</button>
+        <button class="note-fmt-btn" id="ne-status-archived" onclick="neSetStatus('archived')">Archived</button>
+        <button class="note-fmt-btn" onclick="neInsertTimestamp()">Timestamp</button>
+        <button class="note-fmt-btn" onclick="neDuplicateEditing()">Duplicate</button>
+      </div>
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:8px;font-weight:700;letter-spacing:.5px;">ACCENT COLOUR</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button class="ne-color-btn active" data-color="none"   onclick="neSelectColor(this)" style="background:var(--border);border:2px solid transparent;" title="None"></button>
+          <button class="ne-color-btn"        data-color="red"    onclick="neSelectColor(this)" style="background:#FF5555;border:2px solid transparent;"    title="Red"></button>
+          <button class="ne-color-btn"        data-color="orange" onclick="neSelectColor(this)" style="background:#FF9800;border:2px solid transparent;"    title="Orange"></button>
+          <button class="ne-color-btn"        data-color="gold"   onclick="neSelectColor(this)" style="background:#FFD700;border:2px solid transparent;"    title="Gold"></button>
+          <button class="ne-color-btn"        data-color="green"  onclick="neSelectColor(this)" style="background:#4CAF50;border:2px solid transparent;"    title="Green"></button>
+          <button class="ne-color-btn"        data-color="blue"   onclick="neSelectColor(this)" style="background:#64b4ff;border:2px solid transparent;"    title="Blue"></button>
+          <button class="ne-color-btn"        data-color="purple" onclick="neSelectColor(this)" style="background:#AA88FF;border:2px solid transparent;"    title="Purple"></button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">LABELS <span style="font-weight:400;">(comma-separated)</span></div>
+        <div id="ne-label-presets" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;"></div>
+        <input id="ne-labels" type="text" placeholder="e.g. Team, Route, Shopping"
+          style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border);flex-shrink:0;background:var(--panel);">
+      <button onclick="cancelNoteEditor()"
+        style="flex:1;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;">Cancel</button>
+      <button onclick="saveNoteEditor()"
+        style="flex:2;background:var(--game-color,var(--gold));color:#000;border:none;border-radius:5px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;">Save Note</button>
+    </div>
+  </div>
+
+</div><!-- end notes-panel -->
+</div><!-- end notes-side-host -->
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ══ SAFARI ZONE CALCULATOR ══ -->
+<div id="page-safarizone" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">SAFARI ZONE CALCULATOR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Track steps &amp; balls, calculate catch odds per strategy, and browse Pokémon by area.</div>
+      <div id="safari-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STAT CALCULATOR ══ -->
+<div id="page-statcalc" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">STAT CALCULATOR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Enter a Pokémon, level, nature, IVs, and EVs to compute all final stats using the Gen 2 formula.</div>
+      <div id="statcalc-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ POKÉBLOCK OPTIMIZER ══ -->
+<div id="page-pokeblock" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉBLOCK OPTIMIZER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Find the best berries to blend for each contest condition. Reference for every Gen 2 berry flavor.</div>
+      <div id="pokeblock-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ELITE FOUR & CHAMPION ══ -->
+<div id="page-e4ref" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1000px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ELITE FOUR &amp; CHAMPION</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Full team rosters and type weaknesses for every E4 member and Champion across all 5 Gen 2 games.</div>
+      <div id="e4ref-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REMATCH TRAINERS ══ -->
+<div id="page-rematches" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1000px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">REMATCH TRAINERS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">VS Seeker rematches (FR/LG) and Trainer's Eye (Crystal) — curated for EV training and EXP grinding.</div>
+      <div id="rematches-content"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ ROUTE BROWSER ══ -->
+<div id="page-routebrowser" class="page main" style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px) - var(--page-bottom, 24px));overflow:hidden;flex-direction:column;">
+  <div style="padding:10px 16px;background:var(--darker);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;">
+    <span id="rb-page-title" style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">ROUTE BROWSER</span>
+    <div id="rb-game-btns" style="display:flex;gap:4px;"></div>
+    <input id="rb-search" type="text" placeholder="Search location…" oninput="rbFilter()"
+      style="flex:1;min-width:150px;max-width:240px;padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;font-family:'Nunito',sans-serif;"
+      onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+    <span id="rb-area-count" style="font-size:10px;color:var(--muted);"></span>
+  </div>
+  <div style="flex:1;overflow:hidden;display:flex;min-height:0;">
+    <div id="rb-area-list" style="width:260px;flex-shrink:0;overflow-y:auto;border-right:2px solid var(--border);background:var(--panel);"></div>
+    <div id="rb-detail" style="flex:1;overflow-y:auto;padding:16px;background:var(--darker);"></div>
+  </div>
+</div>
+<script src="assets/data/pokedata.js"></script>
+<script src="assets/data/bulba-data-frlg.js"></script>
+<script src="assets/data/bulba-data-rs.js"></script>
+<script src="assets/data/bulba-data-e.js"></script>
+<script src="assets/js/core/page-registry.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages/tutors.js"></script>
+<script src="assets/js/pages/abilities.js"></script>
+<script src="assets/js/pages/learnsets.js"></script>
+<script src="assets/js/pages/encounters.js"></script>
+<script src="assets/js/pages/itemlocs.js"></script>
+<script src="assets/js/pages/safarizone.js"></script>
+<script src="assets/js/pages/statcalc.js"></script>
+<script src="assets/js/pages/pokeblock.js"></script>
+<script src="assets/js/pages/e4ref.js"></script>
+<script src="assets/js/pages/rematches.js"></script>
+<script src="assets/js/pages/routebrowser.js"></script>
+<script src="assets/js/pages/distributions.js"></script>
+<script>
+(function() {
+  function bootFallback() {
+    var raw = (window.location.hash || '').replace(/^#/, '').trim();
+    var pageId = (raw.split('?')[0] || 'home').toLowerCase();
+    if (pageId.indexOf('page=') === 0) pageId = pageId.slice(5);
+    if (!pageId) pageId = 'home';
+
+    var pageEl = document.getElementById('page-' + pageId);
+    if (!pageEl) pageId = 'home';
+
+    if (pageId === 'home') {
+      var home = document.getElementById('page-home');
+      if (home && !home.classList.contains('active')) {
+        document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+        home.classList.add('active');
+      }
+      if (typeof buildHomePage === 'function') {
+        var homeContent = document.getElementById('home-content');
+        if (homeContent && !homeContent.innerHTML.trim()) buildHomePage();
+      }
+      return;
+    }
+
+    if (typeof window.openTopLevelPage === 'function') {
+      window.openTopLevelPage(pageId);
+      return;
+    }
+
+    var target = document.getElementById('page-' + pageId);
+    if (target && !target.classList.contains('active')) {
+      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+      target.classList.add('active');
+    }
+
+    if (window.ensurePageReady) {
+      window.ensurePageReady(pageId);
+      return;
+    }
+
+    var directBuilders = {
+      routebrowser: window.buildRouteBrowserPage,
+      distributions: window.buildDistributionsPage,
+      distributionchecklist: window.buildDistributionsPage,
+      rematches: window.buildRematchesPage,
+      e4ref: window.buildE4RefPage,
+      pokeblock: window.buildPokeblockPage,
+      statcalc: window.buildStatCalcPage,
+      safarizone: window.buildSafariZonePage,
+      tutors: window.buildTutorPage,
+      abilities: window.buildAbilitiesPage,
+      learnsets: window.buildLearnsetsPage,
+      encounters: window.buildEncountersPage,
+      itemlocs: window.buildItemLocsPage
+    };
+    if (typeof directBuilders[pageId] === 'function') directBuilders[pageId]();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootFallback, { once:true });
+  } else {
+    bootFallback();
+  }
+})();
+</script>
+
+<!-- ── Type battle flash overlay ───────────────────────────── -->
+<div id="type-battle-flash" style="position:fixed;inset:0;z-index:9990;pointer-events:none;display:none;"></div>
+
+<!-- ── Bottom ticker ────────────────────────────────────────── -->
+<div id="bottom-ticker">
+  <div id="ticker-track">
+    <span>⚡ TIP: Paralysis halves Speed and gives a 25% chance to not move</span>
+    <span>🔥 TIP: Fire-type moves thaw frozen Pokémon</span>
+    <span>💧 TIP: Rain doubles Water power &amp; halves Fire power</span>
+    <span>☀️ TIP: Sunny Day doubles Fire power &amp; halves Water power</span>
+    <span>🌿 TIP: Sleep Powder has 75% accuracy — combine with Dream Eater</span>
+    <span>💎 TIP: Steel is immune to Poison status</span>
+    <span>👻 TIP: Ghost-types can't be hit by Normal or Fighting moves</span>
+    <span>🐉 TIP: Dragon-types resist Fire, Water, Grass, and Electric</span>
+    <span>⚠️ Watch Out: Sandstorm chips 1/16 HP per turn for non-Rock/Steel/Ground</span>
+    <span>⚠️ Watch Out: Pursuit deals double damage if you switch out</span>
+    <span>⭐ LEGEND: Rayquaza is at Sky Pillar — bring a Mach Bike for the cracked floors</span>
+    <span>⭐ LEGEND: Mewtwo is in Cerulean Cave after becoming Champion</span>
+    <span>🦴 FOSSIL: Dome Fossil → Kabuto | Helix Fossil → Omanyte | Old Amber → Aerodactyl</span>
+    <span>🌟 STARTER TIP: Bulbasaur clears the first two gyms with ease in GSC</span>
+    <span>💡 PRO TIP: Use the Exp. Share to level up your whole party efficiently</span>
+    <span>💡 PRO TIP: Synchronize in your lead slot sets wild Pokémon's nature</span>
+    <span>🎯 TIP: Geodude and Graveler can be found in most caves — great for early Strength</span>
+    <span>🏆 ELITE FOUR: Carry 20+ Full Restores and an Antidote for Agatha</span>
+    <span>💡 PRO TIP: Pickup Meowth/Linoone can farm rare items in RSE</span>
+    <span>🌊 TIP: Surf + Thunderbolt covers most of the game — great attacking combo</span>
+  </div>
+</div>
+<script>
+// Duplicate ticker content for seamless infinite scroll
+(function() {
+  var track = document.getElementById('ticker-track');
+  if (!track) return;
+  track.innerHTML = track.innerHTML + track.innerHTML;
+})();
+</script>
+
+<!-- ══ #9 Boot screen ═══════════════════════════════════════════ -->
+<div id="boot-screen">
+  <img class="boot-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="">
+  <div class="boot-logo">GEN2 eGUIDE</div>
+  <div class="boot-edition">STRATEGY GUIDE &middot; SPECIAL EDITION</div>
+  <div class="boot-bar-wrap"><div class="boot-bar"></div></div>
+  <div class="boot-hint">CLICK TO SKIP</div>
+</div>
+<script>
+(function() {
+  var boot = document.getElementById('boot-screen');
+  if (!boot) return;
+  try {
+    var mode = localStorage.getItem('gen2-boot-mode') || 'session';
+    if (mode === 'first') {
+      if (localStorage.getItem('gen2-booted-ever')) { boot.classList.add('done'); return; }
+      localStorage.setItem('gen2-booted-ever', '1');
+    } else if (mode === 'always') {
+      // always show — no check
+    } else {
+      // session (default)
+      if (sessionStorage.getItem('gen2-booted')) { boot.classList.add('done'); return; }
+      sessionStorage.setItem('gen2-booted', '1');
+    }
+  } catch(e) { boot.classList.add('done'); return; }
+  var t = setTimeout(function(){ boot.classList.add('done'); }, 1900);
+  boot.addEventListener('click', function(){ clearTimeout(t); boot.classList.add('done'); });
+})();
+</script>
+
+<!-- ══ #10 Mascot tip bubble ════════════════════════════════════ -->
+<div id="mascot-tip">
+  <div class="mascot-bubble" onclick="hideMascotTip()">
+    <span class="mascot-close" onclick="event.stopPropagation();hideMascotTip()">&#x2715;</span>
+    <span id="mascot-tip-text"></span>
+  </div>
+  <img class="mascot-sprite" id="mascot-sprite" src="" alt="">
+</div>
+
+<!-- ══ #5 Nuzlocke In Memoriam ══════════════════════════════════ -->
+<div id="nuz-memoriam" onclick="closeInMemoriam()">
+  <div class="memoriam-card" onclick="event.stopPropagation()">
+    <div class="memoriam-title">&#8212; IN MEMORIAM &#8212;</div>
+    <div class="memoriam-line"></div>
+    <img class="memoriam-sprite" src="" alt="">
+    <div class="memoriam-line"></div>
+    <div class="memoriam-name"></div>
+    <div class="memoriam-sub">Fell in battle.<br>Their sacrifice will not be forgotten.</div>
+    <button class="memoriam-dismiss" onclick="closeInMemoriam()">CONTINUE</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   Header Pokémon Sprites — magazine decoration
+   ══════════════════════════════════════════════════════════ */
+(function(){
+  var SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+
+  // Curated pools per game — recognisable Gen 2 era Pokémon
+  var POOLS = {
+    all: [25,133,150,94,6,130,143,59,282,376],   // Pikachu, Eevee, Mewtwo, Gengar, Charizard…
+    FR:  [6,59,38,131,143,94,39,76],              // Charizard, Arcanine, Ninetales, Lapras…
+    LG:  [3,71,36,134,130,113,45,149],            // Venusaur, Victreebel, Clefable, Vaporeon…
+    R:   [257,383,373,306,277,323,302,288],        // Blaziken, Groudon, Salamence, Aggron…
+    S:   [260,382,350,321,365,349,370,226],        // Swampert, Kyogre, Milotic, Wailord…
+    E:   [254,384,376,282,330,334,354,286]         // Sceptile, Rayquaza, Metagross, Gardevoir…
+  };
+
+  function shuffle(arr) {
+    return arr.slice().sort(function(){ return Math.random() - 0.5; });
+  }
+
+  window.updateHeaderSprites = function(game, animate) {
+    var el = document.getElementById('header-sprites');
+    if (!el) return;
+    var pool = POOLS[game] || POOLS.all;
+    var chosen = shuffle(pool).slice(0, 4);
+
+    // Fade out existing
+    Array.from(el.children).forEach(function(img) {
+      img.classList.remove('loaded','sprite-popin');
+      img.style.opacity = '0';
+    });
+
+    setTimeout(function() {
+      el.innerHTML = '';
+      chosen.forEach(function(num, i) {
+        var img = document.createElement('img');
+        img.src = SPRITE_BASE + num + '.png';
+        img.alt = '';
+        img.loading = 'lazy';
+        img.title = '';
+        img.style.animationDelay = (i * 0.07) + 's,' + (i * 0.07 + 0.45) + 's';
+        img.onerror = function(){ this.style.display = 'none'; };
+        img.onload = function(){
+          if (animate !== false) {
+            this.classList.add('sprite-popin');
+          } else {
+            this.classList.add('loaded');
+          }
+        };
+        el.appendChild(img);
+      });
+    }, animate !== false ? 120 : 0);
+  };
+
+  // Apply game class to body + update sprites
+  window._applyGameClass = function(g) {
+    document.body.classList.remove('game-all','game-FR','game-LG','game-R','game-S','game-E');
+    document.body.classList.add('game-' + g);
+    if (window.updateHeaderSprites) window.updateHeaderSprites(g, true);
+  };
+
+  // Initialise on load
+  document.addEventListener('DOMContentLoaded', function() {
+    var saved = (function(){ try{ return localStorage.getItem('gen2-game') || 'all'; }catch(e){ return 'all'; } })();
+    window._applyGameClass(saved);
+    window.updateHeaderSprites(saved, false);
+  });
+})();
+</script>
+
+<!-- ── iOS-style mobile bottom tab bar ──────────────────────── -->
+<nav class="ios-tab-bar" id="iosTabBar" role="navigation" aria-label="Main navigation">
+  <!-- Tab 1: Home — always fixed -->
+  <button class="ios-tab" id="iosTabHome" onclick="iosNavHome()">
+    <svg class="ios-tab-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+    <span class="ios-tab-label">Home</span>
+  </button>
+  <!-- Tabs 2-5: configurable, built by buildIosTabs() -->
+  <div id="iosTabsDynamic" style="display:contents"></div>
+</nav>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   iOS Bottom Tab Bar — config, rendering & navigation
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Available tab options ── */
+var IOS_TAB_OPTIONS = [
+  { id:'guide',      label:'Guide',      badge:false, svg:'<path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>' },
+  { id:'dex',        label:'Pokédex',   badge:false, svg:'<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>' },
+  { id:'easydex',    label:'Easy Dex',  badge:false, svg:'<path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>' },
+  { id:'tracker',    label:'Tracker',   badge:false, svg:'<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>' },
+  { id:'team',       label:'Team',      badge:false, svg:'<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>' },
+  { id:'moves',      label:'Moves',     badge:false, svg:'<path d="M7 2v11h3v9l7-12h-4l4-8z"/>' },
+  { id:'items',      label:'Items',     badge:false, svg:'<path d="M20 6h-2.18c.07-.44.18-.88.18-1.35C18 2.55 16.45 1 14.55 1c-.97 0-1.96.75-2.06.75S11.26 1 10.45 1C8.55 1 7 2.55 7 4.65c0 .47.1.91.17 1.35H5C3.9 7 3 7.9 3 9v11c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>' },
+  { id:'tmhm',       label:'TM / HM',  badge:false, svg:'<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>' },
+  { id:'types',      label:'Types',     badge:false, svg:'<path d="M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z"/>' },
+  { id:'calc',       label:'Calc',      badge:false, svg:'<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/>' },
+  { id:'notes',      label:'Notes',     badge:true,  svg:'<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>' },
+  { id:'map',        label:'Map',       badge:false, svg:'<path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>' },
+  { id:'missables',  label:'Missables', badge:false, svg:'<path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>' },
+  { id:'essentials', label:'Tips',      badge:false, svg:'<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>' },
+  { id:'ribbons',    label:'Ribbons',   badge:false, svg:'<path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2z"/>' },
+];
+var IOS_BAR_DEFAULTS = ['guide','tracker','notes','map'];
+
+/* ── Config persistence ── */
+function getIosBarConfig() {
+  try {
+    var s = localStorage.getItem('gen2-ios-bar');
+    if (s) { var a = JSON.parse(s); if (Array.isArray(a) && a.length === 4) return a; }
+  } catch(e) {}
+  return IOS_BAR_DEFAULTS.slice();
+}
+
+/* ── Build / rebuild tabs 2-5 in the bar ── */
+function buildIosTabs() {
+  var container = document.getElementById('iosTabsDynamic');
+  if (!container) return;
+  var config = getIosBarConfig();
+  var html = '';
+  config.forEach(function(id, i) {
+    var opt = IOS_TAB_OPTIONS.filter(function(o){ return o.id === id; })[0] || IOS_TAB_OPTIONS[0];
+    var tabId = 'iosTabDyn' + (i + 2);
+    var iconHtml = opt.badge
+      ? '<span class="ios-tab-icon-wrap"><svg class="ios-tab-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+opt.svg+'</svg><span class="ios-tab-badge" id="iosNotesBadge"></span></span>'
+      : '<svg class="ios-tab-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+opt.svg+'</svg>';
+    html += '<button class="ios-tab" id="'+tabId+'" data-ios-id="'+id+'" onclick="iosExecTab(\''+id+'\')">'
+          + iconHtml
+          + '<span class="ios-tab-label">'+opt.label+'</span>'
+          + '</button>';
+  });
+  container.innerHTML = html;
+  // Re-sync badge count after rebuild
+  _iosSyncBadge();
+}
+
+/* ── Find a tab button by option ID ── */
+function iosFindTab(optId) {
+  if (optId === 'home') return document.getElementById('iosTabHome');
+  return document.querySelector('#iosTabsDynamic .ios-tab[data-ios-id="'+optId+'"]');
+}
+
+/* ── Active-state helpers ── */
+function iosSetActive(tabId) {
+  document.querySelectorAll('.ios-tab').forEach(function(t){ t.classList.remove('active'); });
+  var t = document.getElementById(tabId);
+  if (t) t.classList.add('active');
+}
+function iosClearActive() {
+  document.querySelectorAll('.ios-tab').forEach(function(t){ t.classList.remove('active'); });
+}
+function iosSetActiveByOptId(optId) {
+  var tab = iosFindTab(optId);
+  if (tab) iosSetActive(tab.id);
+  else iosClearActive();
+}
+
+/* ── Page → option-id map (used by showPage hook & restoreActive) ── */
+var IOS_PAGE_TO_OPT = {
+  home:'home', bulba:'guide', dex:'dex', easydex:'easydex', tracker:'tracker',
+  team:'team', moves:'moves', items:'items', tmhm:'tmhm', typechart:'types',
+  calc:'calc', missables:'missables', essentials:'essentials', ribbons:'ribbons'
+};
+window.iosUpdateForPage = function(pageId) {
+  if (pageId === 'home') { iosSetActive('iosTabHome'); return; }
+  var optId = IOS_PAGE_TO_OPT[pageId];
+  if (!optId) { iosClearActive(); return; }
+  iosSetActiveByOptId(optId);
+};
+function iosRestorePageActive() {
+  try { window.iosUpdateForPage(localStorage.getItem('gen2-last-page') || 'home'); } catch(e) {}
+}
+
+/* ── Tab execution ── */
+var _IOS_ACTIONS = {
+  guide:      function(){ var b=document.getElementById('navBulba'); showPage('bulba',b); if(!window._bulbaBuilt){buildBulbaGuide();window._bulbaBuilt=true;} bulbaAutoSelectGame(); },
+  dex:        function(){ showPage('dex',document.getElementById('navDex')); },
+  easydex:    function(){ showPage('easydex',document.getElementById('navEasydex')); if(!window._easyDexBuilt){renderEasyDexPage();window._easyDexBuilt=true;} },
+  tracker:    function(){ showPage('tracker',document.getElementById('navTracker')); buildTracker(); window._trackerBuilt=true; },
+  team:       function(){ showPage('team',document.getElementById('navTeam')); if(!window._teamBuilt){window._teamBuilt=true;if(typeof tbApplyRestore==='function')tbApplyRestore();} },
+  moves:      function(){ showPage('moves',document.getElementById('navMoves')); if(!window._movesBuilt){buildMoveDex();window._movesBuilt=true;} },
+  items:      function(){ showPage('items',document.getElementById('navItems')); if(!window._itemsBuilt){buildItemDex();window._itemsBuilt=true;} },
+  tmhm:       function(){ showPage('tmhm',document.getElementById('navTmhm')); if(!window._tmhmBuilt){buildTmhmLocator();window._tmhmBuilt=true;} },
+  types:      function(){ showPage('typechart',document.getElementById('navTypeChart')); if(!window._typeChartBuilt){buildTypePage();window._typeChartBuilt=true;} },
+  calc:       function(){ showPage('calc',document.getElementById('navCalc')); },
+  missables:  function(){ showPage('missables',document.getElementById('navMissables')); if(!window._missablesBuilt){buildMissablesPage();window._missablesBuilt=true;} },
+  essentials: function(){ showPage('essentials',document.getElementById('navEssentials')); if(!window._essentialsBuilt){buildEssentialsPage();window._essentialsBuilt=true;} },
+  ribbons:    function(){ showPage('ribbons',document.getElementById('navRibbons')); if(!window._ribbonsBuilt){buildRibbonPage();window._ribbonsBuilt=true;} },
+  notes: function(){
+    var mp=document.getElementById('map-panel');
+    if(mp&&mp.classList.contains('open'))closeMapPanel();
+    var np=document.getElementById('notes-panel');
+    if(np&&np.classList.contains('open')){
+      np.classList.remove('open');
+      var o=document.getElementById('notes-overlay'); if(o)o.classList.remove('open');
+      iosClearActive(); iosRestorePageActive();
+    } else {
+      if(typeof window.notesSyncToGlobalGame==='function')window.notesSyncToGlobalGame();
+      if(np)np.classList.add('open');
+      var ov=document.getElementById('notes-overlay'); if(ov)ov.classList.add('open');
+      if(typeof renderNotesList==='function')renderNotesList();
+      if(typeof renderLabelBar==='function')renderLabelBar();
+      iosSetActiveByOptId('notes');
+    }
+  },
+  map: function(){
+    var np=document.getElementById('notes-panel');
+    if(np&&np.classList.contains('open')){np.classList.remove('open');var o=document.getElementById('notes-overlay');if(o)o.classList.remove('open');}
+    var mp=document.getElementById('map-panel');
+    if(mp&&mp.classList.contains('open')){
+      closeMapPanel(); iosClearActive(); iosRestorePageActive();
+    } else {
+      toggleMapPanel(); iosSetActiveByOptId('map');
+    }
+  }
+};
+function iosExecTab(id) {
+  if (_IOS_ACTIONS[id]) _IOS_ACTIONS[id]();
+}
+function iosNavHome() { resetHome(); }
+
+/* ── Settings: populate selects, save & update preview ── */
+function settingsSyncIosBar() {
+  var config = getIosBarConfig();
+  [2,3,4,5].forEach(function(n) {
+    var sel = document.getElementById('iosBarTab' + n);
+    if (!sel) return;
+    if (!sel.options.length) {
+      IOS_TAB_OPTIONS.forEach(function(opt) {
+        var o = document.createElement('option');
+        o.value = opt.id; o.textContent = opt.label;
+        sel.appendChild(o);
+      });
+    }
+    sel.value = config[n - 2];
+    // Update preview pill
+    var pill = document.getElementById('iosBspTab' + n);
+    if (pill) {
+      var opt = IOS_TAB_OPTIONS.filter(function(o){ return o.id === config[n-2]; })[0];
+      if (opt) pill.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor">'+opt.svg+'</svg>'+opt.label;
+    }
+  });
+}
+function saveIosBarSettings() {
+  var config = [2,3,4,5].map(function(n){
+    return document.getElementById('iosBarTab'+n).value;
+  });
+  try { localStorage.setItem('gen2-ios-bar', JSON.stringify(config)); } catch(e) {}
+  buildIosTabs();
+  settingsSyncIosBar();
+  iosRestorePageActive();
+}
+function resetIosBarSettings() {
+  try { localStorage.removeItem('gen2-ios-bar'); } catch(e) {}
+  buildIosTabs();
+  settingsSyncIosBar();
+  iosRestorePageActive();
+}
+
+/* ── Badge sync ── */
+function _iosSyncBadge() {
+  var b = document.getElementById('iosNotesBadge');
+  if (!b) return;
+  var srcBadge = document.getElementById('notes-tab-badge');
+  var count = srcBadge ? (parseInt(srcBadge.textContent) || 0) : 0;
+  b.textContent = count > 9 ? '9+' : (count || '');
+  b.classList.toggle('visible', count > 0);
+}
+
+/* ── Bootstrap on DOMContentLoaded ── */
+document.addEventListener('DOMContentLoaded', function() {
+  buildIosTabs();
+  // Patch updateBadge to also refresh iOS bar badge
+  var _orig = window.updateBadge;
+  if (typeof _orig === 'function') {
+    window.updateBadge = function() { _orig(); _iosSyncBadge(); };
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="15" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <!-- Top half (red) -->
+  <path d="M1 16 A15 15 0 0 1 31 16 Z" fill="#E8501A"/>
+  <!-- Bottom half (white/light) -->
+  <path d="M1 16 A15 15 0 0 0 31 16 Z" fill="#e8e8e8"/>
+  <!-- Center band -->
+  <rect x="1" y="14.5" width="30" height="3" fill="#111"/>
+  <!-- Center button outer -->
+  <circle cx="16" cy="16" r="5" fill="#111"/>
+  <!-- Center button inner -->
+  <circle cx="16" cy="16" r="3.5" fill="#e8e8e8"/>
+  <!-- Center button shine -->
+  <circle cx="14.5" cy="14.5" r="1" fill="rgba(255,255,255,0.6)"/>
+</svg>
