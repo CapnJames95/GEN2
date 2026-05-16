@@ -12101,19 +12101,140 @@ function buildFrontierPage() {
 }
 
 
+// ══ RNG GUIDE PAGE (Gen 2) ═══════════════════════════════════════
+function buildRngPage() {
+  var el = document.getElementById('rng-content') || document.getElementById('page-rng');
+  if (!el || el.dataset.built === '1') return;
+  el.dataset.built = '1';
+  el.innerHTML =
+    '<div class="panel" style="padding:22px;max-width:980px;margin:0 auto;">'
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:14px;letter-spacing:1px;">GEN 2 RNG & SHINY GUIDE</div>'
+
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:7px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:0.5px;">SHINY FORMULA (DV-BASED)</div>'
+    + '<div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px;">'
+    + 'In Gen 2 a Pokémon is shiny when its DVs match an exact pattern:'
+    + '<ul style="margin:8px 0 8px 22px;line-height:2;">'
+    + '<li><strong style="color:var(--text);">Defense DV</strong>, <strong style="color:var(--text);">Speed DV</strong>, and <strong style="color:var(--text);">Special DV</strong> are all <code>10</code>.</li>'
+    + '<li><strong style="color:var(--text);">Attack DV</strong> is one of <code>2, 3, 6, 7, 10, 11, 14, 15</code>.</li>'
+    + '</ul>'
+    + 'Out of 65,536 possible DV combinations only 8 satisfy this — odds are <strong style="color:var(--text);">1/8,192</strong> per wild encounter or hatched egg. Shiny is NOT tied to Trainer ID in Gen 2 (that\'s Gen 3+).'
+    + '</div>'
+
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:7px;color:var(--game-color,var(--gold));margin:18px 0 8px;letter-spacing:0.5px;">SHINY BREEDING TRICK</div>'
+    + '<div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px;">'
+    + 'Breeding from a shiny parent drastically improves odds. With one shiny parent (typically a shiny Ditto from the Red Gyarados/Lake-of-Rage line) the egg has roughly <strong style="color:var(--text);">1/64</strong> odds of also being shiny — a 128× improvement.'
+    + ' Most Gen-2 shiny hunts go: catch the Red Gyarados → breed it for a shiny Magikarp → breed a shiny Ditto via Stadium 2 swap → then mass-hatch eggs.'
+    + '</div>'
+
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:7px;color:var(--game-color,var(--gold));margin:18px 0 8px;letter-spacing:0.5px;">DV / STAT-EXP MANIPULATION</div>'
+    + '<div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px;">'
+    + 'Gen 2\'s wild DV roll is essentially uncontrollable in-game without TAS-level frame counting. Two practical knobs:'
+    + '<ul style="margin:8px 0 8px 22px;line-height:2;">'
+    + '<li><strong style="color:var(--text);">Box trick:</strong> when you withdraw a Pokémon, the game recalculates stats from Stat Exp. Use this to convert grinded Stat Exp to higher stats mid-game (saves you from waiting for the next level-up).</li>'
+    + '<li><strong style="color:var(--text);">Trainer ID manipulation:</strong> The TID is rolled at "New Game" from the RNG seed. Soft-reset the same cartridge until you get a TID that gives a useful shiny egg combination — typically used for shiny breeding (see Shiny Breeding above).</li>'
+    + '<li><strong style="color:var(--text);">No Hidden Power IV abuse:</strong> Hidden Power in Gen 2 is locked entirely to the four DVs — you can\'t separately set its type. Atk DV % 4 + Def DV % 4 picks the type.</li>'
+    + '</ul>'
+    + '</div>'
+
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:7px;color:var(--game-color,var(--gold));margin:18px 0 8px;letter-spacing:0.5px;">UNOWN LETTER RNG (CRYSTAL)</div>'
+    + '<div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px;">'
+    + 'Unown letter is derived from the four DVs. In Gold/Silver only A-Z appear after solving the Ruins of Alph entrance. In Crystal, additional rooms unlock the <code>!</code> and <code>?</code> forms once the corresponding puzzles are solved.'
+    + '</div>'
+
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:7px;color:var(--game-color,var(--gold));margin:18px 0 8px;letter-spacing:0.5px;">USEFUL TOOLS</div>'
+    + '<div style="font-size:12px;color:var(--muted);line-height:1.8;">'
+    + '<ul style="margin:0 0 0 22px;line-height:2;">'
+    + '<li><strong>BizHawk / mGBA Lua scripts</strong> — display real DVs at the moment of encounter.</li>'
+    + '<li><strong>Stat Calculator</strong> on this site — reverse-engineer DVs from observed in-game stats.</li>'
+    + '<li><strong>Hidden Power Calculator</strong> on the DV/Stat-Exp page — confirm type before committing a hunt.</li>'
+    + '</ul>'
+    + '</div>'
+
+    + '</div>';
+  window._rngBuilt = true;
+}
+
 // ══ MISSABLES PAGE ═══════════════════════════════════════════════
 var _missGame = 'FR';
-var MISSABLES_DATA = {};
+// One-time / missable events per Gen-2 game. Each entry is grouped by
+// section. `id` must be unique per game, `label` is the title shown,
+// `desc` is the detail. `choices` makes it a multi-choice picker
+// (e.g. starter). FR slot = Gold, LG = Silver, E = Crystal.
+var _GSC_COMMON_MISSABLES = {
+  'Starter & Early Gifts': [
+    { id:'starter',  label:'Starter Pokémon',
+      desc:'Choose one from Prof. Elm in New Bark Town. The other two go to your Rival and to a research lab — you cannot get the unchosen ones again without trading.',
+      choices:[ {value:'cyndaquil',label:'Cyndaquil',sub:'Fire'},{value:'totodile',label:'Totodile',sub:'Water'},{value:'chikorita',label:'Chikorita',sub:'Grass'} ] },
+    { id:'mystery-egg',label:'Mystery Egg from Mr. Pokémon',
+      desc:'Pick up the Egg at Mr. Pokémon\'s house on Route 30 and deliver it to Prof. Elm. After triggering the lab break-in, Elm gives the Egg back — it hatches into Togepi.' },
+    { id:'town-map',  label:'Town Map (Mom)',
+      desc:'Speak to your mother in New Bark Town before leaving to receive the Town Map.' },
+    { id:'pokegear-card-radio',label:'Radio Card (Goldenrod Radio Tower)',
+      desc:'Pass a short quiz at the Goldenrod Radio Tower for a Pokégear Radio Card. Enables Buena\'s Password and Pokémon-Channel lures.' },
+    { id:'pokegear-card-expn',label:'EXPN Card (Lavender Radio Tower)',
+      desc:'After clearing Saffron\'s Magnet Train station and visiting Lavender Town, receive the EXPN Card — required to listen to Kanto stations.' }
+  ],
+  'Key Tools': [
+    { id:'squirtbottle',label:'SquirtBottle (Goldenrod)',
+      desc:'A flower-shop NPC gives you the SquirtBottle after Bugsy. Required to wake the Sudowoodo blocking Route 36.' },
+    { id:'old-rod',  label:'Old Rod',
+      desc:'Given by the fisherman in Olivine City\'s Pokémon Center area (some games: Mr. Pokémon\'s house).' },
+    { id:'good-rod', label:'Good Rod',
+      desc:'Given by a Fishing Guru in Olivine City after delivering the SecretPotion.' },
+    { id:'super-rod',label:'Super Rod',
+      desc:'Routes 12 in Kanto — given by the Fishing Brother house south of Lavender Town.' },
+    { id:'bicycle',  label:'Bicycle (Goldenrod Bike Shop)',
+      desc:'Lend the bike from Goldenrod — never returned. Permanent free bike.' }
+  ],
+  'TMs & HMs': [
+    { id:'hm01-cut',  label:'HM01 — Cut',  desc:'Received from Charcoal Master in Ilex Forest after retrieving the Farfetch\'d.' },
+    { id:'hm03-surf', label:'HM03 — Surf', desc:'Given by a sailor in Ecruteak City after clearing the Burned Tower / talking to him at the dance theater.' },
+    { id:'hm04-strength',label:'HM04 — Strength', desc:'Given by a sailor in Olivine City\'s Lighthouse / the man on the S.S. Aqua.' },
+    { id:'hm05-flash',label:'HM05 — Flash', desc:'Given by an Elder at the top of Sprout Tower (Violet City) after defeating the rival there.' },
+    { id:'hm06-whirlpool',label:'HM06 — Whirlpool', desc:'Inside Mahogany Town\'s Rocket Hideout after busting Team Rocket.' },
+    { id:'hm07-waterfall',label:'HM07 — Waterfall', desc:'Found in the Ice Path on the route to Blackthorn.' },
+    { id:'tm27-return',label:'TM27 — Return', desc:'Given by a girl in Goldenrod Department Store rooftop on Sundays (in some games: NPC south of Goldenrod).' },
+    { id:'tm50-nightmare',label:'TM50 — Nightmare', desc:'National Park\'s gatehouse — talk to the man holding it.' },
+    { id:'tm-earthquake',label:'TM26 — Earthquake', desc:'Hidden item near the southern face of Victory Road — one copy only.' }
+  ],
+  'One-Time Pokémon': [
+    { id:'static-sudowoodo',label:'Sudowoodo (Route 36)', desc:'Use the SquirtBottle on the blocking tree. Wakes up as a Lv20 Sudowoodo — only one.' },
+    { id:'static-lapras',  label:'Lapras (Union Cave B2F)', desc:'Appears every Friday in Union Cave\'s deepest floor. Despawns until next Friday after caught/KO\'d.' },
+    { id:'static-snorlax', label:'Snorlax (Route 11, Kanto)', desc:'Blocking Diglett\'s Cave exit. Wake it with the Pokéflute (Lavender Radio Tower).' },
+    { id:'static-articuno',label:'Articuno (Seafoam Islands)', desc:'Static encounter at Lv50 in Seafoam Islands\' B4F. Only one.' },
+    { id:'static-zapdos',  label:'Zapdos (Power Plant)', desc:'Lv50 static encounter in the Power Plant\'s back room. Post-Rocket arc.' },
+    { id:'static-moltres', label:'Moltres (Mt. Silver)', desc:'Lv50 static encounter deep in Mt. Silver. Post-E4.' },
+    { id:'static-mewtwo',  label:'Mewtwo (Cerulean Cave)', desc:'Lv70 static encounter at the back of Cerulean Cave. Post-E4 only.' },
+    { id:'static-hooh',    label:'Ho-Oh (Tin Tower)',     desc:'Tin Tower roof. Requires Rainbow Wing — given by an Elder in Pewter (Gold/Crystal) or trade.' },
+    { id:'static-lugia',   label:'Lugia (Whirl Islands)', desc:'Whirl Islands B4F. Requires Silver Wing — given by an Elder in Pewter (Silver/Crystal) or trade.' },
+    { id:'tyrogue',        label:'Tyrogue (Mt. Mortar)',  desc:'Karate King in the deepest room of Mt. Mortar gives you a Lv10 Tyrogue.' },
+    { id:'eevee-bill',     label:'Eevee (from Bill)',     desc:'Bill\'s grandfather in Goldenrod Pokémon Center gives you an Eevee after meeting Bill in Ecruteak.' },
+    { id:'old-amber',      label:'Old Amber → Aerodactyl', desc:'Pewter Museum (Kanto) — receive Old Amber from the scientist; revive into a Lv5 Aerodactyl.' },
+    { id:'shuckle-cianwood',label:'Shuckle (Cianwood Berry man)', desc:'The "Pokémon\'s Berry" man in Cianwood lends you a Lv15 Shuckle holding a Berry. Keep talking to him to keep it.' },
+    { id:'red-gyarados',   label:'Red Gyarados (Lake of Rage)', desc:'Shiny Lv30 Gyarados — only static shiny in the game. Save before engaging.' }
+  ],
+  'Items & Gifts': [
+    { id:'gb-ticket',  label:'S.S. Ticket', desc:'Given by Prof. Elm in Olivine\'s Sailor area after the Goldenrod Game Corner arc.' },
+    { id:'kanto-pass', label:'Magnet Train Pass', desc:'Copycat in Saffron returns it after you bring her doll back from Vermilion.' },
+    { id:'master-ball',label:'Master Ball',  desc:'Given by Prof. Elm after the Mahogany Rocket arc.' },
+    { id:'silver-wing',label:'Silver Wing / Rainbow Wing',
+      desc:'In Pewter Museum after E4: Crystal gets both. Gold gets only Rainbow Wing (Ho-Oh), Silver gets only Silver Wing (Lugia) — the other must be traded.' },
+    { id:'gs-ball',    label:'GS Ball (Crystal only)',
+      desc:'Pokémon Center NY event / Pokémon Mobile in JP Crystal. Give to Kurt to unlock Celebi at the Ilex Forest shrine.' }
+  ]
+};
+var MISSABLES_DATA = { FR: _GSC_COMMON_MISSABLES, LG: _GSC_COMMON_MISSABLES, E: _GSC_COMMON_MISSABLES };
 
 function buildMissablesPage() {
-  var games = ['FR','LG','R','S','E'];
-  var colors = { FR:'var(--fire)', LG:'var(--leaf)', R:'#FF5555', S:'#5599FF', E:'var(--emerald)' };
+  var games = ['FR','LG','E'];
+  var colors = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
+  var labels = { FR:'🌕 Gold', LG:'🪙 Silver', E:'💎 Crystal' };
   var btns = document.getElementById('miss-game-btns');
   btns.innerHTML = games.map(function(g) {
     var active = g === _missGame;
     var col = colors[g];
     return '<button onclick="missSetGame(\''+g+'\')" data-game="'+g+'" style="font-family:\'Press Start 2P\',monospace;font-size:7px;padding:6px 12px;border-radius:4px;border:2px solid '+(active?col:'var(--border)')+';background:transparent;cursor:pointer;color:'+(active?col:'var(--muted)')+';">'
-      +{FR:'🔥 FR',LG:'🌿 LG',R:'🔴 R',S:'🔷 S',E:'🟢 E'}[g]+'</button>';
+      +labels[g]+'</button>';
   }).join('');
   missRender();
   window._missablesBuilt = true;
@@ -12121,7 +12242,7 @@ function buildMissablesPage() {
 
 function missSetGame(g) {
   _missGame = g;
-  var colors = { FR:'var(--fire)', LG:'var(--leaf)', R:'#FF5555', S:'#5599FF', E:'var(--emerald)' };
+  var colors = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
   document.querySelectorAll('#miss-game-btns button').forEach(function(b) {
     var bg = b.getAttribute('data-game');
     b.style.borderColor = bg === g ? colors[g] : 'var(--border)';
