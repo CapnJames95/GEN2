@@ -1345,28 +1345,28 @@
 
   <!-- EV training guide -->
   <div class="ivev-iv-finder">
-    <div class="ivev-iv-finder-title" style="color:#44DD88;">🌱 GEN 3 EV TRAINING REFERENCE</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Key Gen 2 EV sources. All Gen 2 games share the same EV yield system. Pokérus doubles battle EVs.</div>
+    <div class="ivev-iv-finder-title" style="color:#44DD88;">🌱 GEN 2 STAT EXPERIENCE REFERENCE</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Gen 2 uses <strong>Stat Experience</strong>, not EVs. Every defeated Pokémon contributes its base stats to <em>all six</em> of your Pokémon's Stat Exp totals (max 65535 per stat). There are no per-stat splits — but high-base-stat Pokémon give faster Stat Exp gains. Pokérus doubles Stat Exp gained from battle.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;">
       <div>
-        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Attack EVs</div>
-        <div style="line-height:2;color:var(--muted)">Machop / Machoke (1 Atk EV)<br>Geodude / Graveler (1 Def EV)<br>Krabby → 1 Atk<br><strong style="color:var(--text)">Shuckle → 2 Def EV</strong><br>Meditite → 1 Atk</div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">How Stat Exp Works</div>
+        <div style="line-height:2;color:var(--muted)">Each defeated Pokémon adds its <strong style="color:var(--text)">base stats</strong> to your Pokémon's Stat Exp (one pool per stat, max 65535).<br>No per-stat targeting — every battle contributes to every stat.<br>Stat Exp only converts to stat boosts on level-up (or via Rare Candy / Box trick).</div>
       </div>
       <div>
-        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Speed EVs</div>
-        <div style="line-height:2;color:var(--muted)"><strong style="color:var(--text)">Zigzagoon → 1 Spe EV</strong> (best early)<br>Zubat → 1 Spe<br>Tentacool → 1 SpD EV<br>Magikarp → 1 Spe<br>Poochyena → 1 Atk</div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Maxing a Stat</div>
+        <div style="line-height:2;color:var(--muted)">At Lv100 with 65535 Stat Exp: +63 to the stat.<br>Practical cap: defeat enough high-base-stat Pokémon (e.g. Tauros, Chansey, Snorlax, Dragonite).<br><strong style="color:var(--text)">Box trick:</strong> deposit/withdraw to recalculate stats mid-game.</div>
       </div>
       <div>
-        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Vitamins (+10 EVs, max 100)</div>
-        <div style="line-height:2;color:var(--muted)">HP Up → HP · Protein → Atk<br>Iron → Def · Calcium → SpAtk<br>Zinc → SpDef · Carbos → Spe<br><em style="font-size:10px">Vitamins stop working once stat EVs hit 100</em></div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Vitamins (+2560 Stat Exp, cap 25600)</div>
+        <div style="line-height:2;color:var(--muted)">HP Up → HP · Protein → Atk<br>Iron → Def · Calcium → SpAtk<br>Zinc → SpDef · Carbos → Spe<br><em style="font-size:10px">Vitamins stop once a stat reaches 25600 Stat Exp (10 per stat).</em></div>
       </div>
       <div>
-        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Sp.Atk EVs</div>
-        <div style="line-height:2;color:var(--muted)">Gastly / Haunter → 1 SpA<br>Abra → 1 SpA<br>Ralts → 1 SpA<br><strong style="color:var(--text)">Staryu → 1 SpA EV</strong><br>Kadabra → 2 SpA</div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Best Stat Exp Farms</div>
+        <div style="line-height:2;color:var(--muted)"><strong style="color:var(--text)">Chansey</strong> (Routes 13–15) — huge HP base<br><strong style="color:var(--text)">Tauros</strong> — high Atk/Spe<br><strong style="color:var(--text)">Snorlax</strong> — all-rounder<br><strong style="color:var(--text)">Elite Four loops</strong> — best post-game</div>
       </div>
     </div>
     <div class="ivev-note ivev-note-orange" style="margin-top:12px;margin-bottom:0">
-      <strong>Gen 2 EV cap quirk:</strong> In Gen 2, EVs are stored as a single byte per stat (0–255). The stat formula divides EVs by 4 (flooring), so 252 and 253 give the same result. Having 252 EVs in one stat and 252 in another uses 504 of the 510 total, leaving 6 for a third stat — which gives +1 to that stat. This is the origin of the "252/252/6" spread competitive players use in Gen 2.
+      <strong>Gen 2 Stat Exp quirk:</strong> The Stat Exp bonus is <code>floor(sqrt(StatExp)) / 4</code>, then added before the level multiplier. Because the bonus is square-rooted, the first few thousand Stat Exp matter much more than the last — getting to ~25,000 is most of the practical benefit. There's no equivalent to a "252/252/6" EV split in Gen 2; instead, you simply battle anything for general gains, and use vitamins to top off specific stats.
     </div>
   </div>
 
@@ -1920,16 +1920,16 @@
       <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7;">All Pokémon that evolve via trading in Gen 2, including what held item is required and where to obtain it. Pokémon that require trading can only be obtained by linking two GBA systems or using an emulator link cable.</div>
 
       <div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;">
-        <strong style="color:var(--fire);">Link Cable Required:</strong> Gen 2 trades require two GBA systems + a Game Boy Advance Link Cable (or a GCN–GBA cable for some interactions). Alternatively, use a single emulator with two ROM instances and a virtual link cable (supported in VBA-M, mGBA, etc.).
+        <strong style="color:var(--fire);">Link Cable Required:</strong> Gen 2 trades require two Game Boy / Game Boy Color systems + a Game Link Cable. Alternatively, use a single emulator with two ROM instances and a virtual link cable (supported in BGB, mGBA, SameBoy, etc.).
       </div>
 
       <!-- Gen 2 possible trades -->
-      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin-bottom:12px;">POSSIBLE IN GEN 3 GBA GAMES</div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin-bottom:12px;">POSSIBLE IN GEN 2 GBC GAMES</div>
       <div id="tradeevo-gen2"></div>
 
-      <!-- Gen 4+ only reference -->
-      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:24px 0 12px;">GEN 4+ ONLY (NOT POSSIBLE IN GEN 3)</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">These trade evolutions were introduced or require Pokémon Colosseum / Gen 4 games. Listed here for reference when planning a living Dex.</div>
+      <!-- Gen 3+ only reference -->
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:24px 0 12px;">GEN 3+ ONLY (NOT POSSIBLE IN GEN 2)</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">These trade evolutions were introduced in later generations. Listed here for reference when planning a multi-gen living Dex.</div>
       <div id="tradeevo-gen4"></div>
 
       <!-- Item location guide -->

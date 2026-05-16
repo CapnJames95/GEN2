@@ -9419,52 +9419,47 @@ var OPT_ITEM_RATE_HINTS = {
 
 var OPT_ITEM_OVERRIDES = {
   'leftovers': [
-    { games:['FR','LG'], title:'Repeatable hidden item', location:'S.S. Anne kitchen', method:'Hidden item', heldRate:100, encounterRate:100, note:'Best guaranteed Leftovers route if you have post-game S.S. Anne access.' }
+    { games:['FR','LG','E'], title:'Snorlax held item', location:'Route 11 (Kanto) — Snorlax', method:'Static catch', heldRate:100, encounterRate:100, note:'The Route 11 Snorlax (Pokéflute) is holding a Leftovers in Gen 2.' }
   ],
   'metal coat': [
+    { games:['FR','LG','E'], title:'Magnemite held item', location:'Magnemite swarms / Power Plant', method:'Wild held', heldRate:25, encounterRate:50, note:'Steel Coat in Gen 2; Magnemite/Magneton carry it ~25%.' }
   ],
   'up-grade': [
-    { games:['FR','LG'], title:'Guaranteed item', location:'Silph Co. 5F', method:'Floor item', heldRate:100, encounterRate:100, note:'One-time but immediate.' },
-    { games:['R','S','E'], title:'Guaranteed item', location:'Mossdeep Space Center Pokemaniac', method:'Gift', heldRate:100, encounterRate:100, note:'No farming required.' }
+    { games:['FR','LG','E'], title:'Goldenrod gift', location:'Goldenrod City — scientist', method:'Gift', heldRate:100, encounterRate:100, note:'One-time gift after Mahogany Rocket arc.' }
   ],
   "king's rock": [
-    { games:['R','S','E'], title:'Guaranteed item', location:'Shoal Cave low tide', method:'Floor item', heldRate:100, encounterRate:100, note:'Best if you can visit at low tide.' }
+    { games:['FR','LG','E'], title:'Slowpoke held item', location:'Slowpoke Well / Surf Route 32', method:'Wild held', heldRate:5, encounterRate:50, note:'Wild Slowpoke/Slowbro carry King\'s Rock ~5% in Gen 2.' }
   ],
   'lucky egg': [
-    { games:['R','S','E'], title:'Unavailable in wild Johto', location:'Trade from FR/LG only', method:'Trade', heldRate:0, encounterRate:0, note:'RSE does not have a native Lucky Egg hunt.' }
+    { games:['FR','LG','E'], title:'Chansey held item', location:'Routes 13–15 (Kanto) — Chansey', method:'Wild held', heldRate:5, encounterRate:5, note:'Wild Chansey carries Lucky Egg ~5% — bring Thief / Covet.' }
   ]
 };
 
 var OPT_EV_SPOTS = {
   HP: [
-    { games:['R','S','E'], place:'Rusturf Tunnel', targets:'Whismur', yield:'1 HP EV', why:'Clean single-target HP grinding in early Johto.' },
-    { games:['FR','LG'], place:'Seafoam Islands', targets:'Slowpoke', yield:'1 HP EV', why:'One of the cleaner repeatable HP options in Kanto.' }
+    { games:['FR','LG','E'], place:'Routes 13–15 (Kanto)', targets:'Chansey', yield:'Huge HP Stat Exp', why:'Highest HP base stat farm in Gen 2 — also drops Lucky Egg.' },
+    { games:['FR','LG','E'], place:'Route 11 / Snorlax', targets:'Snorlax (static)', yield:'Massive Stat Exp', why:'Single one-shot grant from defeating Snorlax.' }
   ],
   Atk: [
-    { games:['R','S','E'], place:'Route 101 / 102', targets:'Poochyena', yield:'1 Attack EV', why:'Fast early-game Attack grinding with common encounters.' },
-    { games:['FR','LG'], place:'Route 22 / Rock Tunnel', targets:'Mankey / Machop', yield:'1 Attack EV', why:'Simple, accessible Attack training before post-game.' }
+    { games:['FR','LG','E'], place:'Route 14 / Rock Tunnel', targets:'Tauros / Machoke', yield:'High Atk Stat Exp', why:'Strong Attack base stats for Stat Exp grinding.' }
   ],
   Def: [
-    { games:['R','S','E'], place:'Granite Cave', targets:'Geodude / Aron', yield:'1 Defense EV', why:'Very stable Defense training with high encounter density.' },
-    { games:['FR','LG'], place:'Mt. Moon / Rock Tunnel', targets:'Geodude / Onix', yield:'1 Defense EV', why:'Classic Kanto Defense grind route.' }
+    { games:['FR','LG','E'], place:'Union Cave / Mt. Mortar', targets:'Geodude / Graveler', yield:'Def Stat Exp', why:'High encounter density of Rock-types with strong Defense.' }
   ],
   SpA: [
-    { games:['R','S','E'], place:'Route 113', targets:'Spinda', yield:'1 Sp. Atk EV', why:'Easy overworld access and no Surf requirement.' },
-    { games:['FR','LG'], place:'Pokémon Tower', targets:'Gastly / Haunter', yield:'1-2 Sp. Atk EVs', why:'Reliable special-attacker grind with strong density.' }
+    { games:['FR','LG','E'], place:'Saffron — Mr. Psychic area', targets:'Drowzee / Hypno', yield:'SpA Stat Exp', why:'Reliable Special-Attack grind in Kanto.' }
   ],
   SpD: [
-    { games:['R','S','E'], place:'Any Surf route', targets:'Tentacool / Tentacruel', yield:'1-2 Sp. Def EVs', why:'One of the cleanest Sp. Def grinds in Gen 2.' },
-    { games:['FR','LG'], place:'Routes 19-21 Surf', targets:'Tentacool / Tentacruel', yield:'1-2 Sp. Def EVs', why:'Convenient Kanto surf route with steady Sp. Def gains.' }
+    { games:['FR','LG','E'], place:'Any Surf route', targets:'Tentacool / Tentacruel', yield:'SpD Stat Exp', why:'Very accessible Special Defense grind.' }
   ],
   Spe: [
-    { games:['R','S','E'], place:'Granite Cave / Old Rod anywhere', targets:'Zubat / Magikarp', yield:'1 Speed EV', why:'Very fast Speed farming from common low-bulk targets.' },
-    { games:['FR','LG'], place:'Mt. Moon / Diglett\'s Cave', targets:'Zubat / Diglett', yield:'1 Speed EV', why:'Accessible Speed routes without post-game setup.' }
+    { games:['FR','LG','E'], place:'Caves (Old Rod / Zubat)', targets:'Zubat / Magikarp', yield:'Spe Stat Exp', why:'Fast Speed Stat Exp from low-bulk targets.' }
   ]
 };
 
 function optResolveGames() {
   var sel = OPT_GAME === 'AUTO' ? (GAME === 'all' ? 'all' : GAME) : OPT_GAME;
-  if (sel === 'all') return ['FR','LG','R','S','E'];
+  if (sel === 'all') return ['FR','LG','E'];
   return [sel];
 }
 
@@ -9890,11 +9885,16 @@ function easyDexTermsFromTitle(title) {
   if (/Power Plant/i.test(clean)) terms.push('Kanto Power Plant');
   if (/Pokemon Mansion/i.test(clean)) terms.push('Pokemon Mansion');
   if (/Mt\.?\s*Moon/i.test(clean)) terms.push('Mt. Moon');
-  if (/Mt\.?\s*Chimney/i.test(clean)) terms.push('Mt. Chimney');
-  if (/Mt\.?\s*Pyre/i.test(clean)) terms.push('Mt. Pyre');
+  if (/Mt\.?\s*Mortar/i.test(clean)) terms.push('Mt. Mortar');
+  if (/Mt\.?\s*Silver/i.test(clean)) terms.push('Mt. Silver');
+  if (/Ice Path/i.test(clean)) terms.push('Ice Path');
+  if (/Whirl Islands/i.test(clean)) terms.push('Whirl Islands');
+  if (/Tin Tower|Bell Tower/i.test(clean)) terms.push('Tin Tower');
+  if (/Burned Tower/i.test(clean)) terms.push('Burned Tower');
+  if (/Dragon'?s Den/i.test(clean)) terms.push('Dragon\'s Den');
+  if (/Ruins of Alph/i.test(clean)) terms.push('Ruins of Alph');
   if (/Safari Zone/i.test(clean)) terms.push('Safari Zone');
   if (/Victory Road/i.test(clean)) terms.push('Victory Road');
-  if (/Abandoned Ship/i.test(clean)) terms.push('Abandoned Ship');
   return easyDexUnique(terms);
 }
 
@@ -12965,7 +12965,7 @@ function buildNpcTradesPage() {
     + '<strong style="color:var(--game-color,var(--gold))">Lucky Egg OT trick:</strong> Traded Pokémon (OT ≠ yours) gain 1.5× EXP. '
     + 'If you receive a Pokémon via NPC trade, its OT will never match yours — it always gets the EXP boost. '
     + 'Pokémon received from NPC trades also gain friendship faster, which can be useful for happiness evolutions. '
-    + 'The Haunter trade in Mossdeep is a trap — it does not evolve into Gengar on trade with an NPC.'
+    + 'Note: NPC-traded Pokémon do <em>not</em> trigger trade-evolutions — they keep their original form.'
     + '</div>'
     + '</div>';
 
