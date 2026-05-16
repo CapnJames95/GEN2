@@ -1211,47 +1211,6 @@
         <input class="ivev-inp" id="ivev-level" type="number" min="1" max="100" value="50" style="width:52px" oninput="ivevUpdate()">
       </div>
       <div class="ivev-ctrl-group">
-        <label class="ivev-ctrl-label">Nature</label>
-        <select class="ivev-select" id="ivev-nature-sel" onchange="ivevUpdate()">
-          <option value="neutral">Neutral</option>
-          <optgroup label="+ Attack / − ?">
-            <option value="hardy">Hardy (+Atk −Atk)</option>
-            <option value="lonely">Lonely (+Atk −Def)</option>
-            <option value="brave">Brave (+Atk −Spe)</option>
-            <option value="adamant">Adamant (+Atk −SpA)</option>
-            <option value="naughty">Naughty (+Atk −SpD)</option>
-          </optgroup>
-          <optgroup label="+ Defense / − ?">
-            <option value="bold">Bold (+Def −Atk)</option>
-            <option value="docile">Docile (+Def −Def)</option>
-            <option value="relaxed">Relaxed (+Def −Spe)</option>
-            <option value="impish">Impish (+Def −SpA)</option>
-            <option value="lax">Lax (+Def −SpD)</option>
-          </optgroup>
-          <optgroup label="+ Sp.Atk / − ?">
-            <option value="modest">Modest (+SpA −Atk)</option>
-            <option value="mild">Mild (+SpA −Def)</option>
-            <option value="quiet">Quiet (+SpA −Spe)</option>
-            <option value="bashful">Bashful (+SpA −SpA)</option>
-            <option value="rash">Rash (+SpA −SpD)</option>
-          </optgroup>
-          <optgroup label="+ Sp.Def / − ?">
-            <option value="calm">Calm (+SpD −Atk)</option>
-            <option value="gentle">Gentle (+SpD −Def)</option>
-            <option value="sassy">Sassy (+SpD −Spe)</option>
-            <option value="careful">Careful (+SpD −SpA)</option>
-            <option value="quirky">Quirky (+SpD −SpD)</option>
-          </optgroup>
-          <optgroup label="+ Speed / − ?">
-            <option value="timid">Timid (+Spe −Atk)</option>
-            <option value="hasty">Hasty (+Spe −Def)</option>
-            <option value="jolly">Jolly (+Spe −SpA)</option>
-            <option value="naive">Naive (+Spe −SpD)</option>
-            <option value="serious">Serious (+Spe −Spe)</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="ivev-ctrl-group">
         <label class="ivev-ctrl-label" style="color:#44DD88;">Pokérus</label>
         <button class="ivev-toggle" id="ivev-pokerus" onclick="ivevTogglePokerus(this)">OFF</button>
       </div>
@@ -1268,15 +1227,15 @@
     </div>
   </div>
 
-  <!-- Controls: EV total bar -->
+  <!-- Controls: total Stat Exp bar -->
   <div class="ivev-ev-total" id="ivev-ev-total">
-    <span class="ivev-ev-label" style="color:var(--muted)">Total EVs:</span>
+    <span class="ivev-ev-label" style="color:var(--muted)">Total Stat Exp:</span>
     <div class="ivev-ev-bar-wrap">
       <div class="ivev-ev-bar-fill" id="ivev-ev-bar" style="width:0%;background:#44DD88;"></div>
     </div>
-    <span class="ivev-ev-label" id="ivev-ev-count" style="color:#44DD88">0 / 510</span>
-    <button onclick="ivevClearEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="this.style.borderColor='var(--fire)';this.style.color='var(--fire)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">CLEAR EVs</button>
-    <button onclick="ivevOptimalEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid color-mix(in srgb,var(--game-color,var(--gold)) 40%,transparent);background:color-mix(in srgb,var(--game-color,var(--gold)) 6%,transparent);color:var(--game-color,var(--gold));cursor:pointer;transition:all 0.12s;">AUTO 252/252</button>
+    <span class="ivev-ev-label" id="ivev-ev-count" style="color:#44DD88">0 / 393,210 Stat Exp</span>
+    <button onclick="ivevClearEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="this.style.borderColor='var(--fire)';this.style.color='var(--fire)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">CLEAR</button>
+    <button onclick="ivevOptimalEVs()" style="font-size:9px;font-weight:800;padding:4px 9px;border-radius:4px;border:1px solid color-mix(in srgb,var(--game-color,var(--gold)) 40%,transparent);background:color-mix(in srgb,var(--game-color,var(--gold)) 6%,transparent);color:var(--game-color,var(--gold));cursor:pointer;transition:all 0.12s;">MAX ALL</button>
   </div>
 
   <!-- Main stat grid -->
@@ -1284,18 +1243,17 @@
     <!-- Headers -->
     <div class="ivev-col-header stat-h">STAT</div>
     <div class="ivev-col-header">BASE</div>
-    <div class="ivev-col-header">IV <span style="font-weight:400;opacity:0.6">(0–31)</span></div>
-    <div class="ivev-col-header">EV <span style="font-weight:400;opacity:0.6">(0–252)</span></div>
-    <div class="ivev-col-header">NATURE</div>
+    <div class="ivev-col-header">DV <span style="font-weight:400;opacity:0.6">(0–15)</span></div>
+    <div class="ivev-col-header">STAT EXP <span style="font-weight:400;opacity:0.6">(0–65535)</span></div>
     <div class="ivev-col-header stat-h">RESULT</div>
-    <div class="ivev-col-header">RANGE</div>
+    <div class="ivev-col-header">BAR</div>
     <!-- Stat rows injected by JS -->
   </div>
 
-  <!-- IV Finder -->
+  <!-- DV Finder -->
   <div class="ivev-iv-finder">
-    <div class="ivev-iv-finder-title">🔍 IV FINDER — What IVs give a specific stat value?</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7;">Enter an observed in-game stat value to find the possible IV range. Works best at level 50 or 100.</div>
+    <div class="ivev-iv-finder-title">🔍 DV FINDER — What DVs give a specific stat value?</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7;">Enter an observed in-game stat value to find the possible DV (0–15) range. Most accurate at level 50 or 100 with known Stat Exp.</div>
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px;">
       <div id="ivf-col-hp"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">HP</label><input class="ivev-inp" id="ivf-hp" type="number" placeholder="—" oninput="ivefFind()"></div>
       <div id="ivf-col-atk"><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">ATK</label><input class="ivev-inp" id="ivf-atk" type="number" placeholder="—" oninput="ivefFind()"></div>
@@ -1306,7 +1264,7 @@
     </div>
     <div style="margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
       <div class="ivev-ctrl-group"><label class="ivev-ctrl-label">Level</label><input class="ivev-inp" id="ivf-level" type="number" value="50" min="1" max="100" style="width:52px" oninput="ivefFind()"></div>
-      <div class="ivev-ctrl-group"><label class="ivev-ctrl-label">EVs (each stat)</label><input class="ivev-inp" id="ivf-ev" type="number" value="0" min="0" max="252" style="width:60px" oninput="ivefFind()"></div>
+      <div class="ivev-ctrl-group"><label class="ivev-ctrl-label">Stat Exp (each)</label><input class="ivev-inp" id="ivf-ev" type="number" value="0" min="0" max="65535" style="width:72px" oninput="ivefFind()"></div>
     </div>
     <div id="ivf-results"></div>
   </div>
@@ -1316,28 +1274,25 @@
   <div class="ivev-iv-finder">
     <div class="ivev-iv-finder-title">⚡ HIDDEN POWER CALCULATOR</div>
     <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
-      In Gen 2, Hidden Power's <strong>type</strong> and <strong>power</strong> are determined entirely by a Pokémon's IVs.
-      Enter IVs below (or click <em>Copy from IV Calc</em> to use the values above).
+      In Gen 2, Hidden Power's <strong>type</strong> and <strong>power</strong> are determined entirely by a Pokémon's DVs.
+      Gen 2 only stores four DVs (Atk / Def / Spe / Special) — the HP DV is derived from the LSBs of the others.
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
-      <button onclick="hpCopyFromCalc()" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all 0.12s;" onmouseover="var _gc=gameColor();this.style.borderColor=_gc;this.style.color=_gc" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⬆ Copy IVs from Calculator</button>
-      <button onclick="hpSetIVs(31,31,31,30,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(255,107,53,0.4);background:rgba(255,107,53,0.05);color:var(--fire);cursor:pointer;" title="Fire: 31/31/31/30/31/30">Fire preset</button>
-      <button onclick="hpSetIVs(31,31,31,31,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(27,143,232,0.4);background:rgba(27,143,232,0.05);color:#1B8FE8;cursor:pointer;" title="Ice: 31/31/31/31/31/30">Ice preset</button>
-      <button onclick="hpSetIVs(31,30,31,30,31,30)" style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(80,56,232,0.4);background:rgba(80,56,232,0.05);color:#5038E8;cursor:pointer;" title="Dragon: 31/30/31/30/31/30">Dragon preset</button>
+      <button onclick="hpSetIVs(15,13,15,15)"  style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(255,107,53,0.4);background:rgba(255,107,53,0.05);color:var(--fire);cursor:pointer;" title="Fire — Atk 15 / Def 13 / Spe 15 / Spc 15">Fire preset</button>
+      <button onclick="hpSetIVs(15,13,15,14)"  style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(27,143,232,0.4);background:rgba(27,143,232,0.05);color:#1B8FE8;cursor:pointer;" title="Ice — Atk 15 / Def 13 / Spe 15 / Spc 14">Ice preset</button>
+      <button onclick="hpSetIVs(14,14,15,15)"  style="font-size:9px;font-weight:800;padding:5px 10px;border-radius:4px;border:1px solid rgba(80,56,232,0.4);background:rgba(80,56,232,0.05);color:#5038E8;cursor:pointer;" title="Dragon — Atk 14 / Def 14 / Spe 15 / Spc 15">Dragon preset</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;">
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">HP</label><input class="ivev-inp" id="hp-iv-0" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">ATK</label><input class="ivev-inp" id="hp-iv-1" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">DEF</label><input class="ivev-inp" id="hp-iv-2" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.ATK</label><input class="ivev-inp" id="hp-iv-3" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SP.DEF</label><input class="ivev-inp" id="hp-iv-4" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
-      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SPEED</label><input class="ivev-inp" id="hp-iv-5" type="number" min="0" max="31" value="31" oninput="calcHP()"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">ATK DV</label><input class="ivev-inp" id="hp-iv-1" type="number" min="0" max="15" value="15" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">DEF DV</label><input class="ivev-inp" id="hp-iv-2" type="number" min="0" max="15" value="15" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SPEED DV</label><input class="ivev-inp" id="hp-iv-5" type="number" min="0" max="15" value="15" oninput="calcHP()"></div>
+      <div><label style="font-size:9px;font-weight:800;color:var(--game-color,var(--gold));display:block;margin-bottom:4px">SPECIAL DV</label><input class="ivev-inp" id="hp-iv-3" type="number" min="0" max="15" value="15" oninput="calcHP()"></div>
     </div>
     <div id="hp-result" style="padding:14px 16px;background:var(--darker);border-radius:6px;font-size:13px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <span style="color:var(--muted);font-style:italic;font-size:12px;">Enter IVs above to calculate Hidden Power type and power.</span>
+      <span style="color:var(--muted);font-style:italic;font-size:12px;">Enter DVs above to calculate Hidden Power type and power.</span>
     </div>
     <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7;">
-      <strong>Max power of 70</strong> requires all IVs to be odd-numbered after the bit calculation. Most competitive spreads aim for HP 70.
+      <strong>Max power of 70</strong> requires all four DVs to be ≥8 and Special DV mod 4 = 3 (so DV 15 or 11).
       <strong>Note:</strong> In Gen 2, Hidden Power's base power ranges from 31–70 (unlike Gen 6+ which fixed it at 60).
       The type cycles through 16 types (not Normal).
     </div>
@@ -1741,7 +1696,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:800px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">EXPERIENCE CALCULATOR</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">EXP to next level, total EXP, growth group lookup, and Rare Candy planner for all 386 Gen 2 Pokémon.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">EXP to next level and growth-group lookup for any of the 251 Gen-2 Pokémon. Includes Lucky Egg (×1.5) and Traded-OT (×1.5) modifiers.</div>
       <div id="expcalc-content"></div>
     </div>
   </div>

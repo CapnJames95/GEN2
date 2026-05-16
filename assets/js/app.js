@@ -6463,8 +6463,11 @@ var NATURE_TABLE = {
 
 var IVEV_POKE = null;
 var IVEV_POKERUS = false;
-var IVEV_IVS  = [31,31,31,31,31,31];
-var IVEV_EVS  = [0,0,0,0,0,0];
+// Gen 2: DVs 0–15 per stat (HP DV is derived from LSBs of the other four).
+// SpA and SpD share one "Special" DV; we store it in both slots for display.
+var IVEV_IVS  = [15,15,15,15,15,15];          // treated as DVs
+var IVEV_EVS  = [0,0,0,0,0,0];                // treated as Stat Experience (0–65535)
+var IVEV_STATEXP_MAX = 65535;
 
 // ── Pokémon search ──────────────────────────────────────────
 function ivevPokeSearch(val) {
@@ -6531,9 +6534,8 @@ function ivevRebuildGrid() {
       +'<span class="ivev-cell-label" style="color:'+IVEV_STAT_COLS[i]+'">'+name+'</span>'
       +'</div>'
       +'<div class="ivev-cell ivev-cell-base">'+base+'</div>'
-      +'<div class="ivev-cell"><input class="ivev-inp" id="ivev-iv-'+i+'" type="number" min="0" max="31" value="'+IVEV_IVS[i]+'" oninput="ivevIVChange('+i+',this)"></div>'
-      +'<div class="ivev-cell"><input class="ivev-inp" id="ivev-ev-'+i+'" type="number" min="0" max="'+(isHP?252:252)+'" value="'+IVEV_EVS[i]+'" oninput="ivevEVChange('+i+',this)"></div>'
-      +'<div class="ivev-cell" id="ivev-nat-'+i+'" style="font-size:11px;font-weight:800;color:var(--muted)">×1.0</div>'
+      +'<div class="ivev-cell"><input class="ivev-inp" id="ivev-iv-'+i+'" type="number" min="0" max="15" value="'+IVEV_IVS[i]+'"'+(isHP?' readonly title="HP DV is derived from the LSBs of Atk/Def/Spe/Special"':'')+' oninput="ivevIVChange('+i+',this)"></div>'
+      +'<div class="ivev-cell"><input class="ivev-inp" id="ivev-ev-'+i+'" type="number" min="0" max="65535" value="'+IVEV_EVS[i]+'" oninput="ivevEVChange('+i+',this)"></div>'
       +'<div class="ivev-cell ivev-result-cell" id="ivev-res-'+i+'" style="color:'+IVEV_STAT_COLS[i]+'">—</div>'
       +'<div class="ivev-bar-cell" id="ivev-bar-cell-'+i+'"><div class="ivev-stat-bar-wrap"><div class="ivev-stat-bar" id="ivev-bar-'+i+'" style="width:0%;background:'+IVEV_STAT_COLS[i]+'"></div></div></div>';
   }).join('');
@@ -6542,24 +6544,32 @@ function ivevRebuildGrid() {
   grid.innerHTML =
     '<div class="ivev-col-header stat-h">STAT</div>'
     +'<div class="ivev-col-header">BASE</div>'
-    +'<div class="ivev-col-header">IV <span style="font-weight:400;opacity:0.6">(0–31)</span></div>'
-    +'<div class="ivev-col-header">EV <span style="font-weight:400;opacity:0.6">(0–252)</span></div>'
-    +'<div class="ivev-col-header">NATURE</div>'
+    +'<div class="ivev-col-header">DV <span style="font-weight:400;opacity:0.6">(0–15)</span></div>'
+    +'<div class="ivev-col-header">STAT EXP <span style="font-weight:400;opacity:0.6">(0–65535)</span></div>'
     +'<div class="ivev-col-header stat-h">RESULT</div>'
     +'<div class="ivev-col-header">BAR</div>'
     + statRowsHtml;
 }
 
 function ivevIVChange(i, inp) {
-  var v = Math.max(0, Math.min(31, parseInt(inp.value)||0));
+  if (i === 0) return; // HP DV is derived, not editable
+  var v = Math.max(0, Math.min(15, parseInt(inp.value)||0));
   IVEV_IVS[i] = v;
+  // SpA and SpD share one DV in Gen 2 — mirror the value
+  if (i === 3) { IVEV_IVS[4] = v; var s4=document.getElementById('ivev-iv-4'); if(s4) s4.value=v; }
+  if (i === 4) { IVEV_IVS[3] = v; var s3=document.getElementById('ivev-iv-3'); if(s3) s3.value=v; }
+  // Derive HP DV from LSBs of Atk/Def/Spe/Special
+  IVEV_IVS[0] = ((IVEV_IVS[1]&1)<<3) | ((IVEV_IVS[2]&1)<<2) | ((IVEV_IVS[5]&1)<<1) | (IVEV_IVS[3]&1);
+  var s0=document.getElementById('ivev-iv-0'); if(s0) s0.value=IVEV_IVS[0];
   ivevUpdate();
 }
 
 function ivevEVChange(i, inp) {
-  var v = Math.max(0, Math.min(255, parseInt(inp.value)||0));
+  var v = Math.max(0, Math.min(IVEV_STATEXP_MAX, parseInt(inp.value)||0));
   IVEV_EVS[i] = v;
-  inp.classList.toggle('over-cap', v > 252);
+  // SpA and SpD share one Stat Exp pool in Gen 2
+  if (i === 3) { IVEV_EVS[4] = v; var s4=document.getElementById('ivev-ev-4'); if(s4) s4.value=v; }
+  if (i === 4) { IVEV_EVS[3] = v; var s3=document.getElementById('ivev-ev-3'); if(s3) s3.value=v; }
   ivevUpdate();
 }
 
@@ -6579,15 +6589,9 @@ function ivevClearEVs() {
 }
 
 function ivevOptimalEVs() {
-  // Set first boosted stat and speed to 252, leftover 6 to HP
-  var natureKey = document.getElementById('ivev-nature-sel').value;
-  var nat = NATURE_TABLE[natureKey]||{b:-1,l:-1};
-  IVEV_EVS = [0,0,0,0,0,0];
-  // 252 in boosted stat, 252 in Speed, 6 in HP
-  var boostIdx = nat.b >= 0 ? nat.b : 0; // Atk by default
-  IVEV_EVS[boostIdx] = 252;
-  IVEV_EVS[5] = 252; // Speed
-  if (IVEV_EVS[0] === 0) IVEV_EVS[0] = 6; // HP remainder
+  // Gen 2: there's no per-stat split — max Stat Exp is 65535 in every stat,
+  // with no aggregate cap. "Optimal" therefore means max everything.
+  IVEV_EVS = [IVEV_STATEXP_MAX,IVEV_STATEXP_MAX,IVEV_STATEXP_MAX,IVEV_STATEXP_MAX,IVEV_STATEXP_MAX,IVEV_STATEXP_MAX];
   for (var i=0;i<6;i++){
     var inp=document.getElementById('ivev-ev-'+i);
     if(inp) inp.value=IVEV_EVS[i];
@@ -6595,38 +6599,23 @@ function ivevOptimalEVs() {
   ivevUpdate();
 }
 
-// ── Stat calculation ────────────────────────────────────────
-function ivevCalcStat(base, level, iv, ev, natureMult, isHP) {
+// ── Stat calculation (Gen 2) ────────────────────────────────
+// HP = floor( ((Base + DV) * 2 + floor(sqrt(StatExp))/4) * Level / 100 ) + Level + 10
+// Other = floor( ((Base + DV) * 2 + floor(sqrt(StatExp))/4) * Level / 100 ) + 5
+// No Natures in Gen 2.
+function ivevCalcStat(base, level, dv, statExp, _natureMult, isHP) {
   base = parseInt(base)||0;
   level = parseInt(level)||50;
-  iv = Math.max(0,Math.min(31,parseInt(iv)||0));
-  ev = Math.max(0,Math.min(255,parseInt(ev)||0));
-  natureMult = parseFloat(natureMult)||1.0;
-  if (isHP) {
-    return Math.floor((2*base + iv + Math.floor(ev/4)) * level/100) + level + 10;
-  }
-  return Math.floor((Math.floor((2*base + iv + Math.floor(ev/4)) * level/100) + 5) * natureMult);
+  dv = Math.max(0, Math.min(15, parseInt(dv)||0));
+  statExp = Math.max(0, Math.min(IVEV_STATEXP_MAX, parseInt(statExp)||0));
+  var statExpBonus = Math.floor(Math.floor(Math.sqrt(statExp)) / 4);
+  var core = Math.floor(((base + dv) * 2 + statExpBonus) * level / 100);
+  return isHP ? core + level + 10 : core + 5;
 }
 
-function ivevGetNatureMults() {
-  var key = document.getElementById('ivev-nature-sel').value;
-  var nat = NATURE_TABLE[key]||{b:-1,l:-1};
-  var mults = [1,1,1,1,1,1];
-  // stat indices: HP=0,Atk=1,Def=2,SpA=3,SpD=4,Spe=5
-  // nature indices: 0=Atk,1=Def,2=SpA,3=SpD,4=Spe
-  var nToS = [1,2,3,4,5]; // nature index → stat index
-  if (nat.b >= 0 && nat.b !== nat.l) mults[nToS[nat.b]] = 1.1;
-  if (nat.l >= 0 && nat.b !== nat.l) mults[nToS[nat.l]] = 0.9;
-  return mults;
-}
-
-function ivevGetNatureLabel(statIdx, mults) {
-  var m = mults[statIdx];
-  if (statIdx===0 || m===1.0) return '<span style="color:var(--muted)">×1.0</span>';
-  if (m===1.1) return '<span style="color:#ef5350;font-weight:800">+×1.1</span>';
-  if (m===0.9) return '<span style="color:#64b4ff;font-weight:800">−×0.9</span>';
-  return '×1.0';
-}
+// Natures don't exist in Gen 2 — return all-1.0 so any leftover callers stay safe.
+function ivevGetNatureMults() { return [1,1,1,1,1,1]; }
+function ivevGetNatureLabel() { return ''; }
 
 function ivevUpdate() {
   if (!IVEV_POKE) return;
@@ -6658,16 +6647,17 @@ function ivevUpdate() {
     if (barEl) barEl.style.width = pct+'%';
   }
 
-  // EV total bar
-  var totalCapped = Math.min(totalEV, 510);
-  var pctTotal = Math.round(totalCapped/510*100);
-  var barColor = totalEV > 510 ? '#ef5350' : totalEV === 510 ? 'var(--gold)' : '#44DD88';
+  // Stat Exp total bar — Gen 2 cap is per-stat (65535), not aggregate.
+  // Show the average fill across the six pools instead.
+  var poolMax = IVEV_STATEXP_MAX * 6;
+  var pctTotal = Math.round(totalEV/poolMax*100);
+  var barColor = pctTotal >= 100 ? 'var(--gold)' : '#44DD88';
   var evBar = document.getElementById('ivev-ev-bar');
   var evCount = document.getElementById('ivev-ev-count');
   if (evBar) { evBar.style.width = pctTotal+'%'; evBar.style.background = barColor; }
   if (evCount) {
-    evCount.textContent = totalEV+' / 510';
-    evCount.style.color = totalEV > 510 ? '#ef5350' : totalEV===510 ? 'var(--gold)' : '#44DD88';
+    evCount.textContent = totalEV.toLocaleString() + ' / ' + poolMax.toLocaleString() + ' Stat Exp';
+    evCount.style.color = pctTotal >= 100 ? 'var(--gold)' : '#44DD88';
   }
 
   // Pokérus note
@@ -6692,45 +6682,38 @@ function ivefFind() {
     anyFilled = true;
     var isHP = (i===0);
     var base = IVEV_POKE ? IVEV_POKE.bs[i] : 80;
-    // Find matching IVs
+    // Find matching DVs (Gen 2: 0–15 per stat)
     var matches = [];
-    for (var iv=0;iv<=31;iv++) {
-      var stat = ivefCalcStat(base, level, iv, ev, 1.0, isHP);
-      if (stat === observed) matches.push(iv);
-    }
-    // Check with nature boost/penalty too
-    var matchesBoost=[], matchesPen=[];
-    if (!isHP) {
-      for (var iv2=0;iv2<=31;iv2++) {
-        if (ivefCalcStat(base,level,iv2,ev,1.1,false)===observed) matchesBoost.push(iv2);
-        if (ivefCalcStat(base,level,iv2,ev,0.9,false)===observed) matchesPen.push(iv2);
-      }
+    for (var dv=0;dv<=15;dv++) {
+      var stat = ivefCalcStat(base, level, dv, ev, 1.0, isHP);
+      if (stat === observed) matches.push(dv);
     }
     var rangeStr = matches.length===0 ? '<span style="color:#ef5350">No match</span>'
-      : matches.length===32 ? '<span style="color:var(--muted)">Any IV</span>'
-      : matches[0]===matches[matches.length-1] ? '<span style="color:var(--gold);font-weight:800">IV = '+matches[0]+'</span>'
-      : '<span style="color:var(--gold);font-weight:800">IV '+matches[0]+'–'+matches[matches.length-1]+'</span>';
+      : matches.length===16 ? '<span style="color:var(--muted)">Any DV</span>'
+      : matches[0]===matches[matches.length-1] ? '<span style="color:var(--gold);font-weight:800">DV = '+matches[0]+'</span>'
+      : '<span style="color:var(--gold);font-weight:800">DV '+matches[0]+'–'+matches[matches.length-1]+'</span>';
 
     html += '<div class="ivev-range-row">'
       +'<span class="ivev-range-lbl" style="color:'+IVEV_STAT_COLS[i]+'">'+statNames2[i]+'</span>'
       +'<span style="color:var(--muted);margin-right:8px">'+observed+' →</span>'
       +rangeStr
-      +(matchesBoost.length&&!isHP?' <span style="font-size:9px;color:#ef5350;margin-left:8px">+nature: '+matchesBoost[0]+(matchesBoost.length>1?'–'+matchesBoost[matchesBoost.length-1]:'')+' IV</span>':'')
-      +(matchesPen.length&&!isHP?' <span style="font-size:9px;color:#64b4ff;margin-left:8px">−nature: '+matchesPen[0]+(matchesPen.length>1?'–'+matchesPen[matchesPen.length-1]:'')+' IV</span>':'')
       +'</div>';
   });
 
   html += '</div>';
-  if (!anyFilled) html = '<div style="color:var(--muted);font-size:11px;font-style:italic">Enter observed stat values above to find possible IVs.</div>';
+  if (!anyFilled) html = '<div style="color:var(--muted);font-size:11px;font-style:italic">Enter observed stat values above to find possible DVs.</div>';
 
   document.getElementById('ivf-results').innerHTML = html;
 }
 
-function ivefCalcStat(base, level, iv, ev, nat, isHP) {
+// Gen 2 DV/Stat-Exp formula. `nat` arg kept for callers; ignored (always 1.0).
+function ivefCalcStat(base, level, dv, statExp, nat, isHP) {
   base=parseInt(base)||0; level=parseInt(level)||50;
-  iv=Math.max(0,Math.min(31,iv)); ev=Math.max(0,Math.min(255,parseInt(ev)||0));
-  if (isHP) return Math.floor((2*base+iv+Math.floor(ev/4))*level/100)+level+10;
-  return Math.floor((Math.floor((2*base+iv+Math.floor(ev/4))*level/100)+5)*nat);
+  dv=Math.max(0,Math.min(15,dv));
+  statExp=Math.max(0,Math.min(IVEV_STATEXP_MAX,parseInt(statExp)||0));
+  var bonus = Math.floor(Math.floor(Math.sqrt(statExp))/4);
+  var core = Math.floor(((base+dv)*2 + bonus) * level/100);
+  return isHP ? core + level + 10 : core + 5;
 }
 
 
@@ -6738,21 +6721,30 @@ function ivefCalcStat(base, level, iv, ev, nat, isHP) {
 var HP_TYPES = ['Fighting','Flying','Poison','Ground','Rock','Bug','Ghost','Steel','Fire','Water','Grass','Electric','Psychic','Ice','Dragon','Dark'];
 
 function calcHP() {
-  var ivs = [];
-  for (var i=0;i<6;i++) {
-    var v = parseInt(document.getElementById('hp-iv-'+i).value);
-    if (isNaN(v)||v<0||v>31) v = 31;
-    ivs.push(v);
+  // Gen 2 Hidden Power uses only the four core DVs.
+  // Inputs at hp-iv-1 (Atk), hp-iv-2 (Def), hp-iv-5 (Spe), hp-iv-3 (Special).
+  function getDV(id, def) {
+    var el = document.getElementById(id);
+    var v = el ? parseInt(el.value) : def;
+    if (isNaN(v) || v < 0 || v > 15) v = def;
+    return v;
   }
-  // Type formula: floor(((b0 + 2*b1 + 4*b2 + 8*b3 + 16*b4 + 32*b5) * 15) / 63)
-  // where bN = IV mod 2 (LSB of each IV), order: HP,Atk,Def,Spe,SpA,SpD
-  var bits = [ivs[0]%2, ivs[1]%2, ivs[2]%2, ivs[5]%2, ivs[3]%2, ivs[4]%2];
-  var typeIdx = Math.floor((bits[0]+2*bits[1]+4*bits[2]+8*bits[3]+16*bits[4]+32*bits[5])*15/63);
+  var atk = getDV('hp-iv-1', 15);
+  var def = getDV('hp-iv-2', 15);
+  var spe = getDV('hp-iv-5', 15);
+  var spc = getDV('hp-iv-3', 15);
 
-  // Power formula: floor(((c0 + 2*c1 + 4*c2 + 8*c3 + 16*c4 + 32*c5) * 40) / 63) + 30
-  // where cN = floor(IV/2) mod 2 (bit 1 of each IV), order: HP,Atk,Def,Spe,SpA,SpD
-  var pbits = [Math.floor(ivs[0]/2)%2, Math.floor(ivs[1]/2)%2, Math.floor(ivs[2]/2)%2, Math.floor(ivs[5]/2)%2, Math.floor(ivs[3]/2)%2, Math.floor(ivs[4]/2)%2];
-  var power = Math.floor((pbits[0]+2*pbits[1]+4*pbits[2]+8*pbits[3]+16*pbits[4]+32*pbits[5])*40/63)+30;
+  // Type index (0-15): 4 * (Atk DV mod 4) + (Def DV mod 4)
+  // Type list cycles through the 16 non-Normal types.
+  var typeIdx = 4 * (atk % 4) + (def % 4);
+
+  // Power: bit3 (the "≥8" bit) of each DV, weighted, then * 5 + (Spc % 4), / 2, + 31
+  var w = (spc >> 3) & 1;
+  var x = (spe >> 3) & 1;
+  var y = (def >> 3) & 1;
+  var z = (atk >> 3) & 1;
+  var v = z * 8 + y * 4 + x * 2 + w; // 0–15
+  var power = Math.floor((v * 5 + (spc % 4)) / 2) + 31;
 
   var typeName = HP_TYPES[typeIdx];
   var typeColors = {Fighting:'#B83020',Flying:'#6850C0',Poison:'#8B3099',Ground:'#8B6840',Rock:'#807840',Bug:'#78A810',Ghost:'#4030A0',Steel:'#9898A8',Fire:'#E8501A',Water:'#1B8FE8',Grass:'#3DA83D',Electric:'#D4A800',Psychic:'#D01868',Ice:'#60C8C8',Dragon:'#5038E8',Dark:'#403030'};
@@ -6773,20 +6765,24 @@ function calcHP() {
 }
 
 function hpCopyFromCalc() {
-  for (var i=0;i<6;i++) {
-    var src = document.getElementById('ivev-iv-'+i);
-    var dst = document.getElementById('hp-iv-'+i);
-    if (src && dst) dst.value = src.value || 31;
-  }
+  // Copy the four Gen-2 DVs from the main DV/Stat-Exp grid.
+  // Main grid order: 0=HP (derived), 1=Atk, 2=Def, 3=SpA, 4=SpD, 5=Spe.
+  var map = { 1:'1', 2:'2', 5:'5', 3:'3' };
+  Object.keys(map).forEach(function(idx) {
+    var src = document.getElementById('ivev-iv-'+idx);
+    var dst = document.getElementById('hp-iv-'+map[idx]);
+    if (src && dst) dst.value = src.value || 15;
+  });
   calcHP();
 }
 
-function hpSetIVs(hp,atk,def,spa,spd,spe) {
-  var vals=[hp,atk,def,spa,spd,spe];
-  for(var i=0;i<6;i++){
-    var inp=document.getElementById('hp-iv-'+i);
-    if(inp) inp.value=vals[i];
-  }
+// Order: Atk, Def, Spe, Special (4 Gen-2 DVs only)
+function hpSetIVs(atk, def, spe, spc) {
+  var pairs = { 1:atk, 2:def, 5:spe, 3:spc };
+  Object.keys(pairs).forEach(function(id) {
+    var inp = document.getElementById('hp-iv-'+id);
+    if (inp) inp.value = pairs[id];
+  });
   calcHP();
 }
 
@@ -9033,7 +9029,167 @@ const HATCH_STEPS_DATA = {"1": 5120, "2": 5120, "3": 5120, "4": 5120, "5": 5120,
 // ══════════════════════════════════════════════════════════════════
 var BREED_A = null, BREED_B = null;
 
-function buildBreedCalc() { /* lazy-built on first show */ }
+// ══ EXPERIENCE CALCULATOR (Gen 2) ══════════════════════════════
+// Four growth groups; Gen 2 doesn't use Erratic / Fluctuating.
+var EXP_GROWTH = {
+  fast:        function(L){ return Math.floor(4 * L*L*L / 5); },        // Lv100 = 800,000
+  medium_fast: function(L){ return L*L*L; },                            // Lv100 = 1,000,000
+  medium_slow: function(L){ return Math.max(0, Math.floor(6*L*L*L/5 - 15*L*L + 100*L - 140)); }, // Lv100 = 1,059,860
+  slow:        function(L){ return Math.floor(5 * L*L*L / 4); }         // Lv100 = 1,250,000
+};
+var EXP_GROUP_LABELS = { fast:'Fast', medium_fast:'Medium Fast', medium_slow:'Medium Slow', slow:'Slow' };
+// Per-species growth group — keyed by Pokédex number.
+// Gen 2 = 251 species. Defaults to medium_fast for any Pokémon not listed.
+var EXP_GROUP_OF = {
+  // Starters + final evos
+  1:'medium_slow',2:'medium_slow',3:'medium_slow',
+  4:'medium_slow',5:'medium_slow',6:'medium_slow',
+  7:'medium_slow',8:'medium_slow',9:'medium_slow',
+  152:'medium_slow',153:'medium_slow',154:'medium_slow',
+  155:'medium_slow',156:'medium_slow',157:'medium_slow',
+  158:'medium_slow',159:'medium_slow',160:'medium_slow',
+  // Pseudo-legendaries / slow line
+  147:'slow',148:'slow',149:'slow',
+  246:'slow',247:'slow',248:'slow',
+  // Eeveelutions
+  133:'medium_fast',134:'medium_fast',135:'medium_fast',136:'medium_fast',196:'medium_fast',197:'medium_fast',
+  // Mews / Mewtwo
+  150:'slow',151:'medium_slow',
+  // Legendary birds + beasts + tower duo
+  144:'slow',145:'slow',146:'slow',
+  243:'slow',244:'slow',245:'slow',
+  249:'slow',250:'slow',251:'medium_slow',
+  // Notable Fast group
+  10:'medium_fast',13:'medium_fast',16:'medium_slow', // Caterpie/Weedle med-fast; Pidgey med-slow
+  25:'medium_fast',26:'medium_fast',172:'medium_fast',
+  133:'medium_fast'
+};
+function expGroupFor(num){ return EXP_GROUP_OF[num] || 'medium_fast'; }
+
+function ensureExpCalcPage() {
+  var el = document.getElementById('expcalc-content');
+  if (!el || el.dataset.built === '1') {
+    if (el && el.dataset.built === '1') expCalcUpdate();
+    return;
+  }
+  el.dataset.built = '1';
+  el.innerHTML =
+    '<div class="panel" style="padding:18px;">'
+    + '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px;">'
+    + '<div style="flex:2;min-width:200px;">'
+    +   '<label style="font-size:10px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px;">POKÉMON</label>'
+    +   '<input id="expcalc-poke" placeholder="Type a Pokémon name…" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;" oninput="expCalcUpdate()" list="expcalc-pokelist">'
+    +   '<datalist id="expcalc-pokelist">'
+    +     (POKE||[]).map(function(p){ return '<option value="'+p.name+'">'; }).join('')
+    +   '</datalist>'
+    + '</div>'
+    + '<div><label style="font-size:10px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px;">CURRENT LEVEL</label>'
+    +   '<input id="expcalc-cur" type="number" min="1" max="99" value="5" style="width:76px;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;" oninput="expCalcUpdate()"></div>'
+    + '<div><label style="font-size:10px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px;">TARGET LEVEL</label>'
+    +   '<input id="expcalc-tgt" type="number" min="2" max="100" value="100" style="width:76px;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;" oninput="expCalcUpdate()"></div>'
+    + '<div style="display:flex;gap:6px;align-items:center;">'
+    +   '<label style="font-size:10px;font-weight:700;color:var(--muted);"><input type="checkbox" id="expcalc-egg"  onchange="expCalcUpdate()"> Lucky Egg ×1.5</label>'
+    +   '<label style="font-size:10px;font-weight:700;color:var(--muted);"><input type="checkbox" id="expcalc-trade" onchange="expCalcUpdate()"> Traded ×1.5</label>'
+    + '</div>'
+    + '</div>'
+    + '<div id="expcalc-out" style="font-size:13px;line-height:1.8;color:var(--muted);"></div>'
+    + '<div style="font-size:10px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border);line-height:1.7;">'
+    + '<strong style="color:var(--game-color,var(--gold));">Gen 2 EXP formula:</strong> <code>EXP = (a × b × L) / 7</code> per defeated Pokémon, where <code>a</code> = 1 (wild) or 1.5 (trainer), <code>b</code> = species base EXP yield, <code>L</code> = enemy level. Multipliers stack: Lucky Egg (×1.5) and Traded-OT (×1.5) compound for ×2.25 on a traded Pokémon holding a Lucky Egg.'
+    + '</div>'
+    + '</div>';
+  expCalcUpdate();
+}
+
+function expCalcUpdate() {
+  var nameEl = document.getElementById('expcalc-poke');
+  var curEl  = document.getElementById('expcalc-cur');
+  var tgtEl  = document.getElementById('expcalc-tgt');
+  var eggEl  = document.getElementById('expcalc-egg');
+  var trdEl  = document.getElementById('expcalc-trade');
+  var out    = document.getElementById('expcalc-out');
+  if (!out) return;
+  var name = nameEl ? nameEl.value.trim() : '';
+  var cur  = Math.max(1, Math.min(99, parseInt(curEl && curEl.value) || 5));
+  var tgt  = Math.max(cur+1, Math.min(100, parseInt(tgtEl && tgtEl.value) || 100));
+  var poke = (POKE||[]).find(function(p){ return p.name.toLowerCase() === name.toLowerCase(); });
+  if (!poke) {
+    out.innerHTML = '<em>Pick a Pokémon to see EXP requirements.</em>';
+    return;
+  }
+  var grp = expGroupFor(poke.num);
+  var fn  = EXP_GROWTH[grp];
+  var totalCur = fn(cur);
+  var totalTgt = fn(tgt);
+  var diff = totalTgt - totalCur;
+  var mult = 1.0;
+  if (eggEl && eggEl.checked) mult *= 1.5;
+  if (trdEl && trdEl.checked) mult *= 1.5;
+  var effective = Math.ceil(diff / mult);
+  out.innerHTML =
+    '<div><strong style="color:var(--text);">' + poke.name + '</strong> — growth group: <strong style="color:var(--game-color,var(--gold));">' + EXP_GROUP_LABELS[grp] + '</strong> (Lv100 = ' + fn(100).toLocaleString() + ' EXP)</div>'
+    + '<div style="margin-top:6px;">Lv ' + cur + ' total EXP: <strong>' + totalCur.toLocaleString() + '</strong></div>'
+    + '<div>Lv ' + tgt + ' total EXP: <strong>' + totalTgt.toLocaleString() + '</strong></div>'
+    + '<div style="margin-top:6px;">EXP needed: <strong style="color:var(--game-color,var(--gold));">' + diff.toLocaleString() + '</strong>'
+    + (mult > 1 ? ' &nbsp;|&nbsp; with ×' + mult.toFixed(2) + ' modifier: <strong>' + effective.toLocaleString() + '</strong>' : '')
+    + '</div>';
+}
+
+// ══ BREEDING CALCULATOR (Gen 2) ════════════════════════════════
+// Gen 2 baby Pokémon — these are the ONLY babies in Gen 2.
+// Gen 3+ babies (Wynaut, Bonsly, Mime Jr., Munchlax, Mantyke, Happiny, etc.)
+// do NOT exist here.
+var GEN2_BABIES = [
+  { baby:'Pichu',     babyNum:172, parent:'Pikachu',    parentNum:25,  note:'Breed Pikachu or Raichu with a Ditto.' },
+  { baby:'Cleffa',    babyNum:173, parent:'Clefairy',   parentNum:35,  note:'Breed Clefairy or Clefable with a Ditto.' },
+  { baby:'Igglybuff', babyNum:174, parent:'Jigglypuff', parentNum:39,  note:'Breed Jigglypuff or Wigglytuff with a Ditto.' },
+  { baby:'Tyrogue',   babyNum:236, parent:'Hitmonlee/chan/top', parentNum:106, note:'Breed any Hitmon (lee / chan / top) with a Ditto.' },
+  { baby:'Smoochum',  babyNum:238, parent:'Jynx',       parentNum:124, note:'Breed Jynx with a Ditto.' },
+  { baby:'Elekid',    babyNum:239, parent:'Electabuzz', parentNum:125, note:'Breed Electabuzz with a Ditto.' },
+  { baby:'Magby',     babyNum:240, parent:'Magmar',     parentNum:126, note:'Breed Magmar with a Ditto.' }
+];
+// Egg moves: dad's compatible TM/level-up moves are passed. Light Ball
+// + female Pikachu DOES NOT yet exist (added Gen 4). Gen 2 has no incense babies.
+function buildBreedCalc() {
+  var el = document.getElementById('breed-content');
+  if (!el || el.dataset.built === '1') return;
+  el.dataset.built = '1';
+  el.innerHTML =
+    '<div class="panel" style="padding:18px;">'
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin-bottom:8px;">DAY CARE BASICS</div>'
+    + '<div style="font-size:12px;line-height:1.7;color:var(--muted);margin-bottom:14px;">'
+    + 'Drop two compatible Pokémon at the <strong>Route 34 Day Care</strong> (north of Goldenrod). '
+    + 'Compatible = same Egg Group AND opposite gender, OR one of them is <strong>Ditto</strong>. '
+    + 'Each ~256 steps the Old Man may produce an Egg. The Egg hatches after ~5,120–10,240 steps depending on species. '
+    + '<strong style="color:var(--text);">Egg moves pass from the father.</strong>'
+    + '</div>'
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:18px 0 8px;">GEN-2 BABY POKÉMON (' + GEN2_BABIES.length + ')</div>'
+    + '<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">These are the only baby Pokémon that existed in Gen 2. Wynaut, Bonsly, Mime Jr., Munchlax, Mantyke, Happiny and Riolu were all added in Gen 4 — not here.</div>'
+    + '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+    +   '<thead><tr style="border-bottom:2px solid var(--border);">'
+    +     '<th style="text-align:left;padding:8px 10px;font-family:\'Press Start 2P\',monospace;font-size:6px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">Baby</th>'
+    +     '<th style="text-align:left;padding:8px 10px;font-family:\'Press Start 2P\',monospace;font-size:6px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">Breed With</th>'
+    +     '<th style="text-align:left;padding:8px 10px;font-family:\'Press Start 2P\',monospace;font-size:6px;color:var(--game-color,var(--gold));letter-spacing:0.5px;">How</th>'
+    +   '</tr></thead><tbody>'
+    +   GEN2_BABIES.map(function(b, i) {
+        return '<tr style="' + (i%2 ? 'background:rgba(255,255,255,.02);' : '') + 'border-bottom:1px solid rgba(255,255,255,.04);">'
+          + '<td style="padding:8px 10px;display:flex;align-items:center;gap:8px;">'
+          +   '<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+b.babyNum+'.png" width="32" height="32" style="image-rendering:pixelated;flex-shrink:0;" onerror="this.style.display=\'none\'">'
+          +   '<span class="guide-poke-link" onclick="guideDex(\''+b.baby+'\')">'+b.baby+'</span>'
+          + '</td>'
+          + '<td style="padding:8px 10px;"><span class="guide-poke-link" onclick="guideDex(\''+b.parent.split("/")[0]+'\')">'+b.parent+'</span></td>'
+          + '<td style="padding:8px 10px;color:var(--muted);font-size:11px;">'+b.note+'</td>'
+          + '</tr>';
+      }).join('')
+    +   '</tbody></table>'
+    + '<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));letter-spacing:0.5px;margin:18px 0 8px;">NOTES</div>'
+    + '<div style="font-size:11px;color:var(--muted);line-height:1.8;">'
+    + '• <strong>Tyrogue evolution:</strong> evolves at Lv20 based on Atk vs Def DVs — Hitmonlee (Atk>Def), Hitmonchan (Atk<Def), Hitmontop (Atk=Def).<br>'
+    + '• <strong>Shiny breeding:</strong> if either parent is shiny, odds of a shiny baby jump from 1/8192 to about 1/64 (Shiny breeding chart trick). Most commonly done with a shiny Ditto.<br>'
+    + '• <strong>Egg moves:</strong> only the father can pass moves. Look up a target move on the Moves Dex, then pick a male in the same Egg Group that learns it.<br>'
+    + '• <strong>No Incense items in Gen 2</strong> — those (Sea/Lax/Pure/etc. Incense) are Gen 4+ requirements for the babies of Marill, Wobbuffet, Mr. Mime, Snorlax, Mantine, Chansey, Sudowoodo.'
+    + '</div>'
+    + '</div>';
+}
 
 function breedSearch(side, val) {
   var dd = document.getElementById('breed-' + side + '-dd');
@@ -12297,19 +12453,24 @@ function buildCatchCalcPage() {
   var SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/';
 
   // Ball definitions: name, sprite slug, bonus fn, master flag, note
+  // Gen-2 balls only. Levin/Net/Dive/Nest/Repeat/Timer/Premier/Heal/Luxury
+  // are Gen-3+ and intentionally NOT included.
   var BALLS = [
-    { name:'Poké Ball',    slug:'poke-ball',    master:false, bonus: function(cr,turn,wildLvl){ return 1; } },
-    { name:'Great Ball',   slug:'great-ball',   master:false, bonus: function(cr,turn,wildLvl){ return 1.5; } },
-    { name:'Ultra Ball',   slug:'ultra-ball',   master:false, bonus: function(cr,turn,wildLvl){ return 2; } },
-    { name:'Master Ball',  slug:'master-ball',  master:true,  bonus: function(cr,turn,wildLvl){ return 255; } },
-    { name:'Safari Ball',  slug:'safari-ball',  master:false, bonus: function(cr,turn,wildLvl){ return 1.5; }, note:'Safari Zone only' },
-    { name:'Net Ball',     slug:'net-ball',     master:false, bonus: function(cr,turn,wildLvl){ return 3; },   note:'Water/Bug types ×3, else ×1' },
-    { name:'Dive Ball',    slug:'dive-ball',    master:false, bonus: function(cr,turn,wildLvl){ return 3.5; }, note:'While Surfing/Diving' },
-    { name:'Nest Ball',    slug:'nest-ball',    master:false, bonus: function(cr,turn,wildLvl){ var m = 40 - wildLvl; if (wildLvl >= 40 || m <= 9) m = 10; return m / 10; }, note:'Better at low levels' },
-    { name:'Repeat Ball',  slug:'repeat-ball',  master:false, bonus: function(cr,turn,wildLvl){ return 3; },   note:'If already caught species' },
-    { name:'Timer Ball',   slug:'timer-ball',   master:false, bonus: function(cr,turn,wildLvl){ return Math.min(40, turn + 10) / 10; }, note:'Better with more turns' },
-    { name:'Premier Ball', slug:'premier-ball', master:false, bonus: function(cr,turn,wildLvl){ return 1; },   note:'Same as Poké Ball' },
-    { name:'Luxury Ball',  slug:'luxury-ball',  master:false, bonus: function(cr,turn,wildLvl){ return 1; },   note:'Raises friendship faster' },
+    { name:'Poké Ball',  slug:'poke-ball',  master:false, bonus: function(){ return 1; } },
+    { name:'Great Ball', slug:'great-ball', master:false, bonus: function(){ return 1.5; } },
+    { name:'Ultra Ball', slug:'ultra-ball', master:false, bonus: function(){ return 2; } },
+    { name:'Master Ball',slug:'master-ball',master:true,  bonus: function(){ return 255; } },
+    // ── Apricorn balls (Kurt) ─────────────────────────────────
+    { name:'Fast Ball',  slug:'fast-ball',  master:false, bonus: function(){ return 4; }, note:'×4 only vs Magnemite, Grimer, Tangela & a few other flee-prone species; ×1 otherwise.' },
+    { name:'Friend Ball',slug:'friend-ball',master:false, bonus: function(){ return 1; }, note:'Catch rate unchanged. Caught Pokémon starts at 200 happiness.' },
+    { name:'Heavy Ball', slug:'heavy-ball', master:false, bonus: function(){ return 1; }, note:'Adds a flat bonus to catch rate based on weight (≤102.4kg: −20 · 102.5-204.7: 0 · 204.8-307.1: +20 · 307.2-409.5: +30 · ≥409.6: +40).' },
+    { name:'Level Ball', slug:'level-ball', master:false, bonus: function(cr,turn,wildLvl){ /* approx: assume your Pkmn is double wild lvl */ return wildLvl ? 4 : 1; }, note:'×8 if your Pkmn ≥4× wild lvl, ×4 if ≥2×, ×2 if higher, ×1 if equal/lower.' },
+    { name:'Love Ball',  slug:'love-ball',  master:false, bonus: function(){ return 8; }, note:'×8 only when wild Pokémon is the same species + opposite gender; ×1 otherwise.' },
+    { name:'Lure Ball',  slug:'lure-ball',  master:false, bonus: function(){ return 3; }, note:'×3 only when used on a Pokémon hooked by a rod; ×1 otherwise.' },
+    { name:'Moon Ball',  slug:'moon-ball',  master:false, bonus: function(){ return 4; }, note:'×4 only vs Pokémon that evolve with a Moon Stone (Nidoran lines, Clefairy line, Jigglypuff line); ×1 otherwise.' },
+    { name:'Park Ball',  slug:'park-ball',  master:true,  bonus: function(){ return 255; }, note:'Bug Catching Contest only. Guaranteed catch.' },
+    { name:'Sport Ball', slug:'sport-ball', master:false, bonus: function(){ return 1.5; }, note:'Bug Catching Contest only.' },
+    { name:'Safari Ball',slug:'safari-ball',master:false, bonus: function(){ return 1.5; }, note:'Safari Zone only — and the Safari Zone is closed in original GSC.' }
   ];
 
   var STATUSES = [
@@ -12392,7 +12553,8 @@ function buildCatchCalcPage() {
     'a = ((3×MaxHP − 2×CurrentHP) × CatchRate × BallBonus × StatusBonus) ÷ (3×MaxHP). ',
     'If a ≥ 255: guaranteed catch. Otherwise b = floor(1048560 ÷ ⁴√(16711680 ÷ a)). P(catch) = (b÷65536)⁴.<br>',
     'Status: Sleep/Freeze = ×2 &nbsp;|&nbsp; Paralysis/Burn/Poison = ×1.5 &nbsp;|&nbsp; None = ×1. '
-    + 'Nest Ball bonus = (40 − level)÷10, min 1.0 at level ≥ 31. Timer Ball bonus = min(4, (turns+10)÷10).',
+    + 'Apricorn balls (Fast / Friend / Heavy / Level / Love / Lure / Moon) have conditional bonuses — see each ball\'s tooltip note. '
+    + 'Master Ball and Park Ball (Bug Contest) are guaranteed.',
     '</div>'
   ].join('');
 
@@ -12964,25 +13126,35 @@ function buildHappinessPage() {
   var GAME_COLORS = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
   var GAME_LABELS = { FR:'🌕 Gold', LG:'🪙 Silver', E:'💎 Crystal' };
 
-  // Happiness-evolution Pokémon in Gen 2 (threshold: 220)
-  var HAP_EVOS = [];
-
-  // Happiness methods
-  var METHODS = [
-    { icon:'👣', action:'Walking (every 256 steps)',        gain:'+1',     note:'<span class="guide-item-link" onclick="openItemByName(\'Soothe Bell\')">Soothe Bell</span>: +2 per 256 steps' },
-    { icon:'⬆️', action:'Level up',                         gain:'+2–5',   note:'+5 at base friendship <100, +3 at 100–199, +2 at 200+' },
-    { icon:'💊', action:'Vitamin (HP Up, Iron, etc.)',       gain:'+5',     note:'+3 at 100–199, +2 at 200+' },
-    { icon:'💅', action:'Grooming (Veilstone/Ribbon Syn.)', gain:'+1–5',   note:'Not available in GSC without Eon Ticket events' },
-    { icon:'🍃', action:'EV-reducing Berry (Pomeg etc.)',    gain:'+10',    note:'+5 if friendship ≥200; also reduces EVs' },
-    { icon:'⚔️', action:'Using a move in battle',           gain:'+1',     note:'Applies to moves that explicitly raise friendship (e.g. Return)' },
-    { icon:'💀', action:'Fainting in battle',               gain:'−1',     note:'Avoid letting happiness candidates faint' },
-    { icon:'💊', action:'Bitter medicine (Energy Powder)', gain:'−5',     note:'Energy Root: −10; Revival Herb: −15' },
+  // Happiness-evolution Pokémon in Gen 2 (evolution threshold: 220)
+  // Eevee uses time-of-day, the rest just need ≥220 friendship and a level-up.
+  var HAP_EVOS = [
+    { num:172, name:'Pichu',     evo:'Pikachu',  method:'level up', games:['FR','LG','E'] },
+    { num:173, name:'Cleffa',    evo:'Clefairy', method:'level up', games:['FR','LG','E'] },
+    { num:174, name:'Igglybuff', evo:'Jigglypuff',method:'level up',games:['FR','LG','E'] },
+    { num:175, name:'Togepi',    evo:'Togetic',  method:'level up', games:['FR','LG','E'] },
+    { num:42,  name:'Golbat',    evo:'Crobat',   method:'level up', games:['FR','LG','E'] },
+    { num:113, name:'Chansey',   evo:'Blissey',  method:'level up', games:['FR','LG','E'] },
+    { num:133, name:'Eevee',     evo:'Espeon',   method:'level up — day',   games:['FR','LG','E'] },
+    { num:133, name:'Eevee',     evo:'Umbreon',  method:'level up — night', games:['FR','LG','E'] }
   ];
 
-  // Held items
+  // Happiness methods (Gen 2 / GSC specifics)
+  var METHODS = [
+    { icon:'👣', action:'Walking (every 256 steps)',     gain:'+1',  note:'<span class="guide-item-link" onclick="openItemByName(\'Soothe Bell\')">Soothe Bell</span>: +2 per 256 steps' },
+    { icon:'⬆️', action:'Level up',                      gain:'+5/+3/+2', note:'+5 if friendship <100, +3 at 100–199, +2 at 200+' },
+    { icon:'💊', action:'Vitamin (HP Up, Iron, etc.)',   gain:'+5/+3/+2', note:'Same tiered scaling as level-up' },
+    { icon:'🌿', action:'Haircut — Goldenrod salon',    gain:'+1–5',     note:'Saturday/Sunday only. Small chance for a bigger boost.' },
+    { icon:'🛁', action:'Mt. Moon Square groom (NA)',   gain:'—',        note:'Not in Gen 2 — listed here so you know it doesn\'t apply' },
+    { icon:'⚡', action:'Battling a Gym Leader',         gain:'+1',       note:'Small bonus per Gym Leader fight' },
+    { icon:'💀', action:'Fainting in battle',           gain:'−1 / −5',  note:'−1 below 200 friendship, −5 at 200+' },
+    { icon:'⚗', action:'Bitter medicine (Heal Powder)', gain:'−5',       note:'Energy Powder/Root, Heal Powder, Revival Herb all reduce happiness' }
+  ];
+
+  // Held items / catch bonuses
   var HELD_ITEMS = [
-    { name:'Soothe Bell',   effect:'Doubles happiness gained from walking (256 steps = +2 instead of +1). Does not affect other sources.' },
-    { name:'Luxury Ball',   effect:'Pokémon caught in a Luxury Ball gain +1 extra friendship per happiness-raising event.' },
+    { name:'Soothe Bell', effect:'Doubles walking happiness (every 256 steps = +2). Obtained from a girl in the National Park.' },
+    { name:'Friend Ball', effect:'A Pokémon caught in a Friend Ball starts with 200 friendship instead of the species default — fastest jump-start for happiness evolutions.' }
   ];
 
   var curGame = localStorage.getItem('g3hap_game') || 'FR';
