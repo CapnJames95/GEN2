@@ -88,19 +88,36 @@ def main():
                 game = v.get('version', {}).get('name')
                 if game not in VER_TO_KEY:
                     continue
-                # collapse encounter_details by method
-                by_method = {}
+                # collapse encounter_details by (method, time-of-day)
+                by_key = {}
                 for ed in v.get('encounter_details', []):
                     mlabel = METHOD_LABEL.get(ed.get('method', {}).get('name','walk'), 'Wild')
-                    info = by_method.setdefault(mlabel, {'min':99,'max':0,'chance':0})
+                    # Extract time-of-day from condition_values if present.
+                    tod = 'any'
+                    swarm = False
+                    extra_notes = []
+                    for cv in ed.get('condition_values', []):
+                        cn = cv.get('name', '')
+                        if cn == 'time-morning': tod = 'morning'
+                        elif cn == 'time-day': tod = 'day'
+                        elif cn == 'time-night': tod = 'night'
+                        elif cn == 'swarm-yes': swarm = True
+                        elif cn == 'weekday-friday': extra_notes.append('Fri only')
+                        elif cn.startswith('item-'): extra_notes.append('needs ' + cn[5:].replace('-',' ').title())
+                    key = (mlabel, tod, swarm)
+                    info = by_key.setdefault(key, {'min':99,'max':0,'chance':0,'notes':set()})
                     info['min'] = min(info['min'], ed.get('min_level', 0))
                     info['max'] = max(info['max'], ed.get('max_level', 0))
                     info['chance'] += ed.get('chance', 0)
-                for method, info in by_method.items():
+                    for en in extra_notes: info['notes'].add(en)
+                for (method, tod, swarm), info in by_key.items():
                     locations[pretty][game].append({
                         'n': num, 'name': name, 'method': method,
+                        'time': tod,
+                        'swarm': swarm,
                         'min': info['min'], 'max': info['max'],
-                        'chance': min(100, info['chance'])
+                        'chance': min(100, info['chance']),
+                        'notes': ' · '.join(sorted(info['notes'])) if info['notes'] else ''
                     })
 
     # Sort each game-list by method preference then by chance descending

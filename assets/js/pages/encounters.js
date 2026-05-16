@@ -20,7 +20,10 @@
     'PokéFlute':'#D01868', 'SquirtBottle':'#3DA83D'
   };
 
-  var ENC_FILTER = { game:'all', method:'all', search:'' };
+  var ENC_FILTER = { game:'all', method:'all', time:'all', search:'' };
+
+  var TIME_ICONS = { morning:'🌅', day:'☀️', night:'🌙', any:'' };
+  var TIME_LABEL = { morning:'Morning', day:'Day', night:'Night', any:'Anytime' };
 
   function spriteImg(n) {
     return '<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+n+'.png" '
@@ -67,6 +70,14 @@
       +     '<option value="all">All Methods</option>'
       +     methodList.map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join('')
       +   '</select>'
+      +   '<select id="enc-time" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;" '
+      +     'onchange="window._encUpdate(\'time\', this.value)">'
+      +     '<option value="all">All Times</option>'
+      +     '<option value="morning">🌅 Morning</option>'
+      +     '<option value="day">☀️ Day</option>'
+      +     '<option value="night">🌙 Night</option>'
+      +     '<option value="any">⊘ Any-time only</option>'
+      +   '</select>'
       + '</div>'
       + '<div id="enc-list" style="display:flex;flex-direction:column;gap:14px;"></div>'
       + '</div>';
@@ -90,8 +101,19 @@
       var locNameMatch = !q || loc.toLowerCase().indexOf(q) !== -1;
       GAMES.forEach(function(g) {
         if (gameFilter !== 'all' && gameFilter !== g.key) return;
+        var timeFilter = ENC_FILTER.time;
         var rows = (data[loc][g.key] || []).filter(function(e) {
           if (methodFilter !== 'all' && e.method !== methodFilter) return false;
+          if (timeFilter !== 'all') {
+            var t = e.time || 'any';
+            if (timeFilter === 'any') {
+              if (t !== 'any') return false;
+            } else {
+              // Match the specific time-of-day OR any-time entries (which are
+              // available in every window).
+              if (t !== timeFilter && t !== 'any') return false;
+            }
+          }
           if (q && !locNameMatch && e.name.toLowerCase().indexOf(q) === -1) return false;
           return true;
         });
@@ -115,10 +137,16 @@
           var mcolor = METHOD_COLORS[e.method] || '#888';
           var lvl = (e.min === e.max) ? ('Lv'+e.min) : ('Lv'+e.min+'-'+e.max);
           var pokeName = '<span class="guide-poke-link" onclick="guideDex(\''+e.name.replace(/'/g,"\\'")+'\')">'+e.name+'</span>';
+          var timeBadge = (e.time && e.time !== 'any')
+            ? '<span title="'+(TIME_LABEL[e.time]||'')+'" style="font-size:11px;">'+TIME_ICONS[e.time]+'</span>'
+            : '';
+          var swarmBadge = e.swarm
+            ? '<span title="Swarm only" style="font-size:9px;font-weight:800;color:#FF6B35;">SWARM</span>'
+            : '';
           html += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px;color:var(--text);">'
             + spriteImg(e.n)
             + '<span style="font-size:9px;font-weight:700;color:'+mcolor+';min-width:64px;">'+e.method+'</span>'
-            + '<span style="flex:1;">'+pokeName+'</span>'
+            + '<span style="flex:1;">'+pokeName+' '+timeBadge+' '+swarmBadge+'</span>'
             + '<span style="font-size:10px;color:var(--muted);">'+lvl+'</span>'
             + '<span style="font-size:10px;color:var(--muted);min-width:36px;text-align:right;">'+e.chance+'%</span>'
             + '</div>';

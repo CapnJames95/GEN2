@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="assets/css/app.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="shortcut icon" href="assets/favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#E5B928">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gen 2 eGuide">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <header>
@@ -510,6 +515,11 @@
         <button class="page-nav-dropdown-item" id="navHeldFarm" onclick="closeNavDropdown('navGuidesDropdown');showPage('heldfarm',document.getElementById('navHeldFarm'));buildHeldFarmPage();window._hfBuilt=true;">💎 Held-Item Farm</button>
         <button class="page-nav-dropdown-item" id="navSalon" onclick="closeNavDropdown('navGuidesDropdown');showPage('salon',document.getElementById('navSalon'));buildSalonPage();window._salonBuilt=true;">💇 Goldenrod Salon</button>
         <button class="page-nav-dropdown-item" id="navDaycare" onclick="closeNavDropdown('navGuidesDropdown');showPage('daycare',document.getElementById('navDaycare'));buildDaycarePage();window._daycareBuilt=true;">🥚 Day-Care &amp; Breeding</button>
+        <button class="page-nav-dropdown-item" id="navBcc" onclick="closeNavDropdown('navGuidesDropdown');showPage('bcc',document.getElementById('navBcc'));buildBccPage();window._bccBuilt=true;">🐛 Bug-Catching Contest</button>
+        <button class="page-nav-dropdown-item" id="navApricornTracker" onclick="closeNavDropdown('navGuidesDropdown');showPage('apricorntracker',document.getElementById('navApricornTracker'));buildApricornPage();">🍎 Apricorn Tracker</button>
+        <button class="page-nav-dropdown-item" id="navBerryMap" onclick="closeNavDropdown('navGuidesDropdown');showPage('berrymap',document.getElementById('navBerryMap'));buildBerryMapPage();window._bmBuilt=true;">🍓 Berry Trees</button>
+        <button class="page-nav-dropdown-item" id="navBtOpp" data-games="E" onclick="closeNavDropdown('navGuidesDropdown');showPage('btopp',document.getElementById('navBtOpp'));buildBattleTowerOppPage();window._btoBuilt=true;">🏆 BT Opponents (Crystal)</button>
+        <button class="page-nav-dropdown-item" id="navCrystalEx" data-games="E" onclick="closeNavDropdown('navGuidesDropdown');showPage('crystalex',document.getElementById('navCrystalEx'));buildCrystalExclusivesPage();window._cxBuilt=true;">💎 Crystal Exclusives</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">🎲 RNG Guide</button>
       </div>
     </div>
@@ -1831,6 +1841,51 @@
     </div>
   </div>
 </div>
+<div id="page-bcc" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BUG-CATCHING CONTEST</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Score formula, prize tiers, catchable species, and strategy.</div>
+      <div id="bcc-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-apricorntracker" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">APRICORN DAILY TRACKER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Check off each Apricorn tree as you harvest it today. State stored locally per day.</div>
+      <div id="apricorn-tracker-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-berrymap" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BERRY TREES</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every Gen-2 Berry tree, its effect, and which routes it grows on.</div>
+      <div id="berrymap-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-btopp" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BATTLE TOWER OPPONENTS (CRYSTAL)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Tier rules, banned species, strategy notes, and ribbon rewards for Crystal\'s Battle Tower.</div>
+      <div id="btopp-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-crystalex" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">CRYSTAL EXCLUSIVE FEATURES</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">One-page summary of everything Pokémon Crystal adds over Gold/Silver.</div>
+      <div id="crystalex-content"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ GEN-2-SPECIFIC FEATURE PAGES ══ -->
 <div id="page-apricorns" class="page main">
@@ -2711,6 +2766,17 @@ document.addEventListener('DOMContentLoaded', function() {
     window.updateBadge = function() { _orig(); _iosSyncBadge(); };
   }
 });
+</script>
+<script>
+/* Service worker registration — enables offline use as an installable PWA.
+   Only registers over HTTPS or localhost; skips file:// previews. */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
 </script>
 </body>
 </html>

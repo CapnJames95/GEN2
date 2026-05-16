@@ -378,6 +378,266 @@
   };
 
   // ──────────────────────────────────────────────────────────────
+  //  BUG-CATCHING CONTEST tracker (personal best per game)
+  // ──────────────────────────────────────────────────────────────
+  var BCC_PRIZES = [
+    { rank:'1st', range:'250+', prize:'Sun Stone' },
+    { rank:'2nd', range:'200–249', prize:'Everstone' },
+    { rank:'3rd', range:'150–199', prize:'Gold Berry' },
+    { rank:'4th', range:'100–149', prize:'Berry' },
+    { rank:'5th', range:'0–99',   prize:'Berry' }
+  ];
+  var BCC_SPECIES = [
+    'Caterpie','Metapod','Butterfree','Weedle','Kakuna','Beedrill',
+    'Paras','Venonat','Pinsir','Scyther','Ledyba (G/S morning)','Spinarak (G/S night)','Heracross (rare)'
+  ];
+
+  window.buildBccPage = function() {
+    var el = pageRoot('bcc-content');
+    if (!el) return;
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">BUG-CATCHING CONTEST</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Held in the <strong>National Park</strong> on <strong>Tuesdays, Thursdays, and Saturdays</strong>. Pay 100 ₽, you\'re given 20 Park Balls and 20 in-game minutes to catch the best bug. Only one Pokémon can be submitted — pick the highest-scoring catch.'
+      + '</div>'
+      + section('Score Formula', '<code style="background:var(--panel);padding:4px 6px;border-radius:3px;">Score = Base × Stat Modifier + Type Bonus + HP Bonus + Status Bonus</code><br>'
+        + '<strong>Quick tiers:</strong> Pinsir / Scyther (best base species), Heracross (only via Headbutt — not in contest pool), Butterfree (mid-tier), Beedrill (mid-tier), Caterpie/Weedle (low).<br>'
+        + '<strong>Stat boost</strong>: higher DVs = higher score. <strong>HP %</strong>: catching at high HP scores higher than catching at low HP (counter-intuitive — don\'t waste turns weakening!).')
+      + section('Prizes', table(['Rank','Score','Prize'], BCC_PRIZES.map(function(p){ return [p.rank, p.range, p.prize]; })))
+      + section('Catchable species', '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + BCC_SPECIES.map(function(s){ return '<li>' + s + '</li>'; }).join('')
+        + '</ul>')
+      + section('Strategy', '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li>Hunt for <strong>Pinsir</strong> or <strong>Scyther</strong> first — they\'re rare but score highest.</li>'
+        + '<li>Catch at near-full HP. Don\'t use moves that lower HP.</li>'
+        + '<li>Save before entering — re-roll on losses.</li>'
+        + '<li>Sun Stone prize is otherwise extremely rare (only at Cliff Cave hidden item) — Bug Contest is the reliable source.</li>'
+        + '</ul>')
+      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-top:16px;font-size:11px;color:var(--muted);line-height:1.7;">'
+      + '<strong style="color:var(--text);">Personal Best tracker:</strong> not implemented yet — Gen 2 saves your best in the cartridge under the player\'s name. Compare your in-game stats to the tiers above.'
+      + '</div>'
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  APRICORN tree tracker (daily check-off, localStorage)
+  // ──────────────────────────────────────────────────────────────
+  var APRICORN_TREES = [
+    { color:'Red',    ball:'Level Ball',  hex:'#FF5555', routes:['Route 36','Route 37','Route 42'] },
+    { color:'Blue',   ball:'Lure Ball',   hex:'#5599FF', routes:['Route 32','Route 35','Route 42'] },
+    { color:'Yellow', ball:'Moon Ball',   hex:'#FFD700', routes:['Route 38','Route 39','Route 42'] },
+    { color:'Green',  ball:'Friend Ball', hex:'#44DD88', routes:['Route 37','Route 43','Route 45'] },
+    { color:'Pink',   ball:'Love Ball',   hex:'#FFB6E1', routes:['Route 42','Route 43','Route 45'] },
+    { color:'White',  ball:'Fast Ball',   hex:'#EEEEEE', routes:['Route 36','Route 42'] },
+    { color:'Black',  ball:'Heavy Ball',  hex:'#666666', routes:['Route 38','Route 39','Route 42'] }
+  ];
+
+  function apriKey(date, color, route) {
+    return 'gen2-apri-' + date + '-' + color + '-' + route.replace(/\s+/g,'');
+  }
+  function apriToday() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  window.apriToggleTree = function(color, route) {
+    var today = apriToday();
+    var k = apriKey(today, color, route);
+    if (localStorage.getItem(k) === '1') localStorage.removeItem(k);
+    else localStorage.setItem(k, '1');
+    window.buildApricornPage();
+  };
+
+  window.apriResetDay = function() {
+    var today = apriToday();
+    APRICORN_TREES.forEach(function(tree) {
+      tree.routes.forEach(function(route) {
+        localStorage.removeItem(apriKey(today, tree.color, route));
+      });
+    });
+    window.buildApricornPage();
+  };
+
+  window.buildApricornPage = function() {
+    // Re-render every call (no pageRoot guard) — page is state-driven.
+    var el = document.getElementById('apricorn-tracker-content');
+    if (!el) return;
+    var today = apriToday();
+    var totalTrees = APRICORN_TREES.reduce(function(s, t){ return s + t.routes.length; }, 0);
+    var doneCount = 0;
+    APRICORN_TREES.forEach(function(tree) {
+      tree.routes.forEach(function(route) {
+        if (localStorage.getItem(apriKey(today, tree.color, route)) === '1') doneCount++;
+      });
+    });
+
+    var sections = APRICORN_TREES.map(function(tree) {
+      var rows = tree.routes.map(function(route) {
+        var k = apriKey(today, tree.color, route);
+        var done = localStorage.getItem(k) === '1';
+        return '<button onclick="apriToggleTree(\''+tree.color+'\',\''+route+'\')" '
+          + 'style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:'+(done?'color-mix(in srgb,'+tree.hex+' 25%,var(--card))':'var(--card)')+';border:1px solid '+(done?tree.hex:'var(--border)')+';border-radius:4px;cursor:pointer;color:var(--text);font-size:11px;width:100%;text-align:left;">'
+          + '<span style="font-size:16px;">'+(done?'✓':'○')+'</span>'
+          + '<span style="flex:1;">'+route+'</span>'
+          + (done ? '<span style="font-size:9px;color:'+tree.hex+';font-weight:800;">PICKED</span>' : '')
+          + '</button>';
+      }).join('');
+      return '<div style="background:var(--card);border:1px solid var(--border);border-left:4px solid '+tree.hex+';border-radius:6px;padding:12px 14px;">'
+        + '<div style="font-weight:700;color:'+tree.hex+';margin-bottom:8px;">'+tree.color+' Apricorn → '+tree.ball+'</div>'
+        + '<div style="display:flex;flex-direction:column;gap:6px;">'+rows+'</div>'
+        + '</div>';
+    }).join('');
+
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">APRICORN TREE TRACKER</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Apricorn trees regrow <strong>once per day</strong>. Click each tree as you pick it. State is saved per day in your browser — resets at midnight.<br>'
+      + '<strong>Today (' + today + '):</strong> ' + doneCount + ' / ' + totalTrees + ' picked.'
+      + '</div>'
+      + '<div style="display:flex;gap:8px;margin-bottom:14px;">'
+      + '<button onclick="apriResetDay()" style="font-size:11px;padding:6px 12px;background:var(--panel);border:1px solid var(--border);color:var(--muted);border-radius:4px;cursor:pointer;">Reset today</button>'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">'+sections+'</div>'
+      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-top:18px;font-size:11px;color:var(--muted);line-height:1.7;">'
+      + '<strong style="color:var(--text);">Give Apricorns to Kurt</strong> in Azalea Town. He takes 24 in-game hours to convert them into balls. Each Apricorn = 1 ball. To get a full set of 7 ball types, you need at least 7 of each colour.'
+      + '</div>'
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  BERRY tree map (where every berry grows)
+  // ──────────────────────────────────────────────────────────────
+  var BERRY_TREES = [
+    { berry:'Berry',         color:'#F08030', effect:'Holder restores 10 HP at 50%',  routes:['Route 30 (×3)','Route 38','Cherrygrove outskirts','Route 26','Route 27','Pewter outskirts'] },
+    { berry:'Gold Berry',    color:'#FFD700', effect:'Holder restores 30 HP at 50%',  routes:['Route 30 (rare drop on tree)','Mt. Mortar','Cherrygrove'] },
+    { berry:'Mystery Berry', color:'#9966CC', effect:'Restores 5 PP to a depleted move',routes:['Route 30','Goldenrod outskirts','Route 32'] },
+    { berry:'Bitter Berry',  color:'#3DA83D', effect:'Cures confusion',                routes:['Route 33','Ice Path entrance','Cliff Cave'] },
+    { berry:'Burnt Berry',   color:'#FF6B35', effect:'Cures freeze',                   routes:['Route 36','Mt. Mortar entrance'] },
+    { berry:'Ice Berry',     color:'#60C8C8', effect:'Cures burn',                     routes:['Route 32 (south)','Route 35'] },
+    { berry:'Mint Berry',    color:'#88DD88', effect:'Cures sleep',                    routes:['Route 30','Ilex Forest','Route 31'] },
+    { berry:'PSN Cure Berry',color:'#AA44AA', effect:'Cures poison',                   routes:['Route 32','Slowpoke Well outskirts'] },
+    { berry:'PRZ Cure Berry',color:'#FFD700', effect:'Cures paralysis',                routes:['Route 32','Cherrygrove'] },
+    { berry:'MiracleBerry',  color:'#E91E63', effect:'Cures any status — single use',  routes:['One-time event item from Goldenrod Pharmacy (Crystal)'] }
+  ];
+
+  window.buildBerryMapPage = function() {
+    var el = pageRoot('berrymap-content');
+    if (!el) return;
+    var grid = BERRY_TREES.map(function(b) {
+      return '<div style="background:var(--card);border:1px solid var(--border);border-left:4px solid '+b.color+';border-radius:6px;padding:12px 14px;">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
+        + '<strong style="color:'+b.color+';font-size:13px;">' + itemLink(b.berry) + '</strong>'
+        + '</div>'
+        + '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-style:italic;">' + b.effect + '</div>'
+        + '<div style="font-size:11px;color:var(--text);line-height:1.7;">'
+        + '<strong style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Found on:</strong><br>'
+        + b.routes.map(function(r){ return '• ' + r; }).join('<br>')
+        + '</div>'
+        + '</div>';
+    }).join('');
+
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">BERRY TREES — GEN 2</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'All Berry trees in Gold/Silver/Crystal. Each tree regrows once per real-world day. Berries are held items that trigger automatically in battle (HP/PP/status restore).'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">'+grid+'</div>'
+      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-top:18px;font-size:11px;color:var(--muted);line-height:1.7;">'
+      + '<strong style="color:var(--text);">Note:</strong> The "Berry-blender Pokéblock" system from Gen 3 RSE does NOT exist in Gen 2. Berries are single-effect held items only. Each tree drops 1 berry per real day — don\'t miss the daily cycle.'
+      + '</div>'
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  BATTLE TOWER opponents (Crystal)
+  // ──────────────────────────────────────────────────────────────
+  var BT_TIERS = [
+    { tier:'Lv30',  notes:'Easiest tier — Pokémon capped at Lv30. Common opponents: Sandshrew, Spinda (sub Yanma), Voltorb, Geodude.' },
+    { tier:'Lv50',  notes:'Mid-tier — opponents fully evolved with strong move pools. Tauros, Snorlax, Machamp, Magneton common.' },
+    { tier:'Lv70',  notes:'High-end — pseudo-legendaries appear: Dragonite, Tyranitar, Kingdra. Expect Hyper Beam abuse.' },
+    { tier:'Lv100', notes:'Endgame — perfect-stat boss teams. Includes nearly all Gen-1/2 fully-evolved threats. Ho-Oh/Lugia are not allowed but Mewtwo is.' }
+  ];
+
+  window.buildBattleTowerOppPage = function() {
+    var el = pageRoot('btopp-content');
+    if (!el) return;
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">BATTLE TOWER OPPONENTS — CRYSTAL</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'The Crystal-exclusive Battle Tower (Cianwood, after E4) pits you against 7 trainers in a row using 3 of your Pokémon. Win all 7 to earn a tier-specific Ribbon. Opponents are drawn from a fixed pool per tier.'
+      + '</div>'
+      + section('Tier rules + opponent flavour',
+          BT_TIERS.map(function(t) {
+            return '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--game-color,var(--gold));padding:10px 14px;margin-bottom:8px;border-radius:6px;">'
+              + '<strong style="color:var(--text);font-size:13px;">' + t.tier + '</strong><br>'
+              + '<span style="font-size:11px;color:var(--muted);line-height:1.7;">' + t.notes + '</span>'
+              + '</div>';
+          }).join(''))
+      + section('Banned species (all tiers)',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li>' + pkmnLink('Mew') + ', ' + pkmnLink('Celebi') + ' — event-only Pokémon banned.</li>'
+        + '<li>' + pkmnLink('Ho-Oh') + ', ' + pkmnLink('Lugia') + ' — legendary box mascots banned.</li>'
+        + '<li>' + pkmnLink('Articuno') + ' / ' + pkmnLink('Zapdos') + ' / ' + pkmnLink('Moltres') + ' — Kanto legendary birds banned.</li>'
+        + '<li>' + pkmnLink('Mewtwo') + ' — allowed only at Lv70 / Lv100.</li>'
+        + '<li>Same species twice on your team — not allowed.</li>'
+        + '<li>Identical held items on two team members — not allowed.</li>'
+        + '</ul>')
+      + section('Strategy',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li><strong>Cover 3 types:</strong> a Physical sweeper, a Special sweeper, and a Status-spreader (Curse / Toxic / Thunder Wave).</li>'
+        + '<li><strong>Sleep Talk + Rest</strong> is the most reliable tank set in Gen 2.</li>'
+        + '<li><strong>Quick Claw</strong> on a slow tank lets you Curse turn 1 against fast opponents.</li>'
+        + '<li>Save before entering — losing wipes the streak.</li>'
+        + '</ul>')
+      + section('Rewards',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li>Battle Tower (Lv30) Ribbon — 7 consecutive wins.</li>'
+        + '<li>Battle Tower (Lv50) Ribbon — 7 wins on Lv50 tier.</li>'
+        + '<li>Battle Tower (Lv70) Ribbon — 7 wins on Lv70.</li>'
+        + '<li>Battle Tower (Lv100) Ribbon — 7 wins on Lv100.</li>'
+        + '<li><strong>No item rewards</strong> — Crystal\'s Battle Tower is pure prestige.</li>'
+        + '</ul>')
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  CRYSTAL EXCLUSIVES — landing page
+  // ──────────────────────────────────────────────────────────────
+  window.buildCrystalExclusivesPage = function() {
+    var el = pageRoot('crystalex-content');
+    if (!el) return;
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#7FB8E0;margin-bottom:8px;letter-spacing:1px;">CRYSTAL EXCLUSIVE FEATURES</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Pokémon Crystal added these features over Gold/Silver. If you\'re running Crystal, you have access to <em>everything</em> here on top of all G/S features.'
+      + '</div>'
+
+      + section('🎬 Animations & gender',
+          'Every Pokémon now has an entry animation when it enters battle, and the player can choose a <strong>female protagonist (Kris)</strong> for the first time in the series.')
+      + section('🏛 Battle Tower (Cianwood)',
+          'Brand-new endgame challenge — 7 consecutive battles per streak, 4 tiers (Lv30/50/70/100). Earn tier-specific Ribbons. <em>See <strong>Battle Tower (Crystal)</strong> page.</em>')
+      + section('🐉 Dragon\'s Den expansion',
+          'Post-E4 Dragon Den is reopened with a quiz/elders sequence. <strong>Pass the quiz</strong> for a Dratini with the egg move <strong>Extreme Speed</strong> — otherwise impossible to get.')
+      + section('🌟 Suicune plot',
+          'Crystal makes <strong>' + pkmnLink('Suicune') + '</strong> a fixed encounter (not roaming). Following the trainer <strong>Eusine</strong>\'s arc, you eventually meet Suicune at the Tin Tower for a one-time Lv40 catchable battle.')
+      + section('🥚 Odd Egg',
+          'Receive a free Egg at the Goldenrod Daycare with an extremely high <strong>shiny chance</strong> (~14%). Hatches into Pichu / Cleffa / Igglybuff / Tyrogue / Smoochum / Elekid / Magby.')
+      + section('🔢 Unown ! and ? forms',
+          'Two extra Unown letter forms unlock after solving additional Ruins of Alph puzzles + radio interaction. <em>See <strong>Ruins of Alph</strong> page.</em>')
+      + section('📡 Mobile Adapter (JP only)',
+          'Crystal supported the GBC Mobile Adapter for Pokémon News, Mobile Battle Tower, and Mystery Gift over phone-network connection. Service ended 2002 — never localised.')
+      + section('🥋 Mt. Mortar Move Tutor',
+          'Crystal adds a Dragon-type Move Tutor in Mt. Mortar B1F who teaches <strong>Dragon Breath</strong> to compatible species. <em>See <strong>Mt. Mortar</strong> page.</em>')
+      + section('🏆 Eusine event',
+          'New rival NPC who chases Suicune throughout the game and battles you in Cianwood at one point. Drops backstory + leads to the Suicune fixed encounter.')
+      + section('🎰 Slower Game Corner',
+          'Crystal slows the slot machine reels — making 7-7-7 jackpots noticeably easier to time.')
+      + section('🏠 More post-game NPCs',
+          'Several new buildings open across Johto + Kanto with side dialogue, in-game trades, and extra item gifts not present in G/S.')
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
   //  GOLDENROD SALON (haircut + name rater)
   // ──────────────────────────────────────────────────────────────
   window.buildSalonPage = function() {
