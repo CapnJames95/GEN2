@@ -378,6 +378,110 @@
   };
 
   // ──────────────────────────────────────────────────────────────
+  //  GOLDENROD SALON (haircut + name rater)
+  // ──────────────────────────────────────────────────────────────
+  window.buildSalonPage = function() {
+    var el = pageRoot('salon-content');
+    if (!el) return;
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">GOLDENROD UNDERGROUND</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Two services in the Goldenrod City Underground that touch a Pokémon\'s friendship + identity. Both are free, but the salon is day-limited.'
+      + '</div>'
+
+      + section('💇 Hair Salon (Sun + Mon only)',
+          '<strong>Location:</strong> Goldenrod Underground, west end, between the Item Shops.<br>'
+        + '<strong>Days open:</strong> Sunday + Monday only. Closed every other day.<br>'
+        + '<strong>Older brother:</strong> 500 ₽ — small friendship boost (~+5 to +1).<br>'
+        + '<strong>Younger brother:</strong> 300 ₽ — moderate friendship boost (~+10 to +1).<br>'
+        + 'The exact amount scales <strong style="color:var(--text);">inversely with current friendship</strong>: a near-fresh catch gets ~+10 from the younger brother, a 200+ Pokémon barely gets +1.<br><br>'
+        + '<strong style="color:var(--text);">Strategy:</strong> Use the haircut <em>early</em> in a happiness-evolution grind to skip the slowest part of the friendship climb. Combine with a Friend Ball catch and you can hit 220 friendship in &lt;30 in-game minutes.')
+
+      + section('📝 Name Rater (any day)',
+          '<strong>Location:</strong> Goldenrod City, the house south of the Pokémon Center.<br>'
+        + '<strong>Cost:</strong> Free.<br>'
+        + 'Rename any Pokémon you originally caught (OT = your trainer ID). <strong style="color:var(--text);">Cannot rename traded Pokémon</strong> — that\'s by design.<br><br>'
+        + '<strong>Why it matters:</strong> The "Surfing Pikachu" event Pokémon, the GS-Ball Celebi, and the Mystery Egg Togepi all benefit from getting a proper nickname before they\'re evolved/traded. Once traded their nickname is locked forever.')
+
+      + section('Other Underground shops worth visiting',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li><strong>Coin Case:</strong> Buy from the Bookseller in Goldenrod (south block) — required for the Game Corner.</li>'
+        + '<li><strong>Herb Shop:</strong> Sells Energy Powder / Heal Powder / Energy Root / Revival Herb. Cheap but they <em>lower friendship</em>.</li>'
+        + '<li><strong>Tuesday/Thursday/Saturday shop:</strong> Underground shop sells useful TMs (TM27 Return on certain days).</li>'
+        + '<li><strong>Madam:</strong> Buys Slowpoke Tails for big cash — but you must obtain one ethically (gift from Slowpoke Well event).</li>'
+        + '</ul>')
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  DAY-CARE (Route 34)
+  // ──────────────────────────────────────────────────────────────
+  window.buildDaycarePage = function() {
+    var el = pageRoot('daycare-content');
+    if (!el) return;
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">DAY-CARE — ROUTE 34</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'The Day-Care couple in Route 34 (just north of Goldenrod) introduces breeding in Gen 2. They\'ll level your Pokémon while you\'re elsewhere AND, if compatible pair is left, produce Eggs.'
+      + '</div>'
+
+      + section('Basic services',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li><strong>Day-care man (front of house):</strong> Holds <strong>one</strong> Pokémon for leveling. Costs 100 ₽ + 100 per level gained.</li>'
+        + '<li><strong>Day-care lady (back of house):</strong> Holds the <strong>second</strong> Pokémon. Same cost rules.</li>'
+        + '<li>Talk to either to retrieve a Pokémon — you pay the bill on collection.</li>'
+        + '<li>The Pokémon does NOT evolve while in the Day-Care, even if it hits the evolution level. Take it out and level up once more to trigger.</li>'
+        + '</ul>')
+
+      + section('Breeding',
+          '<strong>Requirements:</strong>'
+        + '<ul style="margin:6px 0 6px 22px;line-height:2;">'
+        + '<li>Two Pokémon left at the Day-Care.</li>'
+        + '<li>Same <strong>Egg Group</strong> (e.g. Field, Water 1, Dragon).</li>'
+        + '<li>Opposite genders <strong>OR</strong> one of them is <strong>Ditto</strong>.</li>'
+        + '<li>Neither is in the Undiscovered group (Legendaries, baby Pokémon).</li>'
+        + '</ul>'
+        + 'Every <strong>256 steps</strong> the game rolls a small chance to lay an Egg. The Day-Care man will stand outside the fence looking forward when one is ready.<br><br>'
+        + '<strong style="color:var(--text);">Egg moves:</strong> Only the <strong>father</strong> can pass moves. Pick a male in the same Egg Group that learns the target move via level-up or TM.')
+
+      + section('Egg Hatching',
+          '<strong>Hatch counter:</strong> 5,120 – 30,720 steps depending on species.<br>'
+        + '<strong>Speed-up tricks:</strong>'
+        + '<ul style="margin:6px 0 6px 22px;line-height:2;">'
+        + '<li>Bike on long stretches (Route 38, Route 35) — each pedal counts as one step.</li>'
+        + '<li>No Flame Body / Magma Armor exists in Gen 2 — those abilities are Gen 3+.</li>'
+        + '<li>Wait — that\'s the only speed trick. Walking simulation.</li>'
+        + '</ul>')
+
+      + section('Gen-2 baby Pokémon (breed via Day-Care)',
+          '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:6px;">'
+        + '<thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:6px 8px;color:var(--muted);">Baby</th><th style="text-align:left;padding:6px 8px;color:var(--muted);">Parent</th><th style="text-align:left;padding:6px 8px;color:var(--muted);">How</th></tr></thead>'
+        + '<tbody>'
+        + ['Pichu','Cleffa','Igglybuff','Tyrogue','Smoochum','Elekid','Magby'].map(function(name, i) {
+            var parents = { Pichu:'Pikachu', Cleffa:'Clefairy', Igglybuff:'Jigglypuff', Tyrogue:'Hitmonlee / Hitmonchan', Smoochum:'Jynx', Elekid:'Electabuzz', Magby:'Magmar' };
+            var nums   = { Pichu:172, Cleffa:173, Igglybuff:174, Tyrogue:236, Smoochum:238, Elekid:239, Magby:240 };
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
+              + '<td style="padding:6px 8px;display:flex;align-items:center;gap:6px;">'
+              +   '<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+nums[name]+'.png" width="28" height="28" style="image-rendering:pixelated;" onerror="this.style.display=\'none\'">'
+              +   pkmnLink(name)
+              + '</td>'
+              + '<td style="padding:6px 8px;color:var(--text);">' + parents[name] + '</td>'
+              + '<td style="padding:6px 8px;color:var(--muted);font-size:11px;">Breed the parent with a compatible mate (Ditto works).</td>'
+              + '</tr>';
+        }).join('')
+        + '</tbody></table>')
+
+      + section('Notes',
+          '<ul style="margin:0 0 0 22px;line-height:2;">'
+        + '<li><strong>Light Ball + Pikachu = Pichu</strong>: this trick is Gen 4+. In original GSC, breeding a Pikachu always gives a Pichu regardless of held item.</li>'
+        + '<li><strong>Incense babies</strong> (Wynaut, Bonsly, Mime Jr., Munchlax, Mantyke, Happiny) all require Incense items — those don\'t exist in Gen 2.</li>'
+        + '<li>Egg hatches at Lv 5 with the species\' base moves + any compatible egg moves from the father.</li>'
+        + '<li>Shiny breeding trick: breed a shiny Ditto → ~1/64 odds of shiny baby. Most starting points trace back to the Lake of Rage Red Gyarados.</li>'
+        + '</ul>')
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
   //  POKÉGEAR — Phone callers, rematches, daily gifts
   // ──────────────────────────────────────────────────────────────
   // Each entry = phone-eligible trainer. Days/hours from the Gen-2 disassembly.

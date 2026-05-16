@@ -7218,7 +7218,9 @@ function toggleTheme() {
       timecapsule: { btn:'navTimeCapsule',   init: function(){ if(typeof window.buildTimeCapsulePage==='function') window.buildTimeCapsulePage(); } },
       mysterygift: { btn:'navMysteryGift',   init: function(){ if(typeof window.buildMysteryGiftPage==='function') window.buildMysteryGiftPage(); } },
       pokegear:    { btn:'navPokegear',      init: function(){ if(typeof window.buildPokegearPage==='function') window.buildPokegearPage(); } },
-      heldfarm:    { btn:'navHeldFarm',      init: function(){ if(typeof window.buildHeldFarmPage==='function') window.buildHeldFarmPage(); } }
+      heldfarm:    { btn:'navHeldFarm',      init: function(){ if(typeof window.buildHeldFarmPage==='function') window.buildHeldFarmPage(); } },
+      salon:       { btn:'navSalon',         init: function(){ if(typeof window.buildSalonPage==='function') window.buildSalonPage(); } },
+      daycare:     { btn:'navDaycare',       init: function(){ if(typeof window.buildDaycarePage==='function') window.buildDaycarePage(); } }
     };
 
     var entry = pageMap[pageId];
@@ -11534,7 +11536,8 @@ document.addEventListener('keydown', function(e) {
     // New Gen-2 guide pages
     radio:'navGuidesGroup', headbutt:'navGuidesGroup', ruins:'navGuidesGroup',
     mtmortar:'navGuidesGroup', timecapsule:'navGuidesGroup', mysterygift:'navGuidesGroup',
-    pokegear:'navGuidesGroup', heldfarm:'navGuidesGroup'
+    pokegear:'navGuidesGroup', heldfarm:'navGuidesGroup',
+    salon:'navGuidesGroup', daycare:'navGuidesGroup'
   };
 
   function _navMenu(id) {
@@ -13057,7 +13060,9 @@ window.dexDashToggleGymBadge = function(gameId, badgeId) {
     timecapsule: { content:'timecapsule-content', build:function(){ if(typeof buildTimeCapsulePage==='function') buildTimeCapsulePage(); } },
     mysterygift: { content:'mysterygift-content', build:function(){ if(typeof buildMysteryGiftPage==='function') buildMysteryGiftPage(); } },
     pokegear: { content:'pokegear-content', build:function(){ if(typeof buildPokegearPage==='function') buildPokegearPage(); } },
-    heldfarm: { content:'heldfarm-content', build:function(){ if(typeof buildHeldFarmPage==='function') buildHeldFarmPage(); } }
+    heldfarm: { content:'heldfarm-content', build:function(){ if(typeof buildHeldFarmPage==='function') buildHeldFarmPage(); } },
+    salon: { content:'salon-content', build:function(){ if(typeof buildSalonPage==='function') buildSalonPage(); } },
+    daycare: { content:'daycare-content', build:function(){ if(typeof buildDaycarePage==='function') buildDaycarePage(); } }
   };
 
   function recoverBuiltInPage() {
@@ -14150,7 +14155,7 @@ var NOTE_BTN_MAP={
   safarizone:'navSafariZone',statcalc:'navStatCalc',
   distributions:'navDistributions',distributionchecklist:'navDistributions',pokeblock:'navPokeblock',e4ref:'navE4Ref',rematches:'navRematches',routebrowser:'navRouteBrowser',
   radio:'navRadio',headbutt:'navHeadbutt',ruins:'navRuins',mtmortar:'navMtMortar',timecapsule:'navTimeCapsule',mysterygift:'navMysteryGift',
-  pokegear:'navPokegear',heldfarm:'navHeldFarm'
+  pokegear:'navPokegear',heldfarm:'navHeldFarm',salon:'navSalon',daycare:'navDaycare'
 };
 
 window.openTopLevelPage = function(pid) {
@@ -14174,7 +14179,9 @@ window.openTopLevelPage = function(pid) {
     timecapsule: function(){ if(typeof buildTimeCapsulePage==='function') buildTimeCapsulePage(); },
     mysterygift: function(){ if(typeof buildMysteryGiftPage==='function') buildMysteryGiftPage(); },
     pokegear: function(){ if(typeof buildPokegearPage==='function') buildPokegearPage(); },
-    heldfarm: function(){ if(typeof buildHeldFarmPage==='function') buildHeldFarmPage(); }
+    heldfarm: function(){ if(typeof buildHeldFarmPage==='function') buildHeldFarmPage(); },
+    salon: function(){ if(typeof buildSalonPage==='function') buildSalonPage(); },
+    daycare: function(){ if(typeof buildDaycarePage==='function') buildDaycarePage(); }
   };
   var navId=NOTE_BTN_MAP[pid];
   var btn=navId?document.getElementById(navId):null;

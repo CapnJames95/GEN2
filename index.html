@@ -508,6 +508,8 @@
         <button class="page-nav-dropdown-item" id="navMysteryGift" onclick="closeNavDropdown('navGuidesDropdown');showPage('mysterygift',document.getElementById('navMysteryGift'));buildMysteryGiftPage();window._mgBuilt=true;">🎁 Mystery Gift</button>
         <button class="page-nav-dropdown-item" id="navPokegear" onclick="closeNavDropdown('navGuidesDropdown');showPage('pokegear',document.getElementById('navPokegear'));buildPokegearPage();window._pgBuilt=true;">📱 Pokégear Calls</button>
         <button class="page-nav-dropdown-item" id="navHeldFarm" onclick="closeNavDropdown('navGuidesDropdown');showPage('heldfarm',document.getElementById('navHeldFarm'));buildHeldFarmPage();window._hfBuilt=true;">💎 Held-Item Farm</button>
+        <button class="page-nav-dropdown-item" id="navSalon" onclick="closeNavDropdown('navGuidesDropdown');showPage('salon',document.getElementById('navSalon'));buildSalonPage();window._salonBuilt=true;">💇 Goldenrod Salon</button>
+        <button class="page-nav-dropdown-item" id="navDaycare" onclick="closeNavDropdown('navGuidesDropdown');showPage('daycare',document.getElementById('navDaycare'));buildDaycarePage();window._daycareBuilt=true;">🥚 Day-Care &amp; Breeding</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">🎲 RNG Guide</button>
       </div>
     </div>
@@ -1808,6 +1810,24 @@
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">HELD-ITEM FARM</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every wild Gen-2 Pokémon that carries a held item, grouped by item with hold-rate %.</div>
       <div id="heldfarm-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-salon" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">GOLDENROD SALON &amp; NAME RATER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Salon haircuts boost friendship; the Name Rater lets you rename any Pokémon you originally caught.</div>
+      <div id="salon-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-daycare" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">DAY-CARE &amp; BREEDING</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Route 34 Day-Care fundamentals — leveling, breeding rules, egg moves, and Gen-2 baby Pokémon.</div>
+      <div id="daycare-content"></div>
     </div>
   </div>
 </div>
