@@ -13202,21 +13202,21 @@ function buildHappinessPage() {
   ];
 
   // Happiness methods (Gen 2 / GSC specifics)
+  // NOTE: Soothe Bell and Luxury Ball are Gen 3+ — they do NOT exist in
+  // original GSC. The fastest Gen-2 jump-start is a Friend Ball catch.
   var METHODS = [
-    { icon:'👣', action:'Walking (every 256 steps)',     gain:'+1',  note:'<span class="guide-item-link" onclick="openItemByName(\'Soothe Bell\')">Soothe Bell</span>: +2 per 256 steps' },
+    { icon:'👣', action:'Walking (every 256 steps)',     gain:'+1',       note:'Pure step-counter passive gain.' },
     { icon:'⬆️', action:'Level up',                      gain:'+5/+3/+2', note:'+5 if friendship <100, +3 at 100–199, +2 at 200+' },
-    { icon:'💊', action:'Vitamin (HP Up, Iron, etc.)',   gain:'+5/+3/+2', note:'Same tiered scaling as level-up' },
-    { icon:'🌿', action:'Haircut — Goldenrod salon',    gain:'+1–5',     note:'Saturday/Sunday only. Small chance for a bigger boost.' },
-    { icon:'🛁', action:'Mt. Moon Square groom (NA)',   gain:'—',        note:'Not in Gen 2 — listed here so you know it doesn\'t apply' },
-    { icon:'⚡', action:'Battling a Gym Leader',         gain:'+1',       note:'Small bonus per Gym Leader fight' },
+    { icon:'💊', action:'Vitamin (HP Up, Iron, etc.)',   gain:'+5/+3/+2', note:'Same tiered scaling as level-up.' },
+    { icon:'🌿', action:'Haircut — Goldenrod salon',    gain:'+1–5',     note:'Saturday/Sunday only. Daily once per haircut. Random within tier.' },
+    { icon:'🩹', action:'Heal at a Pokémon Center',     gain:'+1 (rare)',note:'Tiny chance per visit. Mostly just stack the other sources.' },
     { icon:'💀', action:'Fainting in battle',           gain:'−1 / −5',  note:'−1 below 200 friendship, −5 at 200+' },
-    { icon:'⚗', action:'Bitter medicine (Heal Powder)', gain:'−5',       note:'Energy Powder/Root, Heal Powder, Revival Herb all reduce happiness' }
+    { icon:'⚗', action:'Bitter medicine (Heal Powder)', gain:'−5',       note:'Energy Powder/Root, Heal Powder, Revival Herb all reduce happiness.' }
   ];
 
-  // Held items / catch bonuses
+  // Catch bonuses — Gen 2 only.
   var HELD_ITEMS = [
-    { name:'Soothe Bell', effect:'Doubles walking happiness (every 256 steps = +2). Obtained from a girl in the National Park.' },
-    { name:'Friend Ball', effect:'A Pokémon caught in a Friend Ball starts with 200 friendship instead of the species default — fastest jump-start for happiness evolutions.' }
+    { name:'Friend Ball', effect:'A Pokémon caught in a Friend Ball starts with 200 friendship instead of the species default (usually 70). Fastest single-step jump-start for happiness evolutions. Kurt crafts them from Green Apricorns.' }
   ];
 
   var curGame = localStorage.getItem('g3hap_game') || 'FR';
@@ -13317,9 +13317,9 @@ function buildHappinessPage() {
     // Tips
     '<div style="font-size:10px;color:var(--muted);line-height:1.9;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;">',
     '<strong style="color:var(--text)">Key tips:</strong><br>',
-    '• Start with a Pokémon caught in a <span class="guide-item-link" onclick="openItemByName(\'Luxury Ball\')">Luxury Ball</span> + give it <span class="guide-item-link" onclick="openItemByName(\'Soothe Bell\')">Soothe Bell</span> to hold — fastest combination.<br>',
-    '• Feed EV-reducing berries (Pomeg, Kelpsy, Qualot, Hondew, Grepa, Tamato) for +10 friendship each if they have EVs to spare.<br>',
-    '• Base friendship matters: Golbat starts at 70, Chansey at 140 (easiest), Eevee at 70.<br>',
+    '• Catch the target in a <strong>Friend Ball</strong> (Kurt, Green Apricorn) so it starts at 200 friendship — only 20 more needed to evolve.<br>',
+    '• If you already caught it in another ball, stack: Goldenrod salon haircut (Sat/Sun) + walk every 256 steps + level up = ~10 friendship per minute of play.<br>',
+    '• Base friendship matters: most species start at 70, Chansey at 140 (easiest), Eevee at 70.<br>',
     '• <strong style="color:#FF9800">Eevee → Espeon</strong> requires leveling up during the day; <strong style="color:#9966CC">Eevee → Umbreon</strong> requires leveling up at night. Use a Rare Candy at the right time.',
     '</div>',
   ].join('');
