@@ -502,8 +502,6 @@
     <div class="page-nav-dropdown" id="navTrainingDropdown">
       <button class="page-nav-btn page-nav-dropdown-trigger" id="navTrainingGroup" onclick="toggleNavDropdown(event,'navTrainingDropdown')">TRAINING ▾</button>
       <div class="page-nav-dropdown-menu" id="navTrainingMenu">
-        <button class="page-nav-dropdown-item" id="navIvev" onclick="closeNavDropdown('navTrainingDropdown');showPage('ivev',document.getElementById('navIvev'));">IV / EV Calculator</button>
-        <button class="page-nav-dropdown-item" id="navNatures" onclick="closeNavDropdown('navTrainingDropdown');showPage('natures',document.getElementById('navNatures'));if(!window._naturesBuilt){buildNaturesPage();window._naturesBuilt=true;}">Nature Chart</button>
         <button class="page-nav-dropdown-item" id="navExpCalc" onclick="closeNavDropdown('navTrainingDropdown');showPage('expcalc',document.getElementById('navExpCalc'));ensureExpCalcPage();">EXP Calculator</button>
         <button class="page-nav-dropdown-item" id="navBreed" onclick="closeNavDropdown('navTrainingDropdown');showPage('breed',document.getElementById('navBreed'));if(!window._breedBuilt){buildBreedCalc();window._breedBuilt=true;}">Breeding Calculator</button>
         <button class="page-nav-dropdown-item" id="navCatchCalc" onclick="closeNavDropdown('navTrainingDropdown');showPage('catchcalc',document.getElementById('navCatchCalc'));if(!window._catchCalcBuilt){buildCatchCalcPage();window._catchCalcBuilt=true;}">Catch Rate Calc</button>
@@ -526,9 +524,6 @@
       <button class="page-nav-btn page-nav-dropdown-trigger" id="navGuidesGroup" onclick="toggleNavDropdown(event,'navGuidesDropdown')">GUIDES ▾</button>
       <div class="page-nav-dropdown-menu" id="navGuidesMenu">
         <button class="page-nav-dropdown-item" id="navEssentials" onclick="closeNavDropdown('navGuidesDropdown');showPage('essentials',document.getElementById('navEssentials'));buildEssentialsPage();window._essentialsBuilt=true;">Essentials</button>
-        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navContests" onclick="closeNavDropdown('navGuidesDropdown');showPage('contests',document.getElementById('navContests'));buildContestsPage();window._contestsBuilt=true;">Contests</button>
-        <button class="page-nav-dropdown-item" data-games="E" id="navFrontier" onclick="closeNavDropdown('navGuidesDropdown');showPage('frontier',document.getElementById('navFrontier'));buildFrontierPage();window._frontierBuilt=true;">Battle Frontier</button>
-        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navBerries" onclick="closeNavDropdown('navGuidesDropdown');showPage('berries',document.getElementById('navBerries'));buildBerriesPage();window._berriesBuilt=true;">Berry Farming</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">RNG Guide</button>
       </div>
     </div>
