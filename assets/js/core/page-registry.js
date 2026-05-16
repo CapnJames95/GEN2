@@ -39,6 +39,23 @@ window.PAGE_REGISTRY = window.PAGE_REGISTRY || {
   distributionchecklist: {
     script: 'assets/js/pages/distributionchecklist.js',
     init: function() { if (!window._distributionChecklistBuilt) { buildDistributionChecklistPage(); window._distributionChecklistBuilt = true; } else { buildDistributionChecklistPage(); } }
+  },
+  // ─── Gen-2-specific feature pages ───
+  apricorns: {
+    script: 'assets/js/pages/apricorns.js',
+    init: function() { if (!window._apricornsBuilt) { buildApricornsPage(); window._apricornsBuilt = true; } }
+  },
+  battletower: {
+    script: 'assets/js/pages/battletower.js',
+    init: function() { if (!window._battleTowerBuilt) { buildBattleTowerPage(); window._battleTowerBuilt = true; } }
+  },
+  daynight: {
+    script: 'assets/js/pages/daynight.js',
+    init: function() { if (!window._dayNightBuilt) { buildDayNightPage(); window._dayNightBuilt = true; } }
+  },
+  bugcontest: {
+    script: 'assets/js/pages/bugcontest.js',
+    init: function() { if (!window._bugContestBuilt) { buildBugContestPage(); window._bugContestBuilt = true; } }
   }
 };
 

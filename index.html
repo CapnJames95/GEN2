@@ -524,6 +524,10 @@
       <button class="page-nav-btn page-nav-dropdown-trigger" id="navGuidesGroup" onclick="toggleNavDropdown(event,'navGuidesDropdown')">GUIDES ▾</button>
       <div class="page-nav-dropdown-menu" id="navGuidesMenu">
         <button class="page-nav-dropdown-item" id="navEssentials" onclick="closeNavDropdown('navGuidesDropdown');showPage('essentials',document.getElementById('navEssentials'));buildEssentialsPage();window._essentialsBuilt=true;">Essentials</button>
+        <button class="page-nav-dropdown-item" id="navApricorns" onclick="return openPage('apricorns','navApricorns','navGuidesDropdown')">🍎 Apricorns & Kurt</button>
+        <button class="page-nav-dropdown-item" id="navBattleTower" data-games="E" onclick="return openPage('battletower','navBattleTower','navGuidesDropdown')">🗼 Battle Tower (Crystal)</button>
+        <button class="page-nav-dropdown-item" id="navDayNight" onclick="return openPage('daynight','navDayNight','navGuidesDropdown')">🌅 Day / Night Cycle</button>
+        <button class="page-nav-dropdown-item" id="navBugContest" onclick="return openPage('bugcontest','navBugContest','navGuidesDropdown')">🐛 Bug-Catching Contest</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">RNG Guide</button>
       </div>
     </div>
@@ -1885,6 +1889,39 @@
   </div>
 </div>
 
+<!-- ══ GEN-2-SPECIFIC FEATURE PAGES ══ -->
+<div id="page-apricorns" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1100px;margin:0 auto;padding:24px;">
+      <div id="apricorns-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-battletower" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1100px;margin:0 auto;padding:24px;">
+      <div id="battletower-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-daynight" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1100px;margin:0 auto;padding:24px;">
+      <div id="daynight-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-bugcontest" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:1100px;margin:0 auto;padding:24px;">
+      <div id="bugcontest-content"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ DISTRIBUTIONS PAGE ══ -->
 <div id="page-distributions" class="page main">
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
@@ -2332,6 +2369,11 @@
 <script src="assets/js/pages/rematches.js"></script>
 <script src="assets/js/pages/routebrowser.js"></script>
 <script src="assets/js/pages/distributions.js"></script>
+<!-- Gen-2-specific feature pages -->
+<script src="assets/js/pages/apricorns.js"></script>
+<script src="assets/js/pages/battletower.js"></script>
+<script src="assets/js/pages/daynight.js"></script>
+<script src="assets/js/pages/bugcontest.js"></script>
 <script>
 (function() {
   function bootFallback() {
