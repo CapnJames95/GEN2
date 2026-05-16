@@ -988,7 +988,7 @@ var _FOSSIL_NUMS    = new Set([138,139,140,141,142,345,346,347,348]);
 
 // ── Dex note-link button renderer (shared by buildRow + updateDexLinkedNoteButtons) ──
 window._DEX_NOTE_GAME_COLORS = {ALL:'#F5C518',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
-window._DEX_NOTE_GAME_LABELS = {FR:'FR',LG:'LG',R:'R',S:'S',E:'E'};
+window._DEX_NOTE_GAME_LABELS = {FR:'G',LG:'S',E:'C'};
 window.buildDexNoteLinksHtml = function(linkedNotes, safeName) {
   if (!linkedNotes || !linkedNotes.length) {
     return '<div class="dex-note-links"><button class="dex-note-btn add" onclick="event.stopPropagation();openPokemonLinkedNote(\'' + safeName + '\')">+ Note</button></div>';
@@ -1149,8 +1149,8 @@ function buildTable() {
     filtered.forEach(p => h += buildRow(p));
     if (unavailable.length) {
       const GAME_NAMES = {FR:'Gold',LG:'Silver',E:'Crystal'};
-      const GAME_CLS   = {FR:'gl-fr',LG:'gl-lg',R:'gl-r',S:'gl-s',E:'gl-e'};
-      const GAME_LABELS = {FR:'🔥 FR',LG:'🌿 LG',R:'🔴 R',S:'🔷 S',E:'💚 E'};
+      const GAME_CLS   = {FR:'gl-fr',LG:'gl-lg',E:'gl-e'};
+      const GAME_LABELS = {FR:'🌕 Gold',LG:'🪙 Silver',E:'💎 Crystal'};
       // Always show separator — this also acts as a buffer row so the sticky thead doesn't overlap the first data row
       const sepMsg = filtered.length
         ? `Not in ${GAME_NAMES[GAME]} — also available in other games:`
@@ -1160,7 +1160,7 @@ function buildTable() {
         const unavailSpriteBase = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (window._shinyMode ? 'shiny/' : '');
         const sprite = `<img src="${unavailSpriteBase}${p.num}.png" alt="${p.name}" loading="lazy" onerror="this.style.opacity=0.15">`;
         const num = `#${String(p.num).padStart(3,'0')}`;
-        const availGames = ['FR','LG','R','S','E'].filter(g => g !== GAME && p.games[g] && p.games[g] !== 'nan');
+        const availGames = ['FR','LG','E'].filter(g => g !== GAME && p.games[g] && p.games[g] !== 'nan');
         const gameBadges = availGames.map(g => `<span class="game-label ${GAME_CLS[g]}" style="font-size:0.667em;padding:2px 6px">${GAME_LABELS[g]}</span>`).join(' ');
         h += `<tr class="row-unavailable" style="opacity:0.55">
           <td class="col-num" style="padding-top:0;padding-bottom:0;vertical-align:middle">${num}</td>
@@ -12899,9 +12899,9 @@ function buildNpcTradesPage() {
   // [game[], location, give, receive, OT, level, held, notes]
   var TRADES = [];
 
-  var GAME_COLORS = { FR:'var(--fire)', LG:'#4CAF50', R:'#FF5555', S:'#5599FF', E:'#00CC88' };
-  var GAME_LABELS = { FR:'FR', LG:'LG', R:'R', S:'S', E:'E' };
-  var ALL_GAMES = ['FR','LG','R','S','E'];
+  var GAME_COLORS = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
+  var GAME_LABELS = { FR:'Gold', LG:'Silver', E:'Crystal' };
+  var ALL_GAMES = ['FR','LG','E'];
 
   var currentFilter = 'ALL';
 
@@ -12977,8 +12977,8 @@ function buildHappinessPage() {
   var el = document.getElementById('happiness-content');
   if (!el) return;
 
-  var GAMES = ['FR','LG','R','S','E'];
-  var GAME_COLORS = { FR:'var(--fire)', LG:'#4CAF50', R:'#FF5555', S:'#5599FF', E:'#00CC88' };
+  var GAMES = ['FR','LG','E'];
+  var GAME_COLORS = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
   var GAME_LABELS = { FR:'🌕 Gold', LG:'🪙 Silver', E:'💎 Crystal' };
 
   // Happiness-evolution Pokémon in Gen 2 (threshold: 220)
@@ -13160,8 +13160,8 @@ function closeExportModal() {
 
 var STORAGE_KEY='g3notes_v2';
 var NOTES_PREV_PAGE='home';
-var GAME_COLORS={ALL:'var(--gold)',FR:'var(--fire)',LG:'#4CAF50',R:'#FF5555',S:'#5599FF',E:'#00CC88'};
-var GAME_LABELS={ALL:'🌐 All',FR:'🔥 FR',LG:'🌿 LG',R:'🔴 R',S:'🔷 S',E:'💚 E'};
+var GAME_COLORS={ALL:'var(--gold)',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
+var GAME_LABELS={ALL:'🌐 All',FR:'🌕 Gold',LG:'🪙 Silver',E:'💎 Crystal'};
 var COLOR_ACCENT={none:'var(--border)',red:'#FF5555',orange:'#FF9800',gold:'#FFD700',green:'#4CAF50',blue:'#64b4ff',purple:'#AA88FF'};
 var LABEL_PRESETS=['Team','Route','Shopping','Trade','Reminder','Battle','Progress','Strategy','Pokédex','Story','Misc'];
 
