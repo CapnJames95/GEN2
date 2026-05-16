@@ -553,9 +553,9 @@ body.light-theme .hub-back:hover{color:var(--fire);border-color:var(--fire);back
 .type-btn-steel{background:#9898A8;color:#000;}
 .filter-btns{display:flex;gap:5px;flex-wrap:wrap;}
 .filter-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;font-family:'Nunito',sans-serif;}
-.filter-btn:hover,.filter-btn.active{border-color:var(--fire);color:var(--fire);background:rgba(255,107,53,0.1);}
+.filter-btn:hover,.filter-btn.active{border-color:var(--game-color,var(--gold));color:var(--game-color,var(--gold));background:color-mix(in srgb,var(--game-color,var(--gold)) 10%,transparent);}
 .filter-btn-like{font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;font-family:'Nunito',sans-serif;}
-.filter-btn-like:hover,.filter-btn-like.active{border-color:var(--fire);color:var(--fire);background:rgba(255,107,53,0.1);}
+.filter-btn-like:hover,.filter-btn-like.active{border-color:var(--game-color,var(--gold));color:var(--game-color,var(--gold));background:color-mix(in srgb,var(--game-color,var(--gold)) 10%,transparent);}
 .game-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);background:var(--panel);padding:0 20px;align-items:stretch;}
 .game-tabs-extras{display:flex;align-items:center;gap:8px;margin-left:auto;padding:0 4px;}
 .game-tab{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.15s;white-space:nowrap;position:relative;overflow:hidden;}
@@ -1833,11 +1833,9 @@ body.strong-focus :focus-visible{outline:2px solid var(--gold)!important;outline
   --game-glow: rgba(245,197,24,0.35);
 }
 body.game-all { --accent:#F5C518; --accent-dim:rgba(245,197,24,0.15); --game-glow:rgba(245,197,24,0.40); }
-body.game-FR  { --accent:#FF5C1A; --accent-dim:rgba(255,92,26,0.15);  --game-glow:rgba(255,92,26,0.50); }
-body.game-LG  { --accent:#3DB84A; --accent-dim:rgba(61,184,74,0.15);  --game-glow:rgba(61,184,74,0.45); }
-body.game-R   { --accent:#EE3333; --accent-dim:rgba(238,51,51,0.15);  --game-glow:rgba(238,51,51,0.50); }
-body.game-S   { --accent:#2266EE; --accent-dim:rgba(34,102,238,0.15); --game-glow:rgba(34,102,238,0.50); }
-body.game-E   { --accent:#00CC55; --accent-dim:rgba(0,204,85,0.15);   --game-glow:rgba(0,204,85,0.45); }
+body.game-FR  { --accent:#E5B928; --accent-dim:rgba(229,185,40,0.15); --game-glow:rgba(229,185,40,0.50); } /* Gold */
+body.game-LG  { --accent:#B0BEC5; --accent-dim:rgba(176,190,197,0.18);--game-glow:rgba(176,190,197,0.50); } /* Silver */
+body.game-E   { --accent:#7FB8E0; --accent-dim:rgba(127,184,224,0.15);--game-glow:rgba(127,184,224,0.50); } /* Crystal */
 
 /* ── Header reacts to selected game ──────────────────────────── */
 header {
