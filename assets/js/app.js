@@ -261,8 +261,8 @@ function buildHomePage() {
       items:[
         { icon:'🧭', label:'Kanto Map',         desc:'Interactive Kanto post-game map with clickable zones',  games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('kantomapview',document.getElementById('navKantoMapView'));if(!window._kantomapviewBuilt){buildKantoMapView();window._kantomapviewBuilt=true;}" },
         { icon:'🧭', label:'Johto Map',         desc:'Interactive Johto map with clickable zones',           games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('emeraldmapview',document.getElementById('navCrystalMapView'));if(!window._emeraldmapviewBuilt){buildCrystalMapView();window._emeraldmapviewBuilt=true;}" },
-        { icon:'↗', label:'GSC Sidebar Map',    desc:'Open the Gold / Silver / Crystal IronMON map standalone', games:['FR','LG','E'], action:"window.open('./GSCIronmonMap/index.html','_blank')" },
-        { icon:'↗', label:'Crystal Sidebar Map', desc:'Open Crystal IronMON map standalone in a new tab',   games:['E'],          action:"window.open('./CrystalIronmonMap/index.html','_blank')" },
+        { icon:'↗', label:'Sidebar Map (Johto)', desc:'Detailed scrollable Johto map (simplyblgdev) — opens in new tab', games:['FR','LG','E'], action:"openSidebarMap()" },
+        { icon:'↗', label:'Sidebar Map (Kanto)', desc:'Detailed scrollable Kanto post-game map — opens in new tab',     games:['FR','LG','E'], action:"openSidebarMap('kanto')" },
         { icon:'🗺', label:'Route Browser',   desc:'Select any area to see every Pokémon available', action:"return openPage('routebrowser','navRouteBrowser','navMapsDropdown')" },
       ]
     },
@@ -12096,6 +12096,19 @@ function buildFrontierPage() {
   // Page is no longer navigable; this is a defensive stub.
 }
 
+
+// ══ External sidebar maps (simplyblgdev) ═════════════════════════
+// All Gen-2 games (G/S/C) use the same Johto map. Kanto post-game uses
+// the shared Kanto map. Always opens in a new tab.
+window.openSidebarMap = function(region) {
+  var url;
+  if (region === 'kanto') {
+    url = 'https://simplyblgdev.github.io/pokemon/kanto';
+  } else {
+    url = 'https://simplyblgdev.github.io/pokemon/Johto';
+  }
+  window.open(url, '_blank', 'noopener');
+};
 
 // ══ RNG GUIDE PAGE (Gen 2) ═══════════════════════════════════════
 function buildRngPage() {
