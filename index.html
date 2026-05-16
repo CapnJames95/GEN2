@@ -1264,10 +1264,10 @@
   <!-- Notes about Gen 2 EV system -->
   <div id="ivev-notes-section">
     <div class="ivev-note ivev-note-gold">
-      <strong>Gen 2 EV system:</strong> Unlike later games, Gen 2 has no per-stat cap — a Pokémon can have up to 65,535 EVs in a single stat. However, only the first 255 EVs contribute to each stat (floor(EV/4) is applied), and only the first 252 make a practical difference. The total across all stats is capped at 510. This calculator uses the standard 252 competitive limit per stat, but explains why.
+      <strong>Gen 2 Stat Experience:</strong> Gen 2 uses <strong>Stat Experience (Stat Exp)</strong>, not EVs. Each stat can hold 0–65,535 Stat Exp independently (no overall cap), and the contribution to a stat is <code>floor(sqrt(StatExp) / 4)</code> at level 100. Maxing all six stats requires fighting many Pokémon — each KO grants that species' base stat in Stat Exp. See the dedicated Stat Calculator page for the Gen 2 DV + Stat Exp formula.
     </div>
     <div class="ivev-note ivev-note-green">
-      <strong style="color:#44DD88;">Pokérus (RSE):</strong> A rare virus that doubles EV gain from all battles. A Pokémon with Pokérus earns 2× EVs per KO, stacking with EV items. In Ruby/Sapphire/Crystal, the only EV-boosting items are Vitamins (Protein, Iron, etc.) which add 10 EVs each and cap at 100 EVs per stat. Pokérus doubles <em>battle</em> EVs only, not Vitamin EVs.
+      <strong style="color:#44DD88;">Pokérus:</strong> Introduced in Gen 2. A rare virus that doubles Stat Experience gained from battles. Doesn't stack with Vitamins (Protein, Iron, Carbos, HP Up, Calcium, Zinc) — those add a flat 2,560 Stat Exp each and cap at 25,600 per stat. Pokérus only doubles <em>battle</em> Stat Exp, not Vitamins.
     </div>
   </div>
 
@@ -1498,7 +1498,7 @@
         <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--game-color,var(--gold));margin-bottom:6px;">🥚 HATCH COUNTER</div>
         <div id="breed-hatch-steps" style="font-size:13px;font-weight:800;color:var(--game-color,var(--gold));"></div>
         <div id="breed-hatch-cycles" style="font-size:10px;color:var(--muted);margin-top:3px;"></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6;">Steps = walking while egg is in party. Flame Body / Magma Armor halves this (get Slugma or Magcargo from Route 113).</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6;">Steps = walking while egg is in party. Flame Body / Magma Armor halves this. (Note: Abilities don't exist in Gen 2 — egg-hatch speed is fixed per species.)</div>
       </div>
 
       <button onclick="breedReset()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:8px;color:var(--muted);font-size:10px;cursor:pointer;margin-top:4px;">↺ Reset</button>
@@ -1711,7 +1711,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:900px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉMON CONTESTS</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Complete guide to Pokémon Contests in Ruby, Sapphire &amp; Crystal — conditions, Pokéblocks, appeal, and ribbons.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Pokémon Contests are a Gen-3-only feature. Not available in Gen 2.</div>
       <div id="contests-content"></div>
     </div>
   </div>
@@ -1722,7 +1722,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:900px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BATTLE FRONTIER</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Crystal's Battle Frontier — all 7 facilities, how each works, the Frontier Brain you face, and strategy tips.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Battle Frontier is a Gen-3 feature (Emerald). Gen 2 Crystal has the Battle Tower instead — see Guides → Battle Tower (Crystal).</div>
       <div id="frontier-content"></div>
     </div>
   </div>
@@ -1765,7 +1765,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:900px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BERRY FARMING</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Berry growth timers, yields, mutation chart, and Berry Master phrases for Ruby, Sapphire &amp; Crystal.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Berry-blending Pokéblocks are a Gen-3-only feature. Gen 2 has simpler berries (Berry, Gold Berry, Mint Berry, etc.) — see Items → Held Items.</div>
       <div id="berries-content"></div>
     </div>
   </div>
@@ -1828,7 +1828,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:860px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RNG MANIPULATION GUIDE</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 RNG mechanics — TID/SID manipulation, Methods 1/2/4, shiny hunting, IV abuse for Ruby/Sapphire/Crystal/Gold/Silver.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Gen 2 RNG mechanics — DV manipulation, shiny hunting via the DV formula, Trainer ID and seed-based encounters for Gold/Silver/Crystal.</div>
       <div id="rng-content"></div>
     </div>
   </div>
@@ -1890,7 +1890,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:860px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">NATURE CHART</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All 25 natures — boosted stat (+10%), lowered stat (−10%), and preferred/disliked Pokéblock flavors.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Natures are a Gen-3-only mechanic. Gen 2 uses DVs (Determinant Values) for stat individuality — see Calculators → Stat Calculator.</div>
       <div id="natures-content"></div>
     </div>
   </div>
@@ -2013,22 +2013,8 @@
 
 <!-- ══ TUTORS PAGE ══ -->
 <div id="page-tutors" class="page main">
-  <div class="tutors-wrap">
-    <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:4px;">MOVE TUTORS</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All move tutors across Gen 2 GBA games · FR/LG tutors are one-time events · Crystal tutors require Battle Points (BP)</div>
-    <div class="panel" style="overflow:hidden;">
-      <div style="padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.7;">
-        <strong style="color:var(--game-color,var(--gold));">Ruby / Sapphire:</strong> Only two tutors — one NPC in Fallarbor Town teaches either <span class="guide-move-link" onclick="_openMoveDex('Double-Edge')">Double-Edge</span> or <span class="guide-move-link" onclick="_openMoveDex('Seismic Toss')">Seismic Toss</span> (one-time choice). These are also in the GSC list below.
-      </div>
-      <div style="overflow-x:auto;">
-        <table class="tutors-table" id="tutors-table">
-          <thead><tr>
-            <th>MOVE</th><th>TYPE</th><th style="text-align:center;">FR</th><th style="text-align:center;">LG</th><th style="text-align:center;">EMERALD</th>
-          </tr></thead>
-          <tbody id="tutors-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+  <div class="tutors-wrap" style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;padding:24px;">
+    <div id="tutors-content"></div>
   </div>
 </div>
 
@@ -2051,7 +2037,7 @@
     <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:#44DD88;letter-spacing:1px;white-space:nowrap;">🗺 MAP</div>
     <select id="map-select" onchange="mapSelectRegion(this.value)" style="flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:5px 8px;font-size:12px;outline:none;cursor:pointer;">
       <option value="kanto3">Kanto — Gold / Silver</option>
-      <option value="hoenn">Johto — Ruby / Sapphire / Crystal</option>
+      <option value="johto">Johto — Gold / Silver / Crystal</option>
     </select>
     <button onclick="closeMapPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
   </div>
@@ -2169,7 +2155,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div id="ne-route-wrap">
           <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">LINKED ROUTE / PLACE</div>
-          <input id="ne-route" type="text" placeholder="e.g. Route 110, Mt. Moon, Mauville"
+          <input id="ne-route" type="text" placeholder="e.g. Route 36, Ilex Forest, Goldenrod"
             style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;">
         </div>
         <div id="ne-pokemon-wrap">
@@ -2282,7 +2268,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:1000px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">REMATCH TRAINERS</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">VS Seeker rematches (FR/LG) and Trainer's Eye (Crystal) — curated for EV training and EXP grinding.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Phone-trainer rematches in Crystal — registered trainers call to offer rematches on fixed days/times.</div>
       <div id="rematches-content"></div>
     </div>
   </div>
@@ -2416,7 +2402,7 @@
     <span>💡 PRO TIP: Synchronize in your lead slot sets wild Pokémon's nature</span>
     <span>🎯 TIP: Geodude and Graveler can be found in most caves — great for early Strength</span>
     <span>🏆 ELITE FOUR: Carry 20+ Full Restores and an Antidote for Agatha</span>
-    <span>💡 PRO TIP: Pickup Meowth/Linoone can farm rare items in RSE</span>
+    <span>💡 PRO TIP: Pickup Meowth in Gen 2 occasionally finds items between battles</span>
     <span>🌊 TIP: Surf + Thunderbolt covers most of the game — great attacking combo</span>
   </div>
 </div>
