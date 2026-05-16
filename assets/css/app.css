@@ -514,11 +514,10 @@ body.light-theme .hub-back:hover{color:var(--fire);border-color:var(--fire);back
 .gbadge:hover{opacity:0.8;}
 .gbadge.active-game-badge{opacity:1;box-shadow:0 0 0 2px rgba(255,255,255,0.25);}
 .gbadge-all{color:var(--gold);border-color:var(--gold);background:rgba(255,215,0,0.1);}
-.gbadge-fr{color:var(--fire);border-color:var(--fire);background:rgba(255,107,53,0.1);}
-.gbadge-lg{color:var(--leaf);border-color:var(--leaf);background:rgba(76,175,80,0.1);}
-.gbadge-r{color:#FF6666;border-color:#CC2200;background:rgba(204,34,0,0.1);}
-.gbadge-s{color:#66AAFF;border-color:#0055CC;background:rgba(0,85,204,0.1);}
-.gbadge-e{color:#44DD88;border-color:#00AA44;background:rgba(0,170,68,0.1);}
+/* Gen 2 game badges: FR slot = Gold, LG slot = Silver, E slot = Crystal */
+.gbadge-fr{color:#E5B928;border-color:#E5B928;background:rgba(229,185,40,0.12);}
+.gbadge-lg{color:#B0BEC5;border-color:#B0BEC5;background:rgba(176,190,197,0.12);}
+.gbadge-e{color:#7FB8E0;border-color:#7FB8E0;background:rgba(127,184,224,0.12);}
 .main{position:relative;z-index:1;flex-direction:column;height:calc(100vh - var(--page-top, 82px) - var(--page-bottom, 24px));}
 .controls{padding:10px 20px 8px;background:var(--darker);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
 .search-bar{flex:1;min-width:180px;position:relative;display:flex;align-items:center;}.search-bar-clear{display:none;position:absolute;right:8px;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1;border-radius:3px;transition:color 0.12s;}.search-bar-clear:hover{color:var(--text);}.search-bar-clear.visible{display:block;}
@@ -645,11 +644,10 @@ td{padding:5px 10px;vertical-align:top;}
 
 /* Game label in all-games view */
 .game-label{display:inline-block;font-family:'Press Start 2P',monospace;font-size:6px;padding:2px 6px;border-radius:4px;margin-right:4px;flex-shrink:0;}
-.gl-fr{background:rgba(255,107,53,0.2);color:var(--fire);border:1px solid rgba(255,107,53,0.4);}
-.gl-lg{background:rgba(76,175,80,0.2);color:#66BB66;border:1px solid rgba(76,175,80,0.4);}
-.gl-r{background:rgba(204,34,0,0.2);color:#FF7777;border:1px solid rgba(204,34,0,0.4);}
-.gl-s{background:rgba(0,85,204,0.2);color:#77AAFF;border:1px solid rgba(0,85,204,0.4);}
-.gl-e{background:rgba(0,170,68,0.2);color:#44DD88;border:1px solid rgba(0,170,68,0.4);}
+/* Gen 2 game-label inline tags: FR=Gold, LG=Silver, E=Crystal */
+.gl-fr{background:rgba(229,185,40,0.18);color:#E5B928;border:1px solid rgba(229,185,40,0.4);}
+.gl-lg{background:rgba(176,190,197,0.18);color:#B0BEC5;border:1px solid rgba(176,190,197,0.4);}
+.gl-e{background:rgba(127,184,224,0.18);color:#7FB8E0;border:1px solid rgba(127,184,224,0.4);}
 
 /* All-games view — compact stacked */
 .all-games-cell{font-size:0.917em;}
@@ -721,11 +719,9 @@ th.sortable:hover{color:var(--text);}
 th.sort-asc::after{content:' ▲';color:var(--fire);}
 th.sort-desc::after{content:' ▼';color:var(--fire);}
 
-/* ── RSE game label colours ── */
-.gl-r{background:rgba(238,34,34,0.2);color:#FF5555;border:1px solid rgba(238,34,34,0.4);}
-.gl-s{background:rgba(17,102,238,0.2);color:#5599FF;border:1px solid rgba(17,102,238,0.4);}
-.gl-e{background:rgba(0,204,85,0.2);color:#44DD88;border:1px solid rgba(0,204,85,0.4);}
-.page-nav-btn.rse-active{color:#44DD88;border-bottom-color:#44DD88;}
+/* ── Crystal-specific accent ── */
+.gl-e{background:rgba(127,184,224,0.18);color:#7FB8E0;border:1px solid rgba(127,184,224,0.4);}
+.page-nav-btn.crystal-active{color:#7FB8E0;border-bottom-color:#7FB8E0;}
 /* ── Exclusives page ── */
 #page-excl{height:calc(100vh - var(--page-top, 115px) - var(--page-bottom, 24px));overflow:hidden;flex-direction:column;}
 .excl-header{padding:10px 16px;background:var(--darker);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;}

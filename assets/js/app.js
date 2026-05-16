@@ -18,7 +18,7 @@ function getEvoChain(num) {
 let FILTER = 'all', GAME = 'all', SEARCH = '', SHOW_EVO_CHAIN = false, USE_NATIVE_DEX = false, BEST_RATE_MODE = 'off', TYPE_FILTER = new Set();
 let SORT_KEY = null, SORT_DIR = 1; // 1=asc, -1=desc
 
-var SITE_GAME_COLORS = {all:'var(--gold)',FR:'var(--fire)',LG:'var(--leaf)',R:'#FF5555',S:'#5599FF',E:'#44DD88'};
+var SITE_GAME_COLORS = {all:'var(--gold)',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
 function setSiteGameColor(g) {
   document.documentElement.style.setProperty('--game-color', SITE_GAME_COLORS[g] || 'var(--gold)');
   // Push resolved color to map iframes for game-color theming
@@ -989,7 +989,7 @@ var _STARTER_NUMS   = new Set([1,4,7,252,255,258]);
 var _FOSSIL_NUMS    = new Set([138,139,140,141,142,345,346,347,348]);
 
 // ── Dex note-link button renderer (shared by buildRow + updateDexLinkedNoteButtons) ──
-window._DEX_NOTE_GAME_COLORS = {ALL:'#F5C518',FR:'#ef5350',LG:'#66bb6a',R:'#e53935',S:'#1e88e5',E:'#43a047'};
+window._DEX_NOTE_GAME_COLORS = {ALL:'#F5C518',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
 window._DEX_NOTE_GAME_LABELS = {FR:'FR',LG:'LG',R:'R',S:'S',E:'E'};
 window.buildDexNoteLinksHtml = function(linkedNotes, safeName) {
   if (!linkedNotes || !linkedNotes.length) {
@@ -2582,7 +2582,7 @@ function mdexBuildDetail(id,m) {
       const tmCode = tmItem[1].match(/^(TM|HM)\d+/)[0];
       const locs = tmItem[4] || {};
       const GAME_LABELS = {FR:'🌕 Gold',LG:'🪙 Silver',E:'💎 Crystal'};
-      const GAME_COLORS = {FR:'var(--fire)',LG:'var(--leaf)',R:'#FF5555',S:'#5599FF',E:'var(--emerald)'};
+      const GAME_COLORS = {FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
       let rows = '';
       // If a specific game is selected, show only that game; otherwise show all
       const gamesToShow = (GAME && GAME !== 'all') ? [GAME] : ['FR','LG','R','S','E'];
@@ -4099,7 +4099,7 @@ function exclCard(p, game) {
 // ══ TEAM BUILDER ══════════════════════════════════════════════
 var TB_TEAM = [];
 var TB_GAME = 'all';
-var TB_GAME_COLORS = {all:'var(--gold)',FR:'var(--fire)',LG:'var(--leaf)',R:'#FF5555',S:'#5599FF',E:'#44DD88'};
+var TB_GAME_COLORS = {all:'var(--gold)',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
 function tbUpdateTitleColor(g) {
   var t = document.getElementById('tb-page-title');
   if (t) t.style.setProperty('color', TB_GAME_COLORS[g] || 'var(--gold)');
@@ -5789,7 +5789,7 @@ var TMHM_REGION_GAMES = {
 
 var TMHM_GAME_LABELS = {FR:'Gold',LG:'Silver',E:'Crystal'};
 var TMHM_GROUP_LABELS = {FR:'Gold / Silver', E:'Crystal'};
-var TMHM_GAME_COLORS = {FR:'var(--fire)',LG:'var(--leaf)',R:'#e05555',S:'#5599FF',E:'#44DD88'};
+var TMHM_GAME_COLORS = {FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
 
 
 
