@@ -5751,21 +5751,12 @@ function buildTracker() {
 })();
 
 // ══ TM/HM LOCATOR ═════════════════════════════════════════════
-var TMHM_REGION = 'frlg'; // 'frlg' or 'rse'
-var TMHM_GAME = 'FR';
+// All three Gen-2 games share the same TM/HM list, so per-region
+// filtering is unnecessary. We keep the type filter (All / TM / HM)
+// and the search box.
 var TMHM_TYPE = 'all'; // 'all', 'TM', 'HM'
-
-var TMHM_REGION_GAMES = {
-  frlg: ['FR','LG'],
-  rse:  ['R','S','E']
-};
-
 var TMHM_GAME_LABELS = {FR:'Gold',LG:'Silver',E:'Crystal'};
-var TMHM_GROUP_LABELS = {FR:'Gold / Silver', E:'Crystal'};
 var TMHM_GAME_COLORS = {FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
-
-
-
 
 
 function tmhmSetType(type, btn) {
@@ -5777,14 +5768,10 @@ function tmhmSetType(type, btn) {
 
 
 
+// Kept as a no-op for legacy call sites. Gen 2 games share the same
+// TM/HM list, so switching the game header doesn't change the page.
 function tmhmSyncFromGame(g) {
-  if (g === 'all') return;
-  TMHM_GAME = g;
-  TMHM_REGION = (g === 'FR' || g === 'LG') ? 'frlg' : 'rse';
-  document.querySelectorAll('.tmhm-game-btn').forEach(function(b){ b.classList.remove('active'); });
-  var gb = document.querySelector('.tmhm-game-btn[onclick*="' + g + '"]');
-  if (gb) gb.classList.add('active');
-  tmhmRender();
+  if (typeof tmhmRender === 'function') tmhmRender();
 }
 
 // Gen 2 TM/HM list (Gold, Silver, Crystal)
@@ -5901,123 +5888,69 @@ function buildTmhmLocator() {
     +'</div>';
 }
 
+// Gen 2 TM/HM render — filters the curated GEN2_TMS / GEN2_HMS lists.
+// Search matches against move name, type, or location source. Type-tab
+// (All / TM / HM) hides the other section.
 function tmhmRender() {
-  var q = ((document.getElementById('tmhm-search') || {}).value || '').toLowerCase();
-  var games = TMHM_REGION_GAMES[TMHM_REGION];
-
-  // Get TM/HM items filtered to current region
-  var items = ALL_ITEMS.filter(function(it) {
-    if (it[2] !== 'TM/HM') return false;
-    var name = it[1]; // e.g. "TM01 Focus Punch" or "HM03 Surf"
-    var isTM = /^TM/.test(name);
-    var isHM = /^HM/.test(name);
-    if (TMHM_TYPE === 'TM' && !isTM) return false;
-    if (TMHM_TYPE === 'HM' && !isHM) return false;
-    // Region filter: item must be available in at least one game of the region
-    var locs = it[4] || {};
-    var inRegion = games.some(function(g) { return !!locs[g]; });
-    if (!inRegion && !isHM) return false; // HMs show even if FR/LG only location
-    // HMs: filter by region - RSE HM08 shouldn't show in FR/LG region
-    if (isHM) {
-      if (TMHM_REGION === 'frlg' && name === 'HM08 Dive') return false;
-    }
-    if (q) {
-      var loc = locs[TMHM_GAME] || '';
-      var moveEntry = Object.entries(MOVES_DATA).find(function(e){ return e[1][0] === name.replace(/^(TM|HM)\d+\s*/,''); });
-      var moveName = name.replace(/^(TM|HM)\d+\s*/,'');
-      if (moveName.toLowerCase().indexOf(q) === -1 && loc.toLowerCase().indexOf(q) === -1) return false;
-    }
-    return true;
-  });
-
-  // Sort TMs numerically, HMs after
-  items.sort(function(a, b) {
-    var an = parseInt(a[1].match(/\d+/)[0]);
-    var bn = parseInt(b[1].match(/\d+/)[0]);
-    var aIsHM = /^HM/.test(a[1]) ? 1 : 0;
-    var bIsHM = /^HM/.test(b[1]) ? 1 : 0;
-    if (aIsHM !== bIsHM) return aIsHM - bIsHM;
-    return an - bn;
-  });
-
-  var countEl = document.getElementById('tmhm-count');
-  if (countEl) countEl.textContent = items.length + ' moves';
-
   var inner = document.getElementById('tmhm-inner');
   if (!inner) return;
+  // If buildTmhmLocator hasn't run yet (it owns the table layout), do it now.
+  if (typeof GEN2_TMS === 'undefined') return;
+  var q = ((document.getElementById('tmhm-search') || {}).value || '').toLowerCase().trim();
+  var typeFilter = TMHM_TYPE; // 'all' / 'TM' / 'HM'
 
-  if (!items.length) {
+  function matches(entry) {
+    if (!q) return true;
+    return (entry.n.toLowerCase().indexOf(q) !== -1)
+      || (entry.m.toLowerCase().indexOf(q) !== -1)
+      || (entry.t.toLowerCase().indexOf(q) !== -1)
+      || (entry.src.toLowerCase().indexOf(q) !== -1);
+  }
+  var tms = (typeFilter === 'HM') ? [] : GEN2_TMS.filter(matches);
+  var hms = (typeFilter === 'TM') ? [] : GEN2_HMS.filter(matches);
+
+  var countEl = document.getElementById('tmhm-count');
+  if (countEl) countEl.textContent = (tms.length + hms.length) + ' moves';
+
+  if (!tms.length && !hms.length) {
     inner.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-family:\'Press Start 2P\',monospace;font-size:8px;">NO RESULTS</div>';
     return;
   }
 
-  // Separate TMs and HMs
-  var tms = items.filter(function(it){ return /^TM/.test(it[1]); });
-  var hms = items.filter(function(it){ return /^HM/.test(it[1]); });
-
-  function renderSection(list, title) {
-    if (!list.length) return '';
-    var rows = list.map(function(it) {
-      var name = it[1];
-      var num = name.match(/^(TM|HM)(\d+)/);
-      var prefix = num ? num[1] : '';
-      var numStr = num ? num[2] : '';
-      var moveName = name.replace(/^(TM|HM)\d+\s*/, '');
-      var locs = it[4] || {};
-      var loc = locs[TMHM_GAME] || '';
-      var effect = it[3] || '';
-
-      var moveEntry = null;
-      Object.entries(MOVES_DATA).forEach(function(e){
-        if (e[1][0] === moveName) moveEntry = e[1];
-      });
-      var moveType = moveEntry ? moveEntry[1] : '';
-      var moveCat = moveEntry ? moveEntry[2] : '';
-      var movePow = moveEntry ? moveEntry[3] : null;
-
-      var catIcon = moveCat === 'Physical' ? '⚔' : moveCat === 'Special' ? '✨' : moveCat === 'Status' ? '●' : '';
-      var powStr = movePow ? movePow : '—';
-      var powColor = movePow >= 100 ? '#F08030' : movePow >= 60 ? 'var(--text)' : 'var(--muted)';
-
-      var tmKey = (prefix + numStr).toUpperCase();
-      var tmEntry = ALL_ITEMS.find(function(it){ return it[1].toUpperCase().indexOf(tmKey) === 0; });
-      var tmIconUrl = (tmEntry && ITEM_ICONS[tmEntry[0]]) ? ITEM_ICONS[tmEntry[0]] : ITEM_SPRITE_BASE + prefix.toLowerCase() + numStr + '.png';
-      var tmSprite = '<img src="' + tmIconUrl + '" width="20" height="20" style="image-rendering:pixelated;flex-shrink:0;vertical-align:middle" onerror="this.style.display=\'none\'">';
-
-      var locText = loc
-        ? '<span style="color:var(--text)">' + loc + '</span>'
-        : '<span style="color:var(--muted);font-style:italic">Not available</span>';
-
-      return '<tr>'
-        + '<td style="white-space:nowrap"><div style="display:flex;align-items:center;gap:6px">' + tmSprite + '<span class="tmhm-num-badge">' + prefix + numStr + '</span></div></td>'
-        + '<td style="white-space:nowrap"><span class="tmhm-move-link" onclick="goToMoveInDex(\'' + moveName.replace(/'/g,"\\'") + '\')">' + moveName + '</span></td>'
-        + '<td>' + (moveType ? typeSprite(moveType.toLowerCase()) : '') + '</td>'
-        + '<td style="font-size:11px;color:var(--muted);white-space:nowrap">' + catIcon + ' ' + moveCat + ' <span style="font-family:monospace;font-weight:800;font-size:12px;color:' + powColor + '">' + powStr + '</span></td>'
-        + '<td style="font-size:11px;color:var(--muted);max-width:260px">' + effect.slice(0,55) + (effect.length>55?'…':'') + '</td>'
-        + '<td style="min-width:200px">' + locText + '</td>'
-        + '</tr>';
-    }).join('');
-
-    return '<div class="tmhm-section">'
-      + '<div class="panel" style="padding:0;overflow-x:auto;">'
-      + '<div class="tmhm-section-title">' + title + '</div>'
-      + '<table class="tmhm-table">'
-      + '<thead><tr>'
-      + '<th>#</th>'
-      + '<th>Move</th>'
-      + '<th>Type</th>'
-      + '<th>Cat / Pwr</th>'
-      + '<th>Effect</th>'
-      + '<th>Location — ' + TMHM_GAME_LABELS[TMHM_GAME] + '</th>'
-      + '</tr></thead>'
-      + '<tbody>' + rows + '</tbody>'
-      + '</table></div></div>';
+  var TYPE_COLORS = {normal:'#9E9E9E',fire:'#E8501A',water:'#1B8FE8',grass:'#3DA83D',electric:'#D4A800',ice:'#60C8C8',fighting:'#B83020',poison:'#8B3099',ground:'#8B6840',flying:'#6850C0',psychic:'#D01868',bug:'#78A810',rock:'#807840',ghost:'#4030A0',dragon:'#5038E8',dark:'#403030',steel:'#9898A8',varies:'#666'};
+  function row(entry) {
+    var c = TYPE_COLORS[entry.t] || '#666';
+    return '<tr style="border-bottom:1px solid var(--border);">'
+      + '<td style="padding:6px 8px;font-weight:800;color:var(--text);font-size:11px;white-space:nowrap;">'+entry.n+'</td>'
+      + '<td style="padding:6px 8px;font-size:12px;color:var(--text);font-weight:700;">'+entry.m+'</td>'
+      + '<td style="padding:6px 8px;"><span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;background:'+c+';color:#fff;">'+entry.t+'</span></td>'
+      + '<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.pwr || '–')+'</td>'
+      + '<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.acc ? entry.acc + '%' : '–')+'</td>'
+      + '<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.pp || '–')+'</td>'
+      + '<td style="padding:6px 8px;font-size:11px;color:var(--muted);line-height:1.5;">'+entry.src+'</td>'
+      + '</tr>';
   }
-
-  var html = '';
-  if (TMHM_TYPE !== 'HM') html += renderSection(tms, 'TECHNICAL MACHINES (TM01–TM50)');
-  if (TMHM_TYPE !== 'TM') html += renderSection(hms, 'HIDDEN MACHINES (HM01–HM0' + (TMHM_REGION === 'rse' ? '8' : '7') + ')');
-  inner.innerHTML = html;
+  function table(items, title) {
+    if (!items.length) return '';
+    return '<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));margin:6px 0 8px;letter-spacing:1px;">'+title+'</div>'
+      + '<div class="panel" style="padding:0;overflow:hidden;margin-bottom:18px;">'
+      + '<table style="width:100%;border-collapse:collapse;">'
+      + '<thead style="background:var(--card);"><tr>'
+      + '<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">#</th>'
+      + '<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Move</th>'
+      + '<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Type</th>'
+      + '<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">Power</th>'
+      + '<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">Acc</th>'
+      + '<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">PP</th>'
+      + '<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Location</th>'
+      + '</tr></thead><tbody>'
+      + items.map(row).join('')
+      + '</tbody></table></div>';
+  }
+  inner.innerHTML = '<div style="max-width:1100px;margin:0 auto;padding:0 4px;">'
+    + table(tms, 'TECHNICAL MACHINES (TM01–TM50)')
+    + table(hms, 'HIDDEN MACHINES (HM01–HM07)')
+    + '</div>';
 }
 
 // ══ DAMAGE CALCULATOR ══════════════════════════════════════════
