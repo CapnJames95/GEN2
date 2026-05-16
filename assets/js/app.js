@@ -6218,16 +6218,17 @@ function calcIsActive(id) {
 // ── Stat calculation ────────────────────────────────────────
 // Gen 2 stat formula: ((2*Base + IV + floor(EV/4)) * Level / 100 + 5) * nature
 // HP: ((2*Base + IV + floor(EV/4)) * Level / 100 + Level + 10)
+// Gen-2 stat formula. `iv` is treated as DV (0-15), `ev` as Stat Exp
+// (0-65535), `nature` is the badge-boost multiplier (1.0 or 1.125).
 function calcStatValue(base, level, iv, ev, nature, isHP) {
   base = parseInt(base) || 1;
   level = parseInt(level) || 50;
-  iv = Math.max(0, Math.min(31, parseInt(iv) || 31));
-  ev = Math.max(0, Math.min(252, parseInt(ev) || 0));
-  nature = parseFloat(nature) || 1.0;
-  if (isHP) {
-    return Math.floor((2 * base + iv + Math.floor(ev / 4)) * level / 100) + level + 10;
-  }
-  return Math.floor((Math.floor((2 * base + iv + Math.floor(ev / 4)) * level / 100) + 5) * nature);
+  var dv = Math.max(0, Math.min(15, parseInt(iv) || 15));
+  var statExp = Math.max(0, Math.min(65535, parseInt(ev) || 0));
+  var badge = parseFloat(nature) || 1.0;
+  var bonus = Math.floor(Math.floor(Math.sqrt(statExp)) / 4);
+  var core = Math.floor(((base + dv) * 2 + bonus) * level / 100);
+  return isHP ? core + level + 10 : Math.floor((core + 5) * badge);
 }
 
 function calcIsPhysical() {
@@ -6251,7 +6252,7 @@ function calcUpdate() {
   // Calculate and display attacker stat
   var atkBase = parseInt(document.getElementById('atk-base').value) || 0;
   var atkLevel = parseInt(document.getElementById('atk-level').value) || 50;
-  var atkIV = parseInt(document.getElementById('atk-iv').value) || 31;
+  var atkIV = parseInt(document.getElementById('atk-iv').value) || 15;
   var atkEV = parseInt(document.getElementById('atk-ev').value) || 0;
   var atkNature = parseFloat(document.getElementById('atk-nature').value) || 1.0;
   var atkStat = calcStatValue(atkBase, atkLevel, atkIV, atkEV, atkNature, false);
@@ -6260,7 +6261,7 @@ function calcUpdate() {
   // Calculate and display defender stat
   var defBase = parseInt(document.getElementById('def-base').value) || 0;
   var defLevel = parseInt(document.getElementById('def-level').value) || 50;
-  var defIV = parseInt(document.getElementById('def-iv').value) || 31;
+  var defIV = parseInt(document.getElementById('def-iv').value) || 15;
   var defEV = parseInt(document.getElementById('def-ev').value) || 0;
   var defNature = parseFloat(document.getElementById('def-nature').value) || 1.0;
   var defStat = calcStatValue(defBase, defLevel, defIV, defEV, defNature, false);
@@ -6269,7 +6270,7 @@ function calcUpdate() {
   // Update def HP display
   if (calcState.def) {
     var hpBase = calcState.def.bs[0];
-    var hp = calcStatValue(hpBase, defLevel, 31, 0, 1, true);
+    var hp = calcStatValue(hpBase, defLevel, 15, 0, 1, true);
     document.getElementById('def-hp-display').textContent = 'HP: ' + hp;
   }
 
@@ -8363,7 +8364,7 @@ document.addEventListener('keydown', e => {
   if (page === 'opt') {
     if (lower === 'c') { e.preventDefault(); OPT_TAB = 'items'; renderOptimizerPage(); return; }
     if (lower === 'v') { e.preventDefault(); OPT_TAB = 'ev'; renderOptimizerPage(); return; }
-    if (lower === 's') { e.preventDefault(); OPT_TAB = 'safari'; renderOptimizerPage(); return; }
+    // Note: Safari Zone is closed in original GSC — no safari tab in Gen 2.
   }
 });
 
@@ -9906,10 +9907,10 @@ function renderOptimizerPage() {
   document.querySelectorAll('#opt-tab-row .filter-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.getAttribute('data-opt-tab') === OPT_TAB);
   });
+  if (OPT_TAB === 'safari') OPT_TAB = 'items'; // safari is Gen-3+, fall back
   if (OPT_TAB === 'items') panel.innerHTML = optRenderItems();
   else if (OPT_TAB === 'exp') panel.innerHTML = optRenderExp();
   else if (OPT_TAB === 'ev') panel.innerHTML = optRenderEv();
-  else if (OPT_TAB === 'safari') panel.innerHTML = optRenderSafari();
 }
 
 // ══════════════════════════════════════════════════════════════════

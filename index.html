@@ -1031,15 +1031,14 @@
         <label class="calc-label">Attack stat <span id="atk-stat-type" style="color:var(--muted);font-weight:400">(Atk or SpAtk set by move type)</span></label>
         <div class="calc-row-2">
           <div><label class="calc-label" style="font-size:9px">Base</label><input class="calc-input" id="atk-base" type="number" min="1" max="255" value="80" oninput="calcUpdate()"></div>
-          <div><label class="calc-label" style="font-size:9px">IV (0–31)</label><input class="calc-input" id="atk-iv" type="number" min="0" max="31" value="31" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">DV (0–15)</label><input class="calc-input" id="atk-iv" type="number" min="0" max="15" value="15" oninput="calcUpdate()"></div>
         </div>
         <div class="calc-row-2" style="margin-top:6px">
-          <div><label class="calc-label" style="font-size:9px">EV (0–252)</label><input class="calc-input" id="atk-ev" type="number" min="0" max="252" value="0" oninput="calcUpdate()"></div>
-          <div><label class="calc-label" style="font-size:9px">Nature</label>
+          <div><label class="calc-label" style="font-size:9px">Stat Exp (0–65535)</label><input class="calc-input" id="atk-ev" type="number" min="0" max="65535" value="0" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">Badge boost</label>
             <select class="calc-select" id="atk-nature" onchange="calcUpdate()">
-              <option value="1">Neutral (×1.0)</option>
-              <option value="1.1">+ Atk nature (×1.1)</option>
-              <option value="0.9">− Atk nature (×0.9)</option>
+              <option value="1">No badge (×1.0)</option>
+              <option value="1.125">Badge boost (×1.125)</option>
             </select>
           </div>
         </div>
@@ -1082,15 +1081,14 @@
         <label class="calc-label">Defense stat <span id="def-stat-type" style="color:var(--muted);font-weight:400">(Def or SpDef set by move type)</span></label>
         <div class="calc-row-2">
           <div><label class="calc-label" style="font-size:9px">Base</label><input class="calc-input" id="def-base" type="number" min="1" max="255" value="80" oninput="calcUpdate()"></div>
-          <div><label class="calc-label" style="font-size:9px">IV (0–31)</label><input class="calc-input" id="def-iv" type="number" min="0" max="31" value="31" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">DV (0–15)</label><input class="calc-input" id="def-iv" type="number" min="0" max="15" value="15" oninput="calcUpdate()"></div>
         </div>
         <div class="calc-row-2" style="margin-top:6px">
-          <div><label class="calc-label" style="font-size:9px">EV (0–252)</label><input class="calc-input" id="def-ev" type="number" min="0" max="252" value="0" oninput="calcUpdate()"></div>
-          <div><label class="calc-label" style="font-size:9px">Nature</label>
+          <div><label class="calc-label" style="font-size:9px">Stat Exp (0–65535)</label><input class="calc-input" id="def-ev" type="number" min="0" max="65535" value="0" oninput="calcUpdate()"></div>
+          <div><label class="calc-label" style="font-size:9px">Badge boost</label>
             <select class="calc-select" id="def-nature" onchange="calcUpdate()">
-              <option value="1">Neutral (×1.0)</option>
-              <option value="1.1">+ Def nature (×1.1)</option>
-              <option value="0.9">− Def nature (×0.9)</option>
+              <option value="1">No badge (×1.0)</option>
+              <option value="1.125">Badge boost (×1.125)</option>
             </select>
           </div>
         </div>
@@ -1511,8 +1509,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;" id="opt-tab-row">
         <button type="button" class="filter-btn active" data-opt-tab="items" onclick="optSetTab('items',this)">Held Hunt</button>
         <button type="button" class="filter-btn" data-opt-tab="exp" onclick="optSetTab('exp',this)">EXP Grind</button>
-        <button type="button" class="filter-btn" data-opt-tab="ev" onclick="optSetTab('ev',this)">EV Training</button>
-        <button type="button" class="filter-btn" data-opt-tab="safari" onclick="optSetTab('safari',this)">Safari Odds</button>
+        <button type="button" class="filter-btn" data-opt-tab="ev" onclick="optSetTab('ev',this)">Stat Exp Grind</button>
       </div>
 
       <div id="opt-panel"></div>
