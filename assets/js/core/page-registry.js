@@ -4,10 +4,6 @@ window.PAGE_REGISTRY = window.PAGE_REGISTRY || {
     script: 'assets/js/pages/tutors.js',
     init: function() { if (!window._tutorsBuilt) { buildTutorPage(); window._tutorsBuilt = true; } }
   },
-  abilities: {
-    script: 'assets/js/pages/abilities.js',
-    init: function() { if (!window._abilitiesBuilt) { buildAbilitiesPage(); window._abilitiesBuilt = true; } }
-  },
   learnsets: {
     script: 'assets/js/pages/learnsets.js',
     init: function() { if (!window._learnsetsBuilt) { buildLearnsetsPage(); window._learnsetsBuilt = true; } }
@@ -20,17 +16,9 @@ window.PAGE_REGISTRY = window.PAGE_REGISTRY || {
     script: 'assets/js/pages/itemlocs.js',
     init: function() { if (!window._itemlocsBuilt) { buildItemLocsPage(); window._itemlocsBuilt = true; } }
   },
-  safarizone: {
-    script: 'assets/js/pages/safarizone.js',
-    init: function() { if (!window._safariZoneBuilt) { buildSafariZonePage(); window._safariZoneBuilt = true; } }
-  },
   statcalc: {
     script: 'assets/js/pages/statcalc.js',
     init: function() { if (!window._statCalcBuilt) { buildStatCalcPage(); window._statCalcBuilt = true; } }
-  },
-  pokeblock: {
-    script: 'assets/js/pages/pokeblock.js',
-    init: function() { if (!window._pokeblockBuilt) { buildPokeblockPage(); window._pokeblockBuilt = true; } }
   },
   e4ref: {
     script: 'assets/js/pages/e4ref.js',

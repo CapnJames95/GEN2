@@ -457,7 +457,6 @@
         <button class="page-nav-dropdown-item" id="navExcl" onclick="closeNavDropdown('navPokeDropdown');showPage('excl',document.getElementById('navExcl'));if(!window._exclBuilt){buildExcl();window._exclBuilt=true;}">Exclusives</button>
         <button class="page-nav-dropdown-item" id="navTradeEvo" onclick="closeNavDropdown('navPokeDropdown');showPage('tradeevo',document.getElementById('navTradeEvo'));if(!window._tradevoBuilt){renderTradeEvoPage();window._tradevoBuilt=true;}">Trade Evos</button>
         <button class="page-nav-dropdown-item" id="navNpcTrades" onclick="closeNavDropdown('navPokeDropdown');showPage('npctrades',document.getElementById('navNpcTrades'));if(!window._npcTradesBuilt){buildNpcTradesPage();window._npcTradesBuilt=true;}">NPC Trades</button>
-        <button class="page-nav-dropdown-item" id="navAbilities" onclick="return openPage('abilities','navAbilities','navPokeDropdown')">Abilities</button>
         <button class="page-nav-dropdown-item" id="navLearnsets" onclick="return openPage('learnsets','navLearnsets','navPokeDropdown')">Learnsets</button>
         <button class="page-nav-dropdown-item" id="navEncounters" onclick="return openPage('encounters','navEncounters','navPokeDropdown')">Encounters</button>
       </div>
@@ -509,7 +508,6 @@
         <button class="page-nav-dropdown-item" id="navBreed" onclick="closeNavDropdown('navTrainingDropdown');showPage('breed',document.getElementById('navBreed'));if(!window._breedBuilt){buildBreedCalc();window._breedBuilt=true;}">Breeding Calculator</button>
         <button class="page-nav-dropdown-item" id="navCatchCalc" onclick="closeNavDropdown('navTrainingDropdown');showPage('catchcalc',document.getElementById('navCatchCalc'));if(!window._catchCalcBuilt){buildCatchCalcPage();window._catchCalcBuilt=true;}">Catch Rate Calc</button>
         <button class="page-nav-dropdown-item" id="navHappiness" onclick="closeNavDropdown('navTrainingDropdown');showPage('happiness',document.getElementById('navHappiness'));if(!window._happinessBuilt){buildHappinessPage();window._happinessBuilt=true;}">Happiness Tracker</button>
-        <button class="page-nav-dropdown-item" id="navSafariZone" onclick="return openPage('safarizone','navSafariZone','navTrainingDropdown')">Safari Zone Calc</button>
         <button class="page-nav-dropdown-item" id="navStatCalc" onclick="return openPage('statcalc','navStatCalc','navTrainingDropdown')">Stat Calculator</button>
       </div>
     </div>
@@ -532,7 +530,6 @@
         <button class="page-nav-dropdown-item" data-games="E" id="navFrontier" onclick="closeNavDropdown('navGuidesDropdown');showPage('frontier',document.getElementById('navFrontier'));buildFrontierPage();window._frontierBuilt=true;">Battle Frontier</button>
         <button class="page-nav-dropdown-item" data-games="R,S,E" id="navBerries" onclick="closeNavDropdown('navGuidesDropdown');showPage('berries',document.getElementById('navBerries'));buildBerriesPage();window._berriesBuilt=true;">Berry Farming</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">RNG Guide</button>
-        <button class="page-nav-dropdown-item" data-games="R,S,E" id="navPokeblock" onclick="return openPage('pokeblock','navPokeblock','navGuidesDropdown')">Pokéblock Optimizer</button>
       </div>
     </div>
   </div>
@@ -2326,20 +2323,15 @@
   </div>
 </div>
 <script src="assets/data/pokedata.js"></script>
-<script src="assets/data/bulba-data-frlg.js"></script>
-<script src="assets/data/bulba-data-rs.js"></script>
-<script src="assets/data/bulba-data-e.js"></script>
+<!-- TODO Gen 2: bulba walkthroughs (Crystal / Gold / Silver) will be added when scraped -->
 <script src="assets/js/core/page-registry.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/pages/tutors.js"></script>
-<script src="assets/js/pages/abilities.js"></script>
 <script src="assets/js/pages/learnsets.js"></script>
 <script src="assets/js/pages/encounters.js"></script>
 <script src="assets/js/pages/itemlocs.js"></script>
-<script src="assets/js/pages/safarizone.js"></script>
 <script src="assets/js/pages/statcalc.js"></script>
-<script src="assets/js/pages/pokeblock.js"></script>
 <script src="assets/js/pages/e4ref.js"></script>
 <script src="assets/js/pages/rematches.js"></script>
 <script src="assets/js/pages/routebrowser.js"></script>
