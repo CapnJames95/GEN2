@@ -12097,19 +12097,6 @@ function buildFrontierPage() {
 }
 
 
-// ══ External sidebar maps (simplyblgdev) ═════════════════════════
-// All Gen-2 games (G/S/C) use the same Johto map. Kanto post-game uses
-// the shared Kanto map. Always opens in a new tab.
-window.openSidebarMap = function(region) {
-  var url;
-  if (region === 'kanto') {
-    url = 'https://simplyblgdev.github.io/pokemon/kanto';
-  } else {
-    url = 'https://simplyblgdev.github.io/pokemon/Johto';
-  }
-  window.open(url, '_blank', 'noopener');
-};
-
 // ══ RNG GUIDE PAGE (Gen 2) ═══════════════════════════════════════
 function buildRngPage() {
   var el = document.getElementById('rng-content') || document.getElementById('page-rng');
@@ -13929,14 +13916,15 @@ function updateBadge(){var b=document.getElementById('notes-tab-badge');if(!b)re
 
 /* ── Panel ── */
 // ══ MAP PANEL ═══════════════════════════════════════════════════
+// External simplyblgdev maps loaded into the right-side slideover.
 var _mapRegionUrls = {
-  kanto3: 'https://simplyblgdev.github.io/pokemon/kanto3',
-  hoenn:  'https://simplyblgdev.github.io/pokemon/hoenn'
+  johto: 'https://simplyblgdev.github.io/pokemon/Johto',
+  kanto: 'https://simplyblgdev.github.io/pokemon/kanto'
 };
 
 window.mapSelectRegion = function(region) {
   var iframe = document.getElementById('map-iframe');
-  iframe.src = _mapRegionUrls[region] || _mapRegionUrls.hoenn;
+  iframe.src = _mapRegionUrls[region] || _mapRegionUrls.johto;
 };
 
 /* iOS Safari scroll-lock for panels.
@@ -13972,22 +13960,34 @@ function _panelScrollUnlock() {
   }
 }
 
-window.toggleMapPanel = function() {
+// Open the map panel. Optional region: 'johto' (default) or 'kanto'.
+// Toggles closed if reopened with the same region while already open.
+window.toggleMapPanel = function(region) {
   var panel = document.getElementById('map-panel');
-  if (panel.classList.contains('open')) { closeMapPanel(); return; }
+  region = region || 'johto'; // Gen 2 default: Johto
+  var sel = document.getElementById('map-select');
+  var iframe = document.getElementById('map-iframe');
+  var alreadyOpen = panel.classList.contains('open');
+  var currentRegion = sel ? sel.value : 'johto';
+
+  if (alreadyOpen && currentRegion === region) {
+    closeMapPanel();
+    return;
+  }
   // Close notes if open
   var notesPanel = document.getElementById('notes-panel');
   if (notesPanel && notesPanel.classList.contains('open')) { closeNotesPanel(); }
-  // Auto-select region based on current game
-  var region = (['FR','LG'].indexOf(GAME) !== -1) ? 'kanto3' : 'hoenn';
-  var sel = document.getElementById('map-select');
   if (sel) sel.value = region;
-  var iframe = document.getElementById('map-iframe');
-  var url = _mapRegionUrls[region];
+  var url = _mapRegionUrls[region] || _mapRegionUrls.johto;
   if (iframe.src !== url) iframe.src = url;
   panel.classList.add('open');
   _panelScrollLock();
   if (typeof iosSetActiveByOptId === 'function') iosSetActiveByOptId('map');
+};
+
+// Public alias used by nav buttons + home-grid cards.
+window.openSidebarMap = function(region) {
+  window.toggleMapPanel(region || 'johto');
 };
 window.closeMapPanel = function() {
   document.getElementById('map-panel').classList.remove('open');
