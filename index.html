@@ -506,6 +506,8 @@
         <button class="page-nav-dropdown-item" id="navMtMortar"   onclick="closeNavDropdown('navGuidesDropdown');showPage('mtmortar',document.getElementById('navMtMortar'));buildMtMortarPage();window._mtMortarBuilt=true;">🥋 Mt. Mortar</button>
         <button class="page-nav-dropdown-item" id="navTimeCapsule" onclick="closeNavDropdown('navGuidesDropdown');showPage('timecapsule',document.getElementById('navTimeCapsule'));buildTimeCapsulePage();window._tcBuilt=true;">📦 Time Capsule</button>
         <button class="page-nav-dropdown-item" id="navMysteryGift" onclick="closeNavDropdown('navGuidesDropdown');showPage('mysterygift',document.getElementById('navMysteryGift'));buildMysteryGiftPage();window._mgBuilt=true;">🎁 Mystery Gift</button>
+        <button class="page-nav-dropdown-item" id="navPokegear" onclick="closeNavDropdown('navGuidesDropdown');showPage('pokegear',document.getElementById('navPokegear'));buildPokegearPage();window._pgBuilt=true;">📱 Pokégear Calls</button>
+        <button class="page-nav-dropdown-item" id="navHeldFarm" onclick="closeNavDropdown('navGuidesDropdown');showPage('heldfarm',document.getElementById('navHeldFarm'));buildHeldFarmPage();window._hfBuilt=true;">💎 Held-Item Farm</button>
         <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">🎲 RNG Guide</button>
       </div>
     </div>
@@ -1788,6 +1790,24 @@
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">MYSTERY GIFT</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Daily IR exchange — how to unlock, daily limit, and the full reward pool.</div>
       <div id="mysterygift-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-pokegear" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉGEAR CALLS</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every trainer + NPC whose phone number you can register — when they call, what they give, and which numbers are worth a slot.</div>
+      <div id="pokegear-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-heldfarm" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">HELD-ITEM FARM</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every wild Gen-2 Pokémon that carries a held item, grouped by item with hold-rate %.</div>
+      <div id="heldfarm-content"></div>
     </div>
   </div>
 </div>

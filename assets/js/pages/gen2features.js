@@ -261,6 +261,241 @@
   };
 
   // ──────────────────────────────────────────────────────────────
+  //  HELD-ITEM FARM TABLE
+  // ──────────────────────────────────────────────────────────────
+  // Sortable matrix of every wild Pokémon that carries an item and
+  // the held-rate. Data is hand-curated from the Gen-2 disassembly
+  // (held_item field per species).
+  var GEN2_HELD_FARM = [
+    // [pokemon name, item, %, where to find]
+    ['Snorlax',    'Leftovers',     100, 'Route 11 static (Pokéflute)'],
+    ['Chansey',    'Lucky Egg',     5,   'Routes 13–15 (Kanto)'],
+    ['Slowpoke',   "King's Rock",   5,   'Slowpoke Well / Surf Route 32'],
+    ['Slowbro',    "King's Rock",   5,   'Surf Route 32'],
+    ['Magnemite',  'Metal Coat',    25,  'Routes 38/39 / Power Plant'],
+    ['Magneton',   'Metal Coat',    25,  'Power Plant'],
+    ['Pikachu',    'Light Ball',    5,   'Power Plant / Headbutt Route 2'],
+    ['Ditto',      'Metal Powder',  50,  'Route 35 / 47 (Kanto)'],
+    ['Cubone',     'Thick Club',    50,  'Rock Tunnel (Kanto)'],
+    ['Marowak',    'Thick Club',    5,   'Rock Tunnel post-game'],
+    ['Farfetch\'d','Stick',         100, 'Wild Farfetch\'d (Route 38 swarm)'],
+    ['Smeargle',   'Bright Powder', 5,   'Ruins of Alph'],
+    ['Spearow',    'Sharp Beak',    5,   'Routes 7/9/22 (Kanto)'],
+    ['Fearow',     'Sharp Beak',    5,   'Routes 7/9/22 (Kanto)'],
+    ['Sunkern',    'Gold Berry',    100, 'Routes 37/38'],
+    ['Sunkern',    'Sun Stone',     50,  'Routes 37/38 (rare second slot)'],
+    ['Granbull',   'Quick Claw',    50,  'Route 38'],
+    ['Snubbull',   'Quick Claw',    5,   'Route 38'],
+    ['Koffing',    'Smoke Ball',    100, 'Burned Tower / Rocket HQ'],
+    ['Weezing',    'Smoke Ball',    100, 'Rocket HQ Mahogany'],
+    ['Diglett',    'Soft Sand',     5,   'Diglett\'s Cave (Kanto)'],
+    ['Dugtrio',    'Soft Sand',     5,   'Diglett\'s Cave (Kanto)'],
+    ['Onix',       'Hard Stone',    5,   'Union Cave / Dark Cave'],
+    ['Butterfree', 'SilverPowder',  5,   'Bug Contest / Headbutt'],
+    ['Venonat',    'SilverPowder',  5,   'Headbutt trees'],
+    ['Venomoth',   'SilverPowder',  5,   'Headbutt trees'],
+    ['Gastly',     'Spell Tag',     5,   'Sprout Tower (night) / Pkmn Tower'],
+    ['Haunter',    'Spell Tag',     5,   'Pkmn Tower (Kanto)'],
+    ['Dratini',    'DragonFang',    5,   'Dragon\'s Den / Surf'],
+    ['Dragonair',  'DragonFang',    5,   'Dragon\'s Den'],
+    ['Horsea',     'Dragon Scale',  5,   'Fish — Whirl Islands / Route 12'],
+    ['Seadra',     'Dragon Scale',  5,   'Fish — Whirl Islands'],
+    ['Goldeen',    'Mystic Water',  5,   'Fish — many routes'],
+    ['Seaking',    'Mystic Water',  5,   'Fish — many routes'],
+    ['Shellder',   'NeverMeltIce',  5,   'Surf — Route 19 / Whirl Islands'],
+    ['Cloyster',   'NeverMeltIce',  5,   'Surf — Whirl Islands'],
+    ['Bellsprout', 'MiracleSeed',   5,   'Routes 24/25/31 (Headbutt)'],
+    ['Weepinbell', 'MiracleSeed',   5,   'Routes 24/25/31 (Headbutt)'],
+    ['Abra',       'TwistedSpoon',  50,  'Routes 5/24/25/34'],
+    ['Beedrill',   'Poison Barb',   5,   'Bug Contest / Route 2'],
+    ['Hitmonlee',  'Black Belt',    5,   'Mt. Mortar (Karate King choice)'],
+    ['Hitmonchan', 'Black Belt',    5,   'Mt. Mortar (Karate King choice)'],
+    ['Machop',     'Focus Band',    5,   'Mt. Mortar / Rock Tunnel'],
+    ['Machoke',    'Focus Band',    5,   'Mt. Mortar / Rock Tunnel'],
+    ['Misdreavus', 'Cleanse Tag',   5,   'Mt. Silver (night)'],
+    ['Jigglypuff', 'Polkadot Bow',  5,   'Route 3 / 46 (Kanto)'],
+    ['Granbull',   'Pink Bow',      5,   'Route 38 (alt slot)'],
+    ['Clefairy',   'Moon Stone',    5,   'Mt. Moon'],
+    ['Clefable',   'Moon Stone',    25,  'Mt. Moon (rare second slot)']
+  ];
+
+  window.buildHeldFarmPage = function() {
+    var el = pageRoot('heldfarm-content');
+    if (!el) return;
+
+    // Group by item for easier scanning
+    var byItem = {};
+    GEN2_HELD_FARM.forEach(function(r) {
+      var item = r[1];
+      (byItem[item] = byItem[item] || []).push(r);
+    });
+
+    var items = Object.keys(byItem).sort();
+    var sections = items.map(function(item) {
+      var rows = byItem[item].sort(function(a,b){ return b[2] - a[2]; });
+      var pctMax = Math.max.apply(null, rows.map(function(r){ return r[2]; }));
+      var rateLabel = pctMax === 100 ? 'GUARANTEED' : (pctMax >= 50 ? 'COMMON' : 'RARE');
+      var rateColor = pctMax === 100 ? '#44DD88' : pctMax >= 50 ? '#E5B928' : '#FF6B35';
+      var body = '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+        + '<thead><tr style="border-bottom:1px solid var(--border);">'
+        + '<th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;">Pokémon</th>'
+        + '<th style="text-align:right;padding:6px 10px;color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;">Hold %</th>'
+        + '<th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;">Where</th>'
+        + '</tr></thead><tbody>'
+        + rows.map(function(r) {
+            var rateClr = r[2] === 100 ? '#44DD88' : r[2] >= 50 ? '#E5B928' : 'var(--muted)';
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);">'
+              + '<td style="padding:6px 10px;">' + pkmnLink(r[0]) + '</td>'
+              + '<td style="padding:6px 10px;text-align:right;color:'+rateClr+';font-weight:800;">' + r[2] + '%</td>'
+              + '<td style="padding:6px 10px;color:var(--muted);font-size:11px;">' + r[3] + '</td>'
+              + '</tr>';
+        }).join('')
+        + '</tbody></table>';
+      return '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid '+rateColor+';border-radius:6px;padding:12px 14px;margin-bottom:12px;">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+        + '<strong style="color:var(--text);font-size:13px;">' + itemLink(item) + '</strong>'
+        + '<span style="font-size:9px;color:'+rateColor+';font-weight:800;letter-spacing:0.5px;">' + rateLabel + '</span>'
+        + '<span style="margin-left:auto;font-size:10px;color:var(--muted);">' + rows.length + ' carrier' + (rows.length===1?'':'s') + '</span>'
+        + '</div>'
+        + body
+        + '</div>';
+    }).join('');
+
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">HELD-ITEM FARM</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Wild Pokémon in Gen 2 carry held items at fixed probabilities. Bring a Pokémon with <strong>Thief</strong> or <strong>Covet</strong>, find a carrier, knock it to red HP, then have the thief swap into the item. This page lists every farmable held item in GSC + every species that carries it.'
+      + '</div>'
+      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + '<strong style="color:var(--text);">Legend:</strong> '
+      + '<span style="color:#44DD88;font-weight:800;">GUARANTEED</span> = 100% hold rate · '
+      + '<span style="color:#E5B928;font-weight:800;">COMMON</span> = ≥50% · '
+      + '<span style="color:#FF6B35;font-weight:800;">RARE</span> = ≤25%. '
+      + 'Set up a "Thief monkey" team early: a Linoone-equivalent for catching, a Bug-type with Silver Wind / Cut for raw kills.'
+      + '</div>'
+      + sections
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  //  POKÉGEAR — Phone callers, rematches, daily gifts
+  // ──────────────────────────────────────────────────────────────
+  // Each entry = phone-eligible trainer. Days/hours from the Gen-2 disassembly.
+  var PG_CALLERS = [
+    // ── Gift callers ─────────────────────────────────────────
+    { cat:'gift', name:'Tully (Fisher)',  location:'Route 42',
+      when:'Mon · Wed · Sat — daytime',
+      reward:'Says where to fish today; gives a Quick Claw on first call.',
+      note:'Get his number before Mt. Mortar so the Quick Claw call is available early.' },
+    { cat:'gift', name:'Wilton (Hiker)',  location:'Route 45',
+      when:'Tue · Thu — morning',
+      reward:'Gives Pink Bow / Hard Stone on rematch days.',
+      note:'Strong source of free type-boost items.' },
+    { cat:'gift', name:'Liz (Picnicker)', location:'Route 32',
+      when:'Mon — afternoon',
+      reward:'Hands over a single Berry.',
+      note:'' },
+    { cat:'gift', name:'Beverly (Lass)',  location:'Route 38',
+      when:'Wed · Sat — daytime',
+      reward:'Gives a TwistedSpoon.',
+      note:'Long-form daily gift — repeat callers refresh the bonus on different days.' },
+    { cat:'gift', name:'Jose (Camper)',   location:'Route 27',
+      when:'Sun — daytime',
+      reward:'Gives a Pink Bow.',
+      note:'Best reached after Kanto post-game.' },
+
+    // ── Rematch callers ──────────────────────────────────────
+    { cat:'rematch', name:'Joey (Youngster)',   location:'Route 30',
+      when:'Mon · Wed · Sat — morning',
+      reward:'Rematch (Lv5 → Lv10 → Lv30 Rattata). The famous "Top Percentage Rattata" call.',
+      note:'Frequent caller — keep on Pokégear for easy rematch grinding.' },
+    { cat:'rematch', name:'Liz (Picnicker)',    location:'Route 32',
+      when:'Mon — afternoon',
+      reward:'Rematch with Marill / Hoothoot teams.',
+      note:'Same caller as gift entry — gift swaps with rematch over time.' },
+    { cat:'rematch', name:'Ralph (Fisher)',     location:'Route 32',
+      when:'Wed — morning',
+      reward:'Rematch — Magikarp swarm tip on alternate calls.',
+      note:'' },
+    { cat:'rematch', name:'Jack (Schoolboy)',   location:'Route 35',
+      when:'Tue · Thu — daytime',
+      reward:'Rematch (Sandshrew / Ekans line in his post-E4 team).',
+      note:'' },
+    { cat:'rematch', name:'Tiffany (Picnicker)',location:'Route 37',
+      when:'Sun — daytime',
+      reward:'Rematch + gives a Pink Bow on certain calls.',
+      note:'Dual gift + rematch caller.' },
+    { cat:'rematch', name:'Anthony (Hiker)',    location:'Route 33',
+      when:'Tue — daytime',
+      reward:'Rematch with rock-types.',
+      note:'' },
+
+    // ── Special callers ──────────────────────────────────────
+    { cat:'special', name:'Mom',          location:'New Bark Town',
+      when:'Anytime',
+      reward:'Spends your saved-up money on items / dolls / mood boosts.',
+      note:'Activate the savings account at home; Mom will buy useful items or stash cash for later.' },
+    { cat:'special', name:'Prof. Elm',    location:'New Bark Town',
+      when:'Anytime',
+      reward:'Story progression hints; alerts you when an Egg hatches.',
+      note:'Stays available throughout the game.' },
+    { cat:'special', name:'Buena (DJ)',   location:'Goldenrod Radio Tower',
+      when:'Daily — different password 5pm–midnight',
+      reward:'Tells you that day\'s password. Match it to earn Blue Card points → trade for items.',
+      note:'Set the Pokégear radio to Buena\'s Password and stand still to hear it. Saturday/Sunday she stays on longer.' },
+    { cat:'special', name:'Bill',         location:'Goldenrod PC',
+      when:'After Ecruteak meet',
+      reward:'Reminds you to pick up the Eevee gift at his grandfather\'s in Goldenrod.',
+      note:'One-time prompt — make the trip after you meet him in Ecruteak.' }
+  ];
+
+  var PG_CAT_META = {
+    gift:    { label:'Gift Callers',    color:'#E5B928', icon:'🎁' },
+    rematch: { label:'Rematch Callers', color:'#FF6B35', icon:'⚔️' },
+    special: { label:'Special / Story', color:'#7FB8E0', icon:'⭐' }
+  };
+
+  window.buildPokegearPage = function() {
+    var el = pageRoot('pokegear-content');
+    if (!el) return;
+    var byCat = {};
+    PG_CALLERS.forEach(function(c){ (byCat[c.cat] = byCat[c.cat] || []).push(c); });
+    var html = '';
+    Object.keys(PG_CAT_META).forEach(function(catKey) {
+      var rows = byCat[catKey] || [];
+      if (!rows.length) return;
+      var meta = PG_CAT_META[catKey];
+      html += '<div style="margin-bottom:18px;">'
+        + '<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:'+meta.color+';letter-spacing:0.5px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;">'
+        + meta.icon + ' ' + meta.label.toUpperCase() + '</div>';
+      rows.forEach(function(r) {
+        html += '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid '+meta.color+';border-radius:6px;padding:12px 14px;margin-bottom:10px;">'
+          + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:4px;">'
+          + '<strong style="color:var(--text);font-size:13px;">' + r.name + '</strong>'
+          + '<span style="font-size:10px;color:var(--muted);">📍 ' + r.location + '</span>'
+          + '<span style="margin-left:auto;font-size:10px;color:'+meta.color+';font-weight:700;">' + r.when + '</span>'
+          + '</div>'
+          + '<div style="font-size:11px;color:var(--text);line-height:1.7;">' + r.reward + '</div>'
+          + (r.note ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;font-style:italic;">' + r.note + '</div>' : '')
+          + '</div>';
+      });
+      html += '</div>';
+    });
+
+    el.innerHTML = panel(
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">POKÉGEAR — PHONE CALLERS</div>'
+      + '<div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">'
+      + 'Trainers and NPCs whose phone numbers can be registered on your Pokégear. Most call you on specific days / times to offer a <strong>rematch</strong>, <strong>gift item</strong>, swarm tip, or password.'
+      + ' Save phone slots for the highest-value callers — gift NPCs first, then rematch trainers, then Mom / Elm.'
+      + '</div>'
+      + html
+      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;margin-top:8px;">'
+      + '<strong style="color:var(--text);">Pokégear slots:</strong> Maximum <strong>15 numbers</strong> can be saved. Mom + Elm + Prof. Oak (auto) + Bill (after Ecruteak) take 4 slots, leaving 11 for trainers. Pick wisely — there is no way to delete a saved number in original GSC.'
+      + '</div>'
+    );
+  };
+
+  // ──────────────────────────────────────────────────────────────
   //  MYSTERY GIFT
   // ──────────────────────────────────────────────────────────────
   window.buildMysteryGiftPage = function() {
