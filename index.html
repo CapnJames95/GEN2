@@ -572,11 +572,9 @@
   </div>
   <div class="game-tabs">
     <button class="game-tab active-all" onclick="setGame('all',this)"><span class="gt-full">✦ ALL GAMES</span><span class="gt-short">✦ ALL</span></button>
-    <button class="game-tab" onclick="setGame('FR',this)"><span class="gt-full">🔥 FIRERED</span><span class="gt-short">🔥 FR</span></button>
-    <button class="game-tab" onclick="setGame('LG',this)"><span class="gt-full">🌿 LEAFGREEN</span><span class="gt-short">🌿 LG</span></button>
-    <button class="game-tab" onclick="setGame('R',this)"><span class="gt-full">🔴 RUBY</span><span class="gt-short">🔴 R</span></button>
-    <button class="game-tab" onclick="setGame('S',this)"><span class="gt-full">🔷 SAPPHIRE</span><span class="gt-short">🔷 S</span></button>
-    <button class="game-tab" onclick="setGame('E',this)"><span class="gt-full">💚 EMERALD</span><span class="gt-short">💚 E</span></button>
+    <button class="game-tab" onclick="setGame('FR',this)"><span class="gt-full">🌕 GOLD</span><span class="gt-short">🌕 G</span></button>
+    <button class="game-tab" onclick="setGame('LG',this)"><span class="gt-full">🪙 SILVER</span><span class="gt-short">🪙 S</span></button>
+    <button class="game-tab" onclick="setGame('E',this)"><span class="gt-full">💎 CRYSTAL</span><span class="gt-short">💎 C</span></button>
     <div class="game-tabs-extras">
       <button id="shinyToggle" class="shiny-toggle" onclick="toggleShinyMode(this)" title="Show shiny sprites">✨ Shiny</button>
       <span id="dex-poke-count" class="section-count"></span>
@@ -747,11 +745,10 @@
   <div class="excl-header">
     <h2>VERSION EXCLUSIVES</h2>
     <div class="excl-mode-btns">
-      <button class="excl-mode-btn active" onclick="setExclMode('RS',this)">R vs S</button>
-      <button class="excl-mode-btn" onclick="setExclMode('RE',this)">R vs E</button>
-      <button class="excl-mode-btn" onclick="setExclMode('SE',this)">S vs E</button>
-      <button class="excl-mode-btn" onclick="setExclMode('E_ONLY',this)">E UNIQUE</button>
-      <button class="excl-mode-btn" onclick="setExclMode('FR_LG',this)">FR vs LG</button>
+      <button class="excl-mode-btn active" onclick="setExclMode('GS',this)">G vs S</button>
+      <button class="excl-mode-btn" onclick="setExclMode('GC',this)">G vs C</button>
+      <button class="excl-mode-btn" onclick="setExclMode('SC',this)">S vs C</button>
+      <button class="excl-mode-btn" onclick="setExclMode('C_ONLY',this)">C UNIQUE</button>
     </div>
   </div>
   <div class="excl-body" id="exclBody"></div>
@@ -2058,11 +2055,9 @@
 
   <div style="display:flex;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;overflow-x:auto;">
     <button class="notes-game-tab active" data-game="ALL" onclick="notesSetGame('ALL')">ALL</button>
-    <button class="notes-game-tab" data-game="FR" onclick="notesSetGame('FR')">🔥 FR</button>
-    <button class="notes-game-tab" data-game="LG" onclick="notesSetGame('LG')">🌿 LG</button>
-    <button class="notes-game-tab" data-game="R" onclick="notesSetGame('R')">🔴 R</button>
-    <button class="notes-game-tab" data-game="S" onclick="notesSetGame('S')">🔷 S</button>
-    <button class="notes-game-tab" data-game="E" onclick="notesSetGame('E')">💚 E</button>
+    <button class="notes-game-tab" data-game="FR" onclick="notesSetGame('FR')">🌕 G</button>
+    <button class="notes-game-tab" data-game="LG" onclick="notesSetGame('LG')">🪙 S</button>
+    <button class="notes-game-tab" data-game="E" onclick="notesSetGame('E')">💎 C</button>
   </div>
 
   <div id="notes-list-view" style="display:flex;flex-direction:column;flex:1;min-height:0;">

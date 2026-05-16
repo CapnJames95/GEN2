@@ -369,18 +369,16 @@ function buildHomePage() {
   var mobile = window.innerWidth <= 600;
 
   var GAME_META = {
-    all: { name: 'ALL GAMES',  accent: '#F5C518', issue: 'VOL. I & II',       region: 'KANTO + HOENN' },
-    FR:  { name: 'FIRERED',    accent: '#ef5350', issue: 'VOL. I · ISSUE 1',  region: 'KANTO' },
-    LG:  { name: 'LEAFGREEN',  accent: '#66bb6a', issue: 'VOL. I · ISSUE 2',  region: 'KANTO' },
-    R:   { name: 'RUBY',       accent: '#e53935', issue: 'VOL. II · ISSUE 1', region: 'HOENN' },
-    S:   { name: 'SAPPHIRE',   accent: '#1e88e5', issue: 'VOL. II · ISSUE 2', region: 'HOENN' },
-    E:   { name: 'EMERALD',    accent: '#43a047', issue: 'VOL. II · ISSUE 3', region: 'HOENN' }
+    all: { name: 'ALL GAMES', accent: '#F5C518', issue: 'GOLD · SILVER · CRYSTAL', region: 'JOHTO + KANTO' },
+    FR:  { name: 'GOLD',      accent: '#E5B928', issue: 'VOL. II · ISSUE 1',      region: 'JOHTO + KANTO' },
+    LG:  { name: 'SILVER',    accent: '#B0BEC5', issue: 'VOL. II · ISSUE 2',      region: 'JOHTO + KANTO' },
+    E:   { name: 'CRYSTAL',   accent: '#7FB8E0', issue: 'VOL. II · ISSUE 3',      region: 'JOHTO + KANTO' }
   };
   var gm = GAME_META[GAME] || GAME_META.all;
 
-  // #1 Mascot sprite
-  var MASCOT_NUMS = { all:25, FR:6, LG:3, R:383, S:382, E:384 };
-  var mascotNum = MASCOT_NUMS[GAME] || 25;
+  // #1 Mascot sprite — Gen 2 box legendaries: Ho-Oh (Gold), Lugia (Silver), Suicune (Crystal)
+  var MASCOT_NUMS = { all:251, FR:250, LG:249, E:245 };
+  var mascotNum = MASCOT_NUMS[GAME] || 251;
 
   // #6 Caught %
   var _homeSave = (typeof TRK_SAVE !== 'undefined' && TRK_SAVE && TRK_SAVE !== 'all') ? TRK_SAVE
@@ -463,10 +461,10 @@ function buildHomePage() {
     +   '</div>'
     +   '<div class="home-mast-sep"></div>'
     +   '<div class="home-mast-stats">'
-    +     '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="386">0</span><span class="home-mast-stat-lbl">Pokémon</span></div>'
+    +     '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="251">0</span><span class="home-mast-stat-lbl">Pokémon</span></div>'
     +     (GAME !== 'all'
             ? '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="' + badgeCount + '">0</span><span class="home-mast-stat-lbl">Badges</span></div>'
-            : '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="5">0</span><span class="home-mast-stat-lbl">Games</span></div>'
+            : '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="3">0</span><span class="home-mast-stat-lbl">Games</span></div>'
           )
     +     '<div class="home-mast-stat"><span class="home-mast-stat-num" data-target="' + caughtPct + '" data-suffix="%">0%</span><span class="home-mast-stat-lbl">Caught</span></div>'
     +   '</div>'
@@ -4024,7 +4022,7 @@ const RSE_GUIDE_SECTIONS = [];
 function closeExtMap(){} // stub — slide-out removed; called by jumpToDex
 
 // ── VERSION EXCLUSIVES ──
-var EXCL_MODE = 'RS';
+var EXCL_MODE = 'GS';
 
 function setExclMode(mode, btn) {
   EXCL_MODE = mode;
@@ -4037,39 +4035,36 @@ function buildExcl() {
   var body = document.getElementById('exclBody');
   var leftPoke, rightPoke, leftTitle, rightTitle, lCol, rCol;
 
-  if (EXCL_MODE === 'RS') {
-    leftPoke  = POKE.filter(function(p){ return p.games.R && !p.games.S; });
-    rightPoke = POKE.filter(function(p){ return p.games.S && !p.games.R; });
-    leftTitle = '&#x1F534; RUBY ONLY'; rightTitle = '&#x1F535; SAPPHIRE ONLY';
-    lCol = '#FF5555'; rCol = '#5599FF';
-  } else if (EXCL_MODE === 'RE') {
-    leftPoke  = POKE.filter(function(p){ return p.games.R && !p.games.E; });
-    rightPoke = POKE.filter(function(p){ return p.games.E && !p.games.R; });
-    leftTitle = '&#x1F534; RUBY ONLY'; rightTitle = '&#x1F7E2; EMERALD ONLY';
-    lCol = '#FF5555'; rCol = '#44DD88';
-  } else if (EXCL_MODE === 'SE') {
-    leftPoke  = POKE.filter(function(p){ return p.games.S && !p.games.E; });
-    rightPoke = POKE.filter(function(p){ return p.games.E && !p.games.S; });
-    leftTitle = '&#x1F535; SAPPHIRE ONLY'; rightTitle = '&#x1F7E2; EMERALD ONLY';
-    lCol = '#5599FF'; rCol = '#44DD88';
-  } else if (EXCL_MODE === 'FR_LG') {
+  // Gen 2: Gold=FR slot, Silver=LG slot, Crystal=E slot
+  if (EXCL_MODE === 'GS') {
     leftPoke  = POKE.filter(function(p){ return p.games.FR && !p.games.LG; });
     rightPoke = POKE.filter(function(p){ return p.games.LG && !p.games.FR; });
-    leftTitle = '&#x1F525; FIRERED ONLY'; rightTitle = '&#x1F343; LEAFGREEN ONLY';
-    lCol = '#FF6B35'; rCol = '#4CAF50';
+    leftTitle = '&#x1F315; GOLD ONLY'; rightTitle = '&#x1FA99; SILVER ONLY';
+    lCol = '#E5B928'; rCol = '#B0BEC5';
+  } else if (EXCL_MODE === 'GC') {
+    leftPoke  = POKE.filter(function(p){ return p.games.FR && !p.games.E; });
+    rightPoke = POKE.filter(function(p){ return p.games.E && !p.games.FR; });
+    leftTitle = '&#x1F315; GOLD ONLY'; rightTitle = '&#x1F48E; CRYSTAL ONLY';
+    lCol = '#E5B928'; rCol = '#7FB8E0';
+  } else if (EXCL_MODE === 'SC') {
+    leftPoke  = POKE.filter(function(p){ return p.games.LG && !p.games.E; });
+    rightPoke = POKE.filter(function(p){ return p.games.E && !p.games.LG; });
+    leftTitle = '&#x1FA99; SILVER ONLY'; rightTitle = '&#x1F48E; CRYSTAL ONLY';
+    lCol = '#B0BEC5'; rCol = '#7FB8E0';
   } else {
-    leftPoke  = POKE.filter(function(p){ return p.games.E && !p.games.R && !p.games.S; });
+    leftPoke  = POKE.filter(function(p){ return p.games.E && !p.games.FR && !p.games.LG; });
     body.style.gridTemplateColumns = '1fr';
     body.innerHTML = '<div class="excl-col">'
-      + '<div class="excl-col-header"><h3 style="color:#44DD88">&#x1F7E2; CRYSTAL EXCLUSIVE (' + leftPoke.length + ')</h3><div class="excl-cnt">Not in Gold or Silver</div></div>'
+      + '<div class="excl-col-header"><h3 style="color:#7FB8E0">&#x1F48E; CRYSTAL EXCLUSIVE (' + leftPoke.length + ')</h3><div class="excl-cnt">Not in Gold or Silver</div></div>'
       + '<div class="excl-list">' + leftPoke.map(function(p){ return exclCard(p,'E'); }).join('') + '</div>'
       + '</div>';
     return;
   }
 
   body.style.gridTemplateColumns = '1fr 1fr';
-  var leftGame = (EXCL_MODE === 'FR_LG') ? 'FR' : EXCL_MODE[0];
-  var rightGame = (EXCL_MODE === 'FR_LG') ? 'LG' : EXCL_MODE[1];
+  var GAME_MAP = { GS:['FR','LG'], GC:['FR','E'], SC:['LG','E'] };
+  var leftGame = GAME_MAP[EXCL_MODE][0];
+  var rightGame = GAME_MAP[EXCL_MODE][1];
   body.innerHTML =
     '<div class="excl-col">'
     + '<div class="excl-col-header"><h3 style="color:' + lCol + '">' + leftTitle + '</h3><div class="excl-cnt">' + leftPoke.length + ' Pokemon</div></div>'
@@ -7359,7 +7354,7 @@ function toggleTheme() {
     }
     if (pageId === 'excl') {
       var exclPage = document.getElementById('page-excl');
-      return !exclPage || !/VERSION EXCLUSIVES|FR vs LG|R vs S|E UNIQUE/.test(exclPage.textContent || '');
+      return !exclPage || !/VERSION EXCLUSIVES|G vs S|C UNIQUE/.test(exclPage.textContent || '');
     }
     var contentMap = {
       dexdash: 'dexdash-content',
@@ -11309,25 +11304,17 @@ function bulbaLoadIndex() {
         + '<div style="font-family:\'Press Start 2P\',monospace;font-size:10px;color:var(--bulba-accent,var(--gold));letter-spacing:1px;margin-bottom:4px">SELECT A WALKTHROUGH</div>'
         + '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Choose a game to view its Bulbapedia guide</div>'
         + '<div class="bulba-game-grid">'
-        + '<button onclick="bulbaPickGame(\'FR\')" class="guide-picker-btn" style="border-color:var(--fire);min-width:140px">'
-        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--fire);margin-bottom:8px">\uD83D\uDD25 FIRERED</div>'
-        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Kanto region<br>Pallet Town \u2192 Elite Four<br>21 parts</div>'
+        + '<button onclick="bulbaPickGame(\'FR\')" class="guide-picker-btn" style="border-color:#E5B928;min-width:160px">'
+        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#E5B928;margin-bottom:8px">🌕 GOLD</div>'
+        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto + Kanto<br>New Bark → Red<br>29 parts</div>'
         + '</button>'
-        + '<button onclick="bulbaPickGame(\'LG\')" class="guide-picker-btn" style="border-color:var(--leaf);min-width:140px">'
-        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--leaf);margin-bottom:8px">\uD83C\uDF3F LEAFGREEN</div>'
-        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Kanto region<br>Pallet Town \u2192 Elite Four<br>21 parts</div>'
+        + '<button onclick="bulbaPickGame(\'LG\')" class="guide-picker-btn" style="border-color:#B0BEC5;min-width:160px">'
+        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#B0BEC5;margin-bottom:8px">🪙 SILVER</div>'
+        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto + Kanto<br>New Bark → Red<br>29 parts</div>'
         + '</button>'
-        + '<button onclick="bulbaPickGame(\'R\')" class="guide-picker-btn" style="border-color:var(--ruby);min-width:140px">'
-        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--ruby);margin-bottom:8px">🔴 RUBY</div>'
-        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto region<br>Littleroot \u2192 Champion<br>23 parts</div>'
-        + '</button>'
-        + '<button onclick="bulbaPickGame(\'S\')" class="guide-picker-btn" style="border-color:var(--sapphire);min-width:140px">'
-        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--sapphire);margin-bottom:8px">\uD83D\uDD37 SAPPHIRE</div>'
-        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto region<br>Littleroot \u2192 Champion<br>23 parts</div>'
-        + '</button>'
-        + '<button onclick="bulbaPickGame(\'E\')" class="guide-picker-btn" style="border-color:var(--emerald);min-width:140px">'
-        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--emerald);margin-bottom:8px">\uD83D\uDFE2 EMERALD</div>'
-        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto region<br>Littleroot \u2192 Champion<br>21 parts</div>'
+        + '<button onclick="bulbaPickGame(\'E\')" class="guide-picker-btn" style="border-color:#7FB8E0;min-width:160px">'
+        +   '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#7FB8E0;margin-bottom:8px">💎 CRYSTAL</div>'
+        +   '<div style="font-size:11px;color:var(--muted);line-height:1.7">Johto + Kanto + Battle Tower<br>New Bark → Red<br>29 parts</div>'
         + '</button>'
         + '</div>'
         + '</div>';
