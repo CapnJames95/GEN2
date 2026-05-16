@@ -10260,8 +10260,118 @@ function tmhmSyncFromGame(g) {
   tmhmRender();
 }
 
+// Gen 2 TM/HM list (Gold, Silver, Crystal)
+// TM list is identical across all three games.
+var GEN2_TMS = [
+  { n:'TM01', m:'DynamicPunch', t:'fighting', pp:5,  pwr:100, acc:50,  src:'Goldenrod Game Corner (3000 coins) / Mahogany Town gift' },
+  { n:'TM02', m:'Headbutt',     t:'normal',   pp:15, pwr:70,  acc:100, src:'Ilex Forest (boy near Charcoal Kiln)' },
+  { n:'TM03', m:'Curse',        t:'ghost',    pp:10, pwr:0,   acc:0,   src:'Ecruteak City (Wise Trio house)' },
+  { n:'TM04', m:'Rollout',      t:'rock',     pp:20, pwr:30,  acc:90,  src:'Goldenrod Dept. Store roof Sun event' },
+  { n:'TM05', m:'Roar',         t:'normal',   pp:20, pwr:0,   acc:100, src:'Route 32 gift' },
+  { n:'TM06', m:'Toxic',        t:'poison',   pp:10, pwr:0,   acc:85,  src:'Fuchsia Gym (Janine reward)' },
+  { n:'TM07', m:'Zap Cannon',   t:'electric', pp:5,  pwr:100, acc:50,  src:'Power Plant gift (after restoring power)' },
+  { n:'TM08', m:'Rock Smash',   t:'fighting', pp:15, pwr:20,  acc:100, src:'Route 36 (man in house)' },
+  { n:'TM09', m:'Psych Up',     t:'normal',   pp:10, pwr:0,   acc:0,   src:'Goldenrod Dept. Store (5F, Friday gift)' },
+  { n:'TM10', m:'Hidden Power', t:'varies',   pp:15, pwr:'?', acc:100, src:'Lake of Rage (Cerulean Cave in Kanto)' },
+  { n:'TM11', m:'Sunny Day',    t:'fire',     pp:5,  pwr:0,   acc:0,   src:'Route 36 (Sudowoodo NPC)' },
+  { n:'TM12', m:'Sweet Scent',  t:'normal',   pp:20, pwr:0,   acc:0,   src:'National Park (Mon gift, Crystal Wed/Sat)' },
+  { n:'TM13', m:'Snore',        t:'normal',   pp:15, pwr:40,  acc:100, src:'Mahogany Town Pokémon Center (Wed)' },
+  { n:'TM14', m:'Blizzard',     t:'ice',      pp:5,  pwr:120, acc:70,  src:'Goldenrod Dept. Store / Crystal Mt. Mortar' },
+  { n:'TM15', m:'Hyper Beam',   t:'normal',   pp:5,  pwr:150, acc:90,  src:'Celadon Dept. Store / Goldenrod (5500 coins)' },
+  { n:'TM16', m:'Icy Wind',     t:'ice',      pp:15, pwr:55,  acc:95,  src:'Mahogany Gym (Pryce reward)' },
+  { n:'TM17', m:'Protect',      t:'normal',   pp:10, pwr:0,   acc:0,   src:'Goldenrod Dept. Store / Cerulean Gym' },
+  { n:'TM18', m:'Rain Dance',   t:'water',    pp:5,  pwr:0,   acc:0,   src:'Route 27 (Pokémaniac)' },
+  { n:'TM19', m:'Giga Drain',   t:'grass',    pp:5,  pwr:60,  acc:100, src:'Celadon Gym (Erika reward)' },
+  { n:'TM20', m:'Endure',       t:'normal',   pp:10, pwr:0,   acc:0,   src:'Goldenrod Dept. Store / Lake of Rage' },
+  { n:'TM21', m:'Frustration',  t:'normal',   pp:20, pwr:'?', acc:100, src:'Goldenrod City (twins house)' },
+  { n:'TM22', m:'SolarBeam',    t:'grass',    pp:10, pwr:120, acc:100, src:'Route 27 (woman in house)' },
+  { n:'TM23', m:'Iron Tail',    t:'steel',    pp:15, pwr:100, acc:75,  src:'Olivine Lighthouse (after curing Amphy)' },
+  { n:'TM24', m:'DragonBreath', t:'dragon',   pp:20, pwr:60,  acc:100, src:'Dragon\'s Den (Clair, after Gym)' },
+  { n:'TM25', m:'Thunder',      t:'electric', pp:10, pwr:120, acc:70,  src:'Goldenrod Dept. Store / Power Plant Vermilion' },
+  { n:'TM26', m:'Earthquake',   t:'ground',   pp:10, pwr:100, acc:100, src:'Victory Road / Viridian Gym (Blue reward)' },
+  { n:'TM27', m:'Return',       t:'normal',   pp:20, pwr:'?', acc:100, src:'Goldenrod City (twins house)' },
+  { n:'TM28', m:'Dig',          t:'ground',   pp:10, pwr:60,  acc:100, src:'Union Cave / Diglett\'s Cave (Kanto)' },
+  { n:'TM29', m:'Psychic',      t:'psychic',  pp:10, pwr:90,  acc:100, src:'Saffron Gym (Sabrina reward)' },
+  { n:'TM30', m:'Shadow Ball',  t:'ghost',    pp:15, pwr:80,  acc:100, src:'Ecruteak Gym (Morty reward)' },
+  { n:'TM31', m:'Mud-Slap',     t:'ground',   pp:10, pwr:20,  acc:100, src:'Union Cave B2F / Crystal Tin Tower' },
+  { n:'TM32', m:'Double Team',  t:'normal',   pp:15, pwr:0,   acc:0,   src:'Celadon Game Corner (1500 coins)' },
+  { n:'TM33', m:'Ice Punch',    t:'ice',      pp:15, pwr:75,  acc:100, src:'Goldenrod Game Corner (4000 coins)' },
+  { n:'TM34', m:'Swagger',      t:'normal',   pp:15, pwr:0,   acc:90,  src:'Lake of Rage (Vacation House)' },
+  { n:'TM35', m:'Sleep Talk',   t:'normal',   pp:10, pwr:0,   acc:0,   src:'Goldenrod Dept. Store roof (Sun event)' },
+  { n:'TM36', m:'Sludge Bomb',  t:'poison',   pp:10, pwr:90,  acc:100, src:'Route 43 (Lake of Rage gate, friend)' },
+  { n:'TM37', m:'Sandstorm',    t:'rock',     pp:10, pwr:0,   acc:0,   src:'Route 27 (silver-haired man)' },
+  { n:'TM38', m:'Fire Blast',   t:'fire',     pp:5,  pwr:120, acc:85,  src:'Cinnabar Mt. (Blaine, restored)' },
+  { n:'TM39', m:'Swift',        t:'normal',   pp:20, pwr:60,  acc:100, src:'Route 38 (Earl\'s Pokémon Academy)' },
+  { n:'TM40', m:'Defense Curl', t:'normal',   pp:40, pwr:0,   acc:0,   src:'Goldenrod Dept. Store (5F, gift)' },
+  { n:'TM41', m:'ThunderPunch', t:'electric', pp:15, pwr:75,  acc:100, src:'Goldenrod Game Corner (4000 coins)' },
+  { n:'TM42', m:'Dream Eater',  t:'psychic',  pp:15, pwr:100, acc:100, src:'Saffron City (Mr. Psychic house)' },
+  { n:'TM43', m:'Detect',       t:'fighting', pp:5,  pwr:0,   acc:0,   src:'Cianwood Gym (Chuck reward)' },
+  { n:'TM44', m:'Rest',         t:'psychic',  pp:10, pwr:0,   acc:0,   src:'Route 36 (Sudowoodo route, item)' },
+  { n:'TM45', m:'Attract',      t:'normal',   pp:15, pwr:0,   acc:100, src:'Violet Gym (Falkner reward)' },
+  { n:'TM46', m:'Thief',        t:'dark',     pp:10, pwr:40,  acc:100, src:'Goldenrod Underground (Rocket fight reward)' },
+  { n:'TM47', m:'Steel Wing',   t:'steel',    pp:25, pwr:70,  acc:90,  src:'Route 28 (hiker, after Red)' },
+  { n:'TM48', m:'Fire Punch',   t:'fire',     pp:15, pwr:75,  acc:100, src:'Goldenrod Game Corner (4000 coins)' },
+  { n:'TM49', m:'Fury Cutter',  t:'bug',      pp:20, pwr:10,  acc:95,  src:'Azalea Gym (Bugsy reward)' },
+  { n:'TM50', m:'Nightmare',    t:'ghost',    pp:15, pwr:0,   acc:100, src:'Silph Co. 11F (Saffron) / Crystal Battle Tower' },
+];
+
+var GEN2_HMS = [
+  { n:'HM01', m:'Cut',       t:'normal', pp:30, pwr:50,  acc:95,  src:'Ilex Forest (after recovering the Farfetch\'d)' },
+  { n:'HM02', m:'Fly',       t:'flying', pp:15, pwr:70,  acc:95,  src:'Cianwood City (girl, after defeating Chuck)' },
+  { n:'HM03', m:'Surf',      t:'water',  pp:15, pwr:95,  acc:100, src:'Ecruteak City (Wise Trio house)' },
+  { n:'HM04', m:'Strength',  t:'normal', pp:15, pwr:80,  acc:100, src:'Olivine Café (sailor)' },
+  { n:'HM05', m:'Flash',     t:'normal', pp:20, pwr:0,   acc:70,  src:'Sprout Tower (Sage at the top)' },
+  { n:'HM06', m:'Whirlpool', t:'water',  pp:15, pwr:15,  acc:70,  src:'Route 41 (Pryce, after badge)' },
+  { n:'HM07', m:'Waterfall', t:'water',  pp:15, pwr:80,  acc:100, src:'Mt. Mortar 1F (after Surf+Strength)' },
+];
+
 function buildTmhmLocator() {
-  tmhmRender();
+  var TYPE_COLORS = {normal:'#9E9E9E',fire:'#E8501A',water:'#1B8FE8',grass:'#3DA83D',electric:'#D4A800',ice:'#60C8C8',fighting:'#B83020',poison:'#8B3099',ground:'#8B6840',flying:'#6850C0',psychic:'#D01868',bug:'#78A810',rock:'#807840',ghost:'#4030A0',dragon:'#5038E8',dark:'#403030',steel:'#9898A8',varies:'#666'};
+  var el = document.getElementById('tmhm-inner');
+  if (!el) {
+    var page = document.getElementById('page-tmhm');
+    if (page) el = page;
+  }
+  if (!el) return;
+
+  function row(entry, isHM) {
+    var typeColor = TYPE_COLORS[entry.t] || '#666';
+    return '<tr style="border-bottom:1px solid var(--border);">'
+      +'<td style="padding:6px 8px;font-weight:800;color:var(--text);font-size:11px;white-space:nowrap;">'+entry.n+'</td>'
+      +'<td style="padding:6px 8px;font-size:12px;color:var(--text);font-weight:700;">'+entry.m+'</td>'
+      +'<td style="padding:6px 8px;"><span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;background:'+typeColor+';color:#fff;">'+entry.t+'</span></td>'
+      +'<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.pwr || '–')+'</td>'
+      +'<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.acc ? entry.acc + '%' : '–')+'</td>'
+      +'<td style="padding:6px 8px;text-align:right;font-size:11px;color:var(--muted);">'+(entry.pp || '–')+'</td>'
+      +'<td style="padding:6px 8px;font-size:11px;color:var(--muted);line-height:1.5;">'+entry.src+'</td>'
+      +'</tr>';
+  }
+
+  function tableHTML(items, isHM) {
+    return '<table style="width:100%;border-collapse:collapse;">'
+      +'<thead style="background:var(--card);"><tr>'
+      +'<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">'+(isHM?'HM':'TM')+'</th>'
+      +'<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Move</th>'
+      +'<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Type</th>'
+      +'<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">Power</th>'
+      +'<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">Acc</th>'
+      +'<th style="padding:8px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;">PP</th>'
+      +'<th style="padding:8px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;">Location</th>'
+      +'</tr></thead><tbody>'
+      + items.map(function(it){ return row(it, isHM); }).join('')
+      +'</tbody></table>';
+  }
+
+  el.innerHTML =
+    '<div style="max-width:1100px;margin:0 auto;padding:0 4px;">'
+    +'<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:8px;letter-spacing:1px;">TM / HM LOCATOR — GEN 2</div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">'
+      +'All 50 TMs and 7 HMs available in Gold, Silver, and Crystal. TM list is identical across the three games. Locations listed are the canonical Gen 2 sources — many TMs have multiple copies (Game Corner prizes, gym rewards, hidden, gifts).'
+    +'</div>'
+    +'<div class="panel" style="padding:0;overflow:hidden;margin-bottom:18px;">' + tableHTML(GEN2_TMS, false) + '</div>'
+    +'<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));margin:18px 0 8px;letter-spacing:1px;">HIDDEN MACHINES</div>'
+    +'<div class="panel" style="padding:0;overflow:hidden;">' + tableHTML(GEN2_HMS, true) + '</div>'
+    +'</div>';
 }
 
 function tmhmRender() {
@@ -13594,67 +13704,68 @@ function breedCalc() {
 //  HELD ITEM REFERENCE
 // ══════════════════════════════════════════════════════════════════
 const HELD_ITEMS_DB = [
-  // Battle
-  {name:'Leftovers',cat:'battle',effect:'Restores 1/16 max HP each turn.',location:'SS Anne (post-game, hidden item repeatable) · held by wild Snorlax (FR/LG) · Given by scientist in Canalave Library (RSE: found on Held by Munchlax route)'},
-  {name:'Lum Berry',cat:'berry',effect:'Cures any status condition immediately when inflicted.',location:'Route 115 (RSE berry tree) · Two Island Cape Brink (FR/LG ground item) · Held by wild Tropius (5%)'},
-  {name:'Choice Band',cat:'battle',effect:'Raises Attack by 1.5×, but locks user into one move.',location:'Battle Frontier prize (48 BP) · Held by wild Absol (5%, Route 120 RSE) · Battle Tower reward'},
-  {name:'Bright Powder',cat:'battle',effect:'Lowers foe\'s accuracy by 12.5% (×0.875 multiplier).',location:'Battle Frontier (48 BP) · Held by wild Butterfree (5%)'},
-  {name:'White Herb',cat:'battle',effect:'Restores stat drops once. Consumed on use.',location:'Battle Frontier (48 BP) · Route 104 (RSE, given by man) · Can be held by wild Linoone (Pickup Lv.51+)'},
-  {name:'Focus Band',cat:'battle',effect:'10% chance to survive an otherwise KO hit with 1 HP.',location:'Battle Frontier (48 BP) · Held by wild Machoke (5%)'},
-  {name:'Scope Lens',cat:'battle',effect:'Raises critical hit ratio by 1 stage.',location:'Battle Frontier (48 BP)'},
-  {name:'King\'s Rock',cat:'battle',effect:'Moves have 10% chance to flinch. Also evolves Poliwhirl/Slowpoke via trade.',location:'Shoal Cave low-tide floor (RSE) · Held by wild Slowpoke (5%) · Held by wild Poliwhirl (5%)'},
-  {name:'Salac Berry',cat:'berry',effect:'Raises Speed by 1 stage when HP drops below 1/4.',location:'Berry Master wife phrase "COOL LATIOS" (RSE) · Only via Pickup or events otherwise'},
-  {name:'Petaya Berry',cat:'berry',effect:'Raises Sp. Atk by 1 stage when HP below 1/4.',location:'Berry Master wife phrase "CHALLENGE CONTEST" (RSE)'},
-  {name:'Liechi Berry',cat:'berry',effect:'Raises Attack by 1 stage when HP below 1/4.',location:'Given in Shoal Cave (RSE) after collecting 4 Shoal Shells + 4 Shoal Salts · Very rare'},
-  {name:'Ganlon Berry',cat:'berry',effect:'Raises Defense by 1 stage when HP below 1/4.',location:'Berry Master wife phrase "OVERWHELMING LATIAS" (RSE)'},
-  {name:'Apicot Berry',cat:'berry',effect:'Raises Sp. Def by 1 stage when HP below 1/4.',location:'Berry Master wife phrase "SUPER HUSTLE" (RSE)'},
-  {name:'Starf Berry',cat:'berry',effect:'Raises a random stat by +2 stages when HP below 1/4.',location:'Berry Master wife phrase "COOL LATIAS" (RSE) · Extremely rare'},
-  {name:'Lansat Berry',cat:'berry',effect:'Raises critical hit ratio when HP below 1/4.',location:'Berry Master wife phrase "OVERWHELMING LATIOS" (RSE)'},
-  {name:'Sitrus Berry',cat:'berry',effect:'Restores 30 HP when HP drops to 50%.',location:'Route 114 berry tree (RSE) · Route 10 berry tree (FR/LG) · Multiple NPCs · Held by wild Lickitung (50%)'},
-  {name:'Oran Berry',cat:'berry',effect:'Restores 10 HP when HP drops to 50%.',location:'Route 101 (RSE) · Route 25 (FR/LG) · Held by wild Marill (50%)'},
-  // Healing
-  {name:'Shell Bell',cat:'healing',effect:'Restores 1/8 of damage dealt each turn.',location:'Shoal Cave (RSE) — give the old man 4 Shoal Shells + 4 Shoal Salts · One-time per game'},
-  {name:'Black Sludge',cat:'healing',effect:'Not available in Gen 2 — Gen 4+ item.',location:'Gen 4+ only'},
-  // Stat boost
-  {name:'Thick Club',cat:'boost',effect:'Doubles Attack of Cubone or Marowak.',location:'Held by wild Cubone (50%) and wild Marowak (50%) · Routes in FR/LG'},
-  {name:'Deep Sea Tooth',cat:'boost',effect:'Doubles Sp. Atk of Clamperl. Also evolves Clamperl into Huntail via trade.',location:'Steven Stone gives one on Route 124 (RSE, one version) · Held by wild Carvanha (50%)'},
-  {name:'Deep Sea Scale',cat:'boost',effect:'Doubles Sp. Def of Clamperl. Also evolves Clamperl into Gorebyss via trade.',location:'Steven Stone gives one on Route 124 (RSE, other version) · Held by wild Relicanth (5%)'},
-  {name:'Light Ball',cat:'boost',effect:'Doubles Pikachu\'s Attack and Sp. Atk.',location:'Held by wild Pikachu (5%) · Routes 1, 2, Safari Zone (FR/LG)'},
-  {name:'Metal Powder',cat:'boost',effect:'Doubles Ditto\'s Defense and Sp. Def (when transformed, has no effect).',location:'Held by wild Ditto (5%) · Routes 13-15, 23, Cerulean Cave (FR/LG)'},
-  {name:'Twisted Spoon',cat:'boost',effect:'Boosts Psychic-type moves by 10%.',location:'Held by wild Abra (50%) · Route 24, 25 (FR/LG)'},
-  {name:'Magnet',cat:'boost',effect:'Boosts Electric-type moves by 10%.',location:'Route 110 (RSE hidden item) · Held by wild Magnemite (50%)'},
-  {name:'Charcoal',cat:'boost',effect:'Boosts Fire-type moves by 10%.',location:'Lavaridge Town (RSE, gift from hiker) · Held by wild Torkoal (50%)'},
-  {name:'Mystic Water',cat:'boost',effect:'Boosts Water-type moves by 10%.',location:'Route 120 (RSE, hidden item) · Held by wild Staryu (5%)'},
-  {name:'Miracle Seed',cat:'boost',effect:'Boosts Grass-type moves by 10%.',location:'Route 104 (RSE, gift) · Held by wild Oddish (50%)'},
-  {name:'Never-Melt Ice',cat:'boost',effect:'Boosts Ice-type moves by 10%.',location:'Shoal Cave (RSE, given by old man after Shoal Shell quest)'},
-  {name:'Silk Scarf',cat:'boost',effect:'Boosts Normal-type moves by 10%.',location:'Dewford Town (RSE, gift) · Mr. Fuji\'s house Lavender Town (FR/LG)'},
-  {name:'Black Belt',cat:'boost',effect:'Boosts Fighting-type moves by 10%.',location:'Held by wild Machop (50%) · Route 112 (RSE)'},
-  {name:'Sharp Beak',cat:'boost',effect:'Boosts Flying-type moves by 10%.',location:'Held by wild Dodrio (50%) and Fearow (50%)'},
-  {name:'Poison Barb',cat:'boost',effect:'Boosts Poison-type moves by 10%.',location:'Held by wild Tentacool (50%) and Roselia (50%)'},
-  {name:'Soft Sand',cat:'boost',effect:'Boosts Ground-type moves by 10%.',location:'Route 109 (RSE) · Held by wild Sandshrew (50%)'},
-  {name:'Hard Stone',cat:'boost',effect:'Boosts Rock-type moves by 10%.',location:'Held by wild Geodude (50%) and Graveler (50%)'},
-  {name:'Silver Powder',cat:'boost',effect:'Boosts Bug-type moves by 10%.',location:'Held by wild Butterfree (50%)'},
-  {name:'Spell Tag',cat:'boost',effect:'Boosts Ghost-type moves by 10%.',location:'Mt. Pyre summit (RSE) · Lavender Town Pokémon Tower (FR/LG)'},
-  {name:'Dragon Fang',cat:'boost',effect:'Boosts Dragon-type moves by 10%.',location:'Held by wild Horsea and Seadra (5%) · Safari Zone (FR/LG, hidden) · Victory Road (RSE)'},
-  // Evolution items
-  {name:'Metal Coat',cat:'evo',effect:'Boosts Steel-type moves 10%. Evolves Scyther→Scizor and Onix→Steelix via trade.',location:'Held by wild Magnemite (5%) and Steelix (5%) · Devon Researcher (RSE, post-Devon Goods quest)'},
-  {name:'Dragon Scale',cat:'evo',effect:'Boosts Dragon-type moves 10%. Evolves Seadra→Kingdra via trade.',location:'Held by wild Horsea (5%) and Seadra (5%)'},
-  {name:'Up-Grade',cat:'evo',effect:'Evolves Porygon→Porygon2 via trade.',location:'Silph Co. 5F (FR/LG) · Pokémaniac in Mossdeep City Space Center (RSE)'},
-  {name:'Fire Stone',cat:'evo',effect:'Evolves Vulpix, Growlithe, Eevee.',location:'Celadon Dept. Store (FR/LG) · Various routes via Pickup Lv.71+'},
-  {name:'Thunderstone',cat:'evo',effect:'Evolves Pikachu, Eevee.',location:'Celadon Dept. Store (FR/LG) · Power Plant (FR/LG) · Various Pickup'},
-  {name:'Water Stone',cat:'evo',effect:'Evolves Staryu, Eevee, Poliwag, Shellder.',location:'Celadon Dept. Store (FR/LG) · Various Pickup'},
-  {name:'Leaf Stone',cat:'evo',effect:'Evolves Gloom, Weepinbell, Exeggcute.',location:'Celadon Dept. Store (FR/LG) · Various Pickup'},
-  {name:'Sun Stone',cat:'evo',effect:'Evolves Gloom→Bellossom, Sunkern→Sunflora.',location:'Route 6 (FR/LG) · Pickup Lv.71+ (RSE/FR/LG)'},
-  {name:'Moon Stone',cat:'evo',effect:'Evolves Nidorina, Nidorino, Clefairy, Jigglypuff, Skitty.',location:'Mt. Moon (FR/LG, multiple) · Pickup Lv.71+'},
-  // Other
-  {name:'Amulet Coin',cat:'other',effect:'Doubles prize money from battles when holder participates.',location:'Goldenrod Dept. Store (FR/LG, given by mother) · Route 103 (RSE, hidden) · Pickup potential'},
-  {name:'Exp. Share',cat:'other',effect:'Shares 50% of EXP with holder, even if it didn\'t battle.',location:'Route 15 (FR/LG, from aide after 50 caught) · Devon Corp. (RSE, after delivering letter)'},
-  {name:'Smoke Ball',cat:'other',effect:'Guarantees escape from wild Pokémon battles.',location:'Pokémon Mart (various) · Held by wild Koffing (5%)'},
-  {name:'Everstone',cat:'other',effect:'Holder cannot evolve. 50% chance to pass Nature when breeding in Gen 2.',location:'Held by wild Geodude (5%) and Graveler (5%) · Route 114 (RSE, gift from hiker)'},
-  {name:'Nugget',cat:'other',effect:'Sell for ₽5000. No battle effect.',location:'Cape Brink (FR/LG) · Pickup Lv.91+'},
-  {name:'PP Up',cat:'other',effect:'Raises PP of one move by 20% (up to ×3 max).',location:'Pickup Lv.91+ · Various hidden items across routes'},
-  {name:'Rare Candy',cat:'other',effect:'Raises level by 1. Increases all stats proportionally.',location:'Pickup Lv.71+/81+/91+ · Hidden items in various dungeons'},
-  {name:'Lucky Egg',cat:'other',effect:'1.5× EXP gain for holder.',location:'Held by wild Chansey (5%) · Cerulean Cave, Safari Zone (FR/LG) · Not available in RSE without trading'},
+  // ─── Battle effect items ───
+  {name:'Leftovers',cat:'battle',effect:'Restores 1/16 max HP each turn in battle.',location:'Held by wild Snorlax (5%). Single guaranteed copy: take the Pokémon Center bed in Goldenrod (Crystal Mobile only) — most reliably caught from Snorlax wild on Vermilion Diglett route.'},
+  {name:"King's Rock",cat:'battle',effect:'10% chance to make moves flinch. Also evolves Poliwhirl into Politoed and Slowpoke into Slowking when traded while held.',location:'Mt. Mortar (Crystal) · Slowpoke Well (Gold/Silver/Crystal, after Team Rocket cleared) · Held by wild Slowpoke (5%)'},
+  {name:'Quick Claw',cat:'battle',effect:'~24% chance to move first regardless of Speed.',location:'Goldenrod Department Store 5F (gift) · Held by wild Granbull (Route 38, 5%)'},
+  {name:'Bright Powder',cat:'battle',effect:'Reduces foe accuracy by 12.5% (×0.875 modifier).',location:'Held by wild Smeargle (5%) · Whirl Islands hidden item'},
+  {name:'Focus Band',cat:'battle',effect:'~12% chance to survive a fatal hit at 1 HP.',location:'Held by wild Machop (5%) and wild Machoke (5%)'},
+  {name:'Scope Lens',cat:'battle',effect:'Boosts holder\'s critical hit ratio by 1 stage.',location:'Single copy: Route 36 (hidden item, requires Itemfinder)'},
+  {name:'Stick',cat:'battle',effect:'Boosts Farfetch\'d\'s critical hit ratio by 2 stages. Farfetch\'d only.',location:'Held by wild Farfetch\'d (5%, Route 38 swarm)'},
+  {name:'Lucky Punch',cat:'battle',effect:'Boosts Chansey\'s critical hit ratio by 2 stages. Chansey only.',location:'Held by wild Chansey (5%)'},
+  {name:'Smoke Ball',cat:'battle',effect:'Guarantees escape from any wild battle.',location:'Route 36 (hidden) · Held by wild Koffing/Weezing (5%)'},
+  {name:'Berserk Gene',cat:'battle',effect:'Raises Attack +2 stages but causes confusion. Single-use, consumed.',location:'Cerulean Cave (Kanto, after Mewtwo gone)'},
+
+  // ─── Berries (Gen 2 simple berries) ───
+  {name:'Berry',cat:'berry',effect:'Heals 10 HP when holder\'s HP drops to 50% or below.',location:'Many Berry Trees across Johto. Common.'},
+  {name:'Gold Berry',cat:'berry',effect:'Heals 30 HP when holder\'s HP drops to 50% or below.',location:'Berry Trees (rare). Held by wild Sunkern (10%)'},
+  {name:'Bitter Berry',cat:'berry',effect:'Cures Confusion automatically.',location:'Berry Trees across Johto'},
+  {name:'Burnt Berry',cat:'berry',effect:'Cures Freeze automatically.',location:'Berry Trees on cold routes (Mahogany, Ice Path)'},
+  {name:'Ice Berry',cat:'berry',effect:'Cures Burn automatically.',location:'Berry Trees on warm routes'},
+  {name:'Mint Berry',cat:'berry',effect:'Cures Sleep automatically.',location:'Berry Trees across Johto'},
+  {name:'Mystic Berry',cat:'berry',effect:'Cures Paralysis automatically.',location:'Berry Trees across Johto'},
+  {name:'PSN Cure Berry',cat:'berry',effect:'Cures Poison automatically.',location:'Berry Trees across Johto'},
+  {name:'PRZ Cure Berry',cat:'berry',effect:'Cures Paralysis automatically. (Alternate name for Mystic Berry in some sources.)',location:'Berry Trees'},
+  {name:'MiracleBerry',cat:'berry',effect:'Cures ANY status condition or confusion automatically. One-time event item.',location:'Goldenrod Pharmacy event item (Crystal post-game)'},
+
+  // ─── Stat-boosting / Pokémon-specific items ───
+  {name:'Thick Club',cat:'boost',effect:'Doubles Cubone\'s and Marowak\'s Attack. Cubone/Marowak only.',location:'Held by wild Cubone (50%, Rock Tunnel) and wild Marowak (5%)'},
+  {name:'Light Ball',cat:'boost',effect:'Doubles Pikachu\'s Special Attack. Pikachu only.',location:'Held by wild Pikachu (5%, Route 2)'},
+  {name:'Metal Powder',cat:'boost',effect:'Doubles Ditto\'s Defense and Special Defense.',location:'Held by wild Ditto (50%, Route 23 / Cerulean Cave)'},
+  {name:'Pink Bow',cat:'boost',effect:'Boosts Normal-type moves by 10%. Gen 2 type-boost item.',location:'Held by wild Granbull/Snubbull (5%)'},
+  {name:'Polkadot Bow',cat:'boost',effect:'Boosts Normal-type moves by 10%. (Alternate appearance to Pink Bow in some text.)',location:'Held by wild Jigglypuff (5%)'},
+  {name:'Black Belt',cat:'boost',effect:'Boosts Fighting-type moves by 10%.',location:'Held by wild Hitmonlee/Hitmonchan (5%) · Fighting Dojo (Saffron) reward'},
+  {name:'Sharp Beak',cat:'boost',effect:'Boosts Flying-type moves by 10%.',location:'Held by wild Spearow/Fearow (5%)'},
+  {name:'Poison Barb',cat:'boost',effect:'Boosts Poison-type moves by 10%.',location:'Held by wild Beedrill (5%) · Goldenrod Tunnel hidden'},
+  {name:'Soft Sand',cat:'boost',effect:'Boosts Ground-type moves by 10%.',location:'Held by wild Diglett/Dugtrio (5%) · Route 27 hidden item'},
+  {name:'Hard Stone',cat:'boost',effect:'Boosts Rock-type moves by 10%.',location:'Held by wild Onix (5%) · Cianwood hidden item'},
+  {name:'SilverPowder',cat:'boost',effect:'Boosts Bug-type moves by 10%.',location:'Held by wild Butterfree (5%) and wild Venonat/Venomoth (5%)'},
+  {name:'Spell Tag',cat:'boost',effect:'Boosts Ghost-type moves by 10%.',location:'Route 38 hidden item · Held by wild Gastly (5%)'},
+  {name:'DragonFang',cat:'boost',effect:'Boosts Dragon-type moves by 10%. (Note: in Gen 2 the multiplier is 10%; bumped to 20% from Gen 4.)',location:'Dragon\'s Den hidden item · Held by wild Dratini/Dragonair (5%)'},
+  {name:'BlackGlasses',cat:'boost',effect:'Boosts Dark-type moves by 10%.',location:'Goldenrod Underground (after Rocket fight)'},
+  {name:'Magnet',cat:'boost',effect:'Boosts Electric-type moves by 10%.',location:'Held by wild Magnemite/Magneton (5%) · Power Plant hidden'},
+  {name:'Mystic Water',cat:'boost',effect:'Boosts Water-type moves by 10%.',location:'Held by wild Goldeen/Seaking (5%) · Whirl Islands'},
+  {name:'Charcoal',cat:'boost',effect:'Boosts Fire-type moves by 10%.',location:'Ilex Forest (gift from the Charcoal Master after rescuing Farfetch\'d)'},
+  {name:'MiracleSeed',cat:'boost',effect:'Boosts Grass-type moves by 10%.',location:'Held by wild Bellsprout (5%) · Ilex Forest hidden'},
+  {name:'NeverMeltIce',cat:'boost',effect:'Boosts Ice-type moves by 10%.',location:'Held by wild Shellder/Cloyster (5%) · Ice Path hidden'},
+  {name:'TwistedSpoon',cat:'boost',effect:'Boosts Psychic-type moves by 10%.',location:'Held by wild Abra (50%) · Saffron hidden'},
+
+  // ─── Evolution-trigger held items (Gen 2 introduced these) ───
+  {name:'Metal Coat',cat:'evo',effect:'Evolves Onix into Steelix (trade) and Scyther into Scizor (trade). Also boosts Steel moves +10%.',location:'Olivine Lighthouse (top floor, gift) · One-time per game · Held by wild Magnemite (5%)'},
+  {name:'Dragon Scale',cat:'evo',effect:'Evolves Seadra into Kingdra (trade). Boosts Dragon moves slightly.',location:'Held by wild Horsea/Seadra (5%, Whirl Islands fishing) · One can be obtained from a gift in Mahogany (Crystal)'},
+  {name:'Up-Grade',cat:'evo',effect:'Evolves Porygon into Porygon2 (trade).',location:'Silph Co. (Saffron, gift from the President)'},
+  {name:'King\'s Rock (evo)',cat:'evo',effect:'Also serves as evolution item: Slowpoke→Slowking and Poliwhirl→Politoed when traded holding it.',location:'See Battle category. Same item.'},
+
+  // ─── Healing ───
+  {name:'Mail',cat:'other',effect:'Holds a written letter the holder carries. Some Mail types boost stats slightly when held (Flower Mail, etc.).',location:'Buyable at Pokémon Center / various postmen'},
+
+  // ─── Other utility ───
+  {name:'Amulet Coin',cat:'other',effect:'Doubles prize money earned from trainer battles when holder participates.',location:'Goldenrod Department Store basement (gift, after rescuing Bill\'s family)'},
+  {name:'Exp. Share',cat:'other',effect:'Holder receives a share of EXP from KO\'d Pokémon even if it didn\'t battle. Gen 2 version splits EXP between all participants AND the holder.',location:'Mr. Pokémon\'s House (gift after delivering the egg, Routes 30-31)'},
+  {name:'Lucky Egg',cat:'other',effect:'Holder gains 1.5× EXP from every battle.',location:'Held by wild Chansey (5%, Routes 13/14/15)'},
+  {name:'Cleanse Tag',cat:'other',effect:'Halves wild Pokémon encounter rate while held.',location:'Held by wild Misdreavus (5%) · Goldenrod Underground'},
+  {name:'PP Up',cat:'other',effect:'Raises max PP of one move by 20% (up to ×3 max).',location:'Various hidden items · Goldenrod Game Corner (4000 coins) · Berry Forest of Bell Tower'},
+  {name:'Rare Candy',cat:'other',effect:'Raises level by 1.',location:'Hidden items scattered: Burnt Tower, Cliff Cave, Cerulean Cave, Bell Tower'},
 ];
 
 function buildHeldItems() {
