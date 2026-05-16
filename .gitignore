@@ -1,5 +1,6 @@
-# Cookie file used by scripts/scrape_bulba.py — never commit
+# Personal session files used by scripts/scrape_bulba.py — never commit
 scripts/.cf_clearance
+scripts/.user_agent
 
 # OS junk
 .DS_Store

@@ -39,7 +39,28 @@ WALKTHROUGHS = {
 }
 
 API = 'https://bulbapedia.bulbagarden.net/w/api.php'
-UA  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+UA_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), '.user_agent'))
+DEFAULT_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+
+def load_user_agent():
+    """Cloudflare's cf_clearance cookie is bound to the User-Agent string
+    that received it. Read the user's actual browser UA from .user_agent
+    if present; otherwise warn and fall back to a default that probably
+    won't match."""
+    if os.path.exists(UA_FILE):
+        val = open(UA_FILE).read().strip().strip('"').strip("'")
+        if val and len(val) >= 30:
+            return val
+    print(f'\n⚠️  No {UA_FILE} found.')
+    print('   The cf_clearance cookie is bound to your browser\'s User-Agent.')
+    print('   Without matching it exactly, Cloudflare will reject the cookie.')
+    print('   In Bulbapedia\'s tab, open the JS console (⌥⌘J / Develop > Show JS Console)')
+    print('   and run:    navigator.userAgent')
+    print('   then paste the result into:')
+    print(f'      pbpaste > {UA_FILE}')
+    print('   ...and re-run this script.\n')
+    print('   Trying with a default UA anyway (will likely fail)...\n')
+    return DEFAULT_UA
 
 def load_cookie():
     if not os.path.exists(COOKIE_FILE):
@@ -64,12 +85,12 @@ def save_cache(c):
     with open(CACHE_FILE, 'w') as f:
         json.dump(c, f)
 
-def fetch(page_title, cookie):
+def fetch(page_title, cookie, ua):
     params = {'action':'parse','page':page_title,'format':'json','prop':'text'}
     url = API + '?' + urllib.parse.urlencode(params)
     cmd = [
         'curl','-s','--max-time','30','--compressed',
-        '-H', f'User-Agent: {UA}',
+        '-H', f'User-Agent: {ua}',
         '-H', 'Accept: application/json',
         '-H', 'Accept-Language: en-US,en;q=0.9',
         '-H', f'Cookie: cf_clearance={cookie}',
@@ -115,7 +136,7 @@ def wrap_body(html):
         '</div>\n</div>'
     )
 
-def scrape_walkthrough(key, info, cookie, cache):
+def scrape_walkthrough(key, info, cookie, ua, cache):
     print(f'\n=== Scraping {key} ({info["page"]}) ===')
     parts = {}
     cf_block_count = 0
@@ -126,7 +147,7 @@ def scrape_walkthrough(key, info, cookie, cache):
             parts[str(p)] = cache[cache_key]
             print(f'  Part {p}: cached ({len(cache[cache_key])} chars)')
             continue
-        resp = fetch(page_title, cookie)
+        resp = fetch(page_title, cookie, ua)
         if 'error' in resp:
             err = resp['error'].get('code','?')
             if err == 'missingtitle':
@@ -169,10 +190,12 @@ def write_out(key, info, parts):
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     cookie = load_cookie()
+    ua = load_user_agent()
     print(f'Using cf_clearance cookie ({len(cookie)} chars)')
+    print(f'Using User-Agent: {ua[:80]}...')
     cache = load_cache()
     for key, info in WALKTHROUGHS.items():
-        parts = scrape_walkthrough(key, info, cookie, cache)
+        parts = scrape_walkthrough(key, info, cookie, ua, cache)
         if parts:
             write_out(key, info, parts)
     print('\nDone.')
