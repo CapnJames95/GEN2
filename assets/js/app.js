@@ -261,8 +261,8 @@ function buildHomePage() {
       items:[
         { icon:'🧭', label:'Kanto Map',         desc:'Interactive Kanto post-game map with clickable zones',  games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('kantomapview',document.getElementById('navKantoMapView'));if(!window._kantomapviewBuilt){buildKantoMapView();window._kantomapviewBuilt=true;}" },
         { icon:'🧭', label:'Johto Map',         desc:'Interactive Johto map with clickable zones',           games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('emeraldmapview',document.getElementById('navCrystalMapView'));if(!window._emeraldmapviewBuilt){buildCrystalMapView();window._emeraldmapviewBuilt=true;}" },
-        { icon:'↗', label:'Sidebar Map (Johto)', desc:'Detailed scrollable Johto map (simplyblgdev) — opens in new tab', games:['FR','LG','E'], action:"openSidebarMap()" },
-        { icon:'↗', label:'Sidebar Map (Kanto)', desc:'Detailed scrollable Kanto post-game map — opens in new tab',     games:['FR','LG','E'], action:"openSidebarMap('kanto')" },
+        { icon:'🗺', label:'Sidebar Map (Johto)', desc:'Detailed scrollable Johto map (simplyblgdev) — opens the right-side slideover', games:['FR','LG','E'], action:"openSidebarMap()" },
+        { icon:'🗺', label:'Sidebar Map (Kanto)', desc:'Detailed scrollable Kanto post-game map — opens the right-side slideover',     games:['FR','LG','E'], action:"openSidebarMap('kanto')" },
         { icon:'🗺', label:'Route Browser',   desc:'Select any area to see every Pokémon available', action:"return openPage('routebrowser','navRouteBrowser','navMapsDropdown')" },
       ]
     },
