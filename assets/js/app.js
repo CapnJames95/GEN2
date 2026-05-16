@@ -1253,7 +1253,7 @@ function syncHeaderBadges(g) {
   var mobileSelect = document.getElementById('gameSwitcherMobile');
   if (mobileSelect) mobileSelect.value = g;
   // propagate game accent colour to all page-hd-title elements
-  var _accentMap = {all:'#F5C518',FR:'#ef5350',LG:'#66bb6a',R:'#e53935',S:'#1e88e5',E:'#43a047'};
+  var _accentMap = {all:'#F5C518',FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
   document.documentElement.style.setProperty('--mast-accent', _accentMap[g] || '#F5C518');
 }
 
