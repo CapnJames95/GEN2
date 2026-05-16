@@ -259,10 +259,10 @@ function buildHomePage() {
     {
       label:'MAPS', color:'#4CAF50', icon:'🗾', group:true,
       items:[
-        { icon:'🧭', label:'Kanto Map',       desc:'Interactive Gold / Silver map with clickable zones',    games:['FR','LG'], action:"closeNavDropdown('navMapsDropdown');showPage('kantomapview',document.getElementById('navKantoMapView'));if(!window._kantomapviewBuilt){buildKantoMapView();window._kantomapviewBuilt=true;}" },
-        { icon:'🧭', label:'Crystal Map',     desc:'Interactive Johto map with clickable zones',    games:['R','S','E'], action:"closeNavDropdown('navMapsDropdown');showPage('emeraldmapview',document.getElementById('navCrystalMapView'));if(!window._emeraldmapviewBuilt){buildCrystalMapView();window._emeraldmapviewBuilt=true;}" },
-        { icon:'↗', label:'GSC Sidebar Map',    desc:'Open Gold / Silver IronMON map standalone in a new tab', games:['FR','LG'], action:"window.open('./GSCIronmonMap/index.html','_blank')" },
-        { icon:'↗', label:'Crystal Sidebar Map', desc:'Open Crystal IronMON map standalone in a new tab', games:['R','S','E'], action:"window.open('./CrystalIronmonMap/index.html','_blank')" },
+        { icon:'🧭', label:'Kanto Map',         desc:'Interactive Kanto post-game map with clickable zones',  games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('kantomapview',document.getElementById('navKantoMapView'));if(!window._kantomapviewBuilt){buildKantoMapView();window._kantomapviewBuilt=true;}" },
+        { icon:'🧭', label:'Johto Map',         desc:'Interactive Johto map with clickable zones',           games:['FR','LG','E'], action:"closeNavDropdown('navMapsDropdown');showPage('emeraldmapview',document.getElementById('navCrystalMapView'));if(!window._emeraldmapviewBuilt){buildCrystalMapView();window._emeraldmapviewBuilt=true;}" },
+        { icon:'↗', label:'GSC Sidebar Map',    desc:'Open the Gold / Silver / Crystal IronMON map standalone', games:['FR','LG','E'], action:"window.open('./GSCIronmonMap/index.html','_blank')" },
+        { icon:'↗', label:'Crystal Sidebar Map', desc:'Open Crystal IronMON map standalone in a new tab',   games:['E'],          action:"window.open('./CrystalIronmonMap/index.html','_blank')" },
         { icon:'🗺', label:'Route Browser',   desc:'Select any area to see every Pokémon available', action:"return openPage('routebrowser','navRouteBrowser','navMapsDropdown')" },
       ]
     },
@@ -2398,19 +2398,17 @@ function buildMoveDex() {
           <th onclick="mdexSort('acc')" style="text-align:right">Acc</th>
           <th onclick="mdexSort('pp')" style="text-align:right">PP</th>
           <th onclick="mdexSort('learners')">Learners</th>
-          <th style="white-space:nowrap">Contest</th>
         </tr></thead>
         <tbody id="mdex-tbody"></tbody>
       </table>
     </div>`;
   mdexRender();
-  // Show/hide contest appeal filters based on game (RSE only)
-  const isRSE = ['R','S','E'].includes(GAME);
+  // Gen 2 has no Pokémon Contests — always hide the contest appeal filter UI
   ['mc-Cool','mc-Beautiful','mc-Cute','mc-Clever','mc-Tough','mdex-contest-sep'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.style.display = isRSE || GAME==='all' ? '' : 'none';
+    if (el) el.style.display = 'none';
   });
-  if (!isRSE && GAME!=='all' && MD_CONTEST_FILTER) {
+  if (MD_CONTEST_FILTER) {
     MD_CONTEST_FILTER = null;
     document.querySelectorAll('.mdex-cat-btn').forEach(b => b.classList.remove('active'));
   }
@@ -2467,18 +2465,14 @@ function mdexGetFiltered() {
 }
 
 function mdexRender() {
-  // Show/hide contest filters based on game
-  const isRSE = ['R','S','E','all'].includes(GAME);
-  const isGSC = ['FR','LG'].includes(GAME);
+  // Gen 2: no Pokémon Contests — always hide contest filters and column
   ['mc-Cool','mc-Beautiful','mc-Cute','mc-Clever','mc-Tough'].forEach(function(id){
     const el = document.getElementById(id);
-    if(el) el.style.display = isGSC ? 'none' : '';
+    if(el) el.style.display = 'none';
   });
-  // Reset contest filter if switching to FR/LG
-  if(isGSC && MD_CONTEST_FILTER) { MD_CONTEST_FILTER=null; document.querySelectorAll('[id^="mc-"]').forEach(function(b){b.classList.remove('active');}); }
-  // Hide/show contest column
+  if(MD_CONTEST_FILTER) { MD_CONTEST_FILTER=null; document.querySelectorAll('[id^="mc-"]').forEach(function(b){b.classList.remove('active');}); }
   const mdexTbl = document.getElementById('mdex-table');
-  if (mdexTbl) mdexTbl.classList.toggle('mdex-no-contest', isGSC);
+  if (mdexTbl) mdexTbl.classList.add('mdex-no-contest');
   const rows = mdexGetFiltered();
   rows.sort((a,b) => {
     const [aid,am]=a,[bid,bm]=b; let av,bv;
@@ -2519,13 +2513,12 @@ function mdexRender() {
       <td style="text-align:right;font-family:monospace;font-weight:800;color:${pwrColor}">${power||'<span style=\"color:var(--muted);font-style:italic\">—</span>'}</td>
       <td style="text-align:right;font-family:monospace;color:var(--muted)">${acc?acc+'%':'<span style=\"font-style:italic\">—</span>'}</td>
       <td style="text-align:right;font-family:monospace;color:var(--muted)">${pp}</td>
-      <td style="color:var(--muted);font-size:11px">${lcount||'—'}</td>
-      <td style="font-size:10px;font-weight:700">${(()=>{if(['FR','LG'].includes(GAME))return'<span style=\'color:var(--muted);font-size:9px\'>RSE only</span>';const cc=CONTEST_CATS[name];if(!cc)return'<span style=\"color:var(--muted)\">—</span>';const cols={Cool:'#E8501A',Beautiful:'#1B8FE8',Cute:'#D070D0',Clever:'#3DA83D',Tough:'#9E9E9E'};const col=cols[cc]||'#888';return'<span style=\"background:'+col+'22;color:'+col+';border:1px solid '+col+'44;padding:1px 6px;border-radius:3px\">'+cc+'</span>';})()}</td>`;
+      <td style="color:var(--muted);font-size:11px">${lcount||'—'}</td>`;
     const dtr=document.createElement('tr');
     dtr.className='mdet-row'+(isOpen?' mopen':'');
     dtr.setAttribute('data-did',id);
     const dtd=document.createElement('td');
-    dtd.colSpan=9;
+    dtd.colSpan=8;
     const dp=document.createElement('div');
     dp.className='mdet-panel';
     if (isOpen){dp.innerHTML=mdexBuildDetail(id,m);requestAnimationFrame(()=>dp.style.maxHeight=dp.scrollHeight+'px');}
@@ -2847,7 +2840,9 @@ function renderAbilitiesPanel(num) {
 }
 
 function renderContestPanel(num) {
-  if (!['R','S','E'].includes(GAME)) return '';
+  // Gen 2 has no Pokémon Contests — always suppress.
+  return '';
+  // eslint-disable-next-line no-unreachable
   // Derive contest affinity from base stats
   const bs = BASE_STATS[num];
   if (!bs) return '';
@@ -2880,8 +2875,8 @@ function renderContestPanel(num) {
 function renderMovesPanel(num) {
   const ls = LEARNSETS[num];
   let html = '<div class="moves-panel">';
-  const isRSEGame = ['R','S','E'].includes(GAME);
-  const learnsetLabel = isRSEGame ? 'Learnset (RSE)' : GAME === 'all' ? 'Learnset (FR/LG · RSE)' : 'Learnset (FR/LG)';
+  const isRSEGame = false; // Gen 2: no RSE games; keeps downstream conditionals dormant
+  const learnsetLabel = 'Learnset';
   html += `<div style="font-family:monospace;font-size:10px;font-weight:800;color:var(--leaf);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">${learnsetLabel}</div>`;
 
   const tabs = [
@@ -6892,13 +6887,12 @@ function cmpRenderPanel() {
     panel.innerHTML = '<div class="cmp-empty">Select two Pokémon above to compare.</div>';
     return;
   }
-  // Show/hide contest tab based on game
-  var isRSECtx = ['R','S','E'].includes(GAME);
+  // Gen 2: no Contests and no Abilities — always hide these tabs.
   var contestTab = document.querySelector('.cmp-tab[onclick*="contest"]');
-  if (contestTab) {
-    contestTab.style.display = isRSECtx || GAME==='all' ? '' : 'none';
-    if (!isRSECtx && GAME!=='all' && CMP_TAB==='contest') CMP_TAB='stats';
-  }
+  if (contestTab) contestTab.style.display = 'none';
+  var abilitiesTab = document.querySelector('.cmp-tab[onclick*="abilities"]');
+  if (abilitiesTab) abilitiesTab.style.display = 'none';
+  if (CMP_TAB === 'contest' || CMP_TAB === 'abilities') CMP_TAB = 'stats';
   if (CMP_TAB === 'stats')         panel.innerHTML = cmpPanelStats();
   else if (CMP_TAB === 'moves')    panel.innerHTML = cmpPanelMoves();
   else if (CMP_TAB === 'abilities') panel.innerHTML = cmpPanelAbilities();
@@ -10333,16 +10327,15 @@ function renderEasyDexPage() {
 //  TRADE EVOLUTION HELPER
 // ══════════════════════════════════════════════════════════════════
 const TRADE_EVOS_GEN2 = [
-  {fromNum:64,from:'Kadabra',toNum:65,to:'Alakazam',item:null,sprite:65,games:'FR/LG/E',tip:'No item needed. Simply trade to another Gen 2 game.'},
-  {fromNum:67,from:'Machoke',toNum:68,to:'Machamp',item:null,sprite:68,games:'FR/LG/E',tip:'No item needed.'},
-  {fromNum:75,from:'Graveler',toNum:76,to:'Golem',item:null,sprite:76,games:'FR/LG/E',tip:'No item needed.'},
-  {fromNum:93,from:'Haunter',toNum:94,to:'Gengar',item:null,sprite:94,games:'FR/LG/E',tip:'No item needed. Trade back to keep Gengar.'},
-  {fromNum:123,from:'Scyther',toNum:212,to:'Scizor',item:'Metal Coat',sprite:212,games:'FR/LG/E',tip:'Scyther must hold Metal Coat when traded.'},
-  {fromNum:137,from:'Porygon',toNum:233,to:'Porygon2',item:'Up-Grade',sprite:233,games:'FR/LG/E',tip:'Porygon must hold Up-Grade when traded.'},
-  {fromNum:61,from:'Poliwhirl',toNum:186,to:'Politoed',item:"King's Rock",sprite:186,games:'FR/LG/E',tip:"Poliwhirl must hold King's Rock when traded."},
-  {fromNum:117,from:'Seadra',toNum:230,to:'Kingdra',item:'Dragon Scale',sprite:230,games:'FR/LG/E',tip:'Seadra must hold Dragon Scale when traded.'},
-  {fromNum:366,from:'Clamperl',toNum:367,to:'Huntail',item:'Deep Sea Tooth',sprite:367,games:'R/S/E (Deep Sea Tooth)',tip:'Clamperl must hold Deep Sea Tooth. Steven Stone gives this on Route 124 (one per game).'},
-  {fromNum:366,from:'Clamperl',toNum:368,to:'Gorebyss',item:'Deep Sea Scale',sprite:368,games:'R/S/E (Deep Sea Scale)',tip:'Clamperl must hold Deep Sea Scale. Steven Stone gives this on Route 124 (alternate version).'},
+  {fromNum:64,from:'Kadabra',toNum:65,to:'Alakazam',item:null,sprite:65,games:'G/S/C',tip:'No item needed. Simply trade to another Gen 2 game.'},
+  {fromNum:67,from:'Machoke',toNum:68,to:'Machamp',item:null,sprite:68,games:'G/S/C',tip:'No item needed.'},
+  {fromNum:75,from:'Graveler',toNum:76,to:'Golem',item:null,sprite:76,games:'G/S/C',tip:'No item needed.'},
+  {fromNum:93,from:'Haunter',toNum:94,to:'Gengar',item:null,sprite:94,games:'G/S/C',tip:'No item needed. Trade back to keep Gengar.'},
+  {fromNum:123,from:'Scyther',toNum:212,to:'Scizor',item:'Metal Coat',sprite:212,games:'G/S/C',tip:'Scyther must hold Metal Coat when traded.'},
+  {fromNum:137,from:'Porygon',toNum:233,to:'Porygon2',item:'Up-Grade',sprite:233,games:'G/S/C',tip:'Porygon must hold Up-Grade when traded.'},
+  {fromNum:61,from:'Poliwhirl',toNum:186,to:'Politoed',item:"King's Rock",sprite:186,games:'G/S/C',tip:"Poliwhirl must hold King's Rock when traded."},
+  {fromNum:117,from:'Seadra',toNum:230,to:'Kingdra',item:'Dragon Scale',sprite:230,games:'G/S/C',tip:'Seadra must hold Dragon Scale when traded. Wild Horsea/Seadra can be caught carrying one.'},
+  {fromNum:79,from:'Slowpoke',toNum:199,to:'Slowking',item:"King's Rock",sprite:199,games:'G/S/C',tip:"Slowpoke must hold King's Rock when traded. Wild Slowpoke/Slowbro carry one ~5%."},
 ];
 
 const TRADE_EVOS_GEN4 = [
@@ -11033,26 +11026,8 @@ function bulbaRenderCustomPart(num) {
 }
 
 function bulbaGetExtraCards() {
-  if (BULBA_GAME === 'frlg') {
-    return [
-      { key:'frlg-sevii',   title:'Sevii Islands Guide',  sub:'Moved from the Kanto guide and kept separate from Bulba progress' },
-      { key:'frlg-legends', title:'Legendary Checklist',  sub:'FR/LG post-game legendary reference' },
-      { key:'frlg-safari',  title:'Safari Zone Guide',    sub:'Full Kanto Safari Zone — areas, encounters, items & strategies' }
-    ];
-  }
-  if (BULBA_GAME === 'rs') {
-    return [
-      { key:'rs-features', title:'RSE Features',         sub:'Mirage Island, Trick House, trades, and version differences' },
-            { key:'rs-safari',   title:'Safari Zone Guide',    sub:'Full Johto Safari Zone — all zones, R/S exclusives, tips' }
-    ];
-  }
-  if (BULBA_GAME === 'e') {
-    return [
-      { key:'e-features', title:'RSE Features',         sub:'Mirage Island, Trick House, trades, and version differences' },
-      { key:'e-legends',  title:'Legendary Checklist',  sub:'Crystal post-game legendary reference' },
-      { key:'e-safari',   title:'Safari Zone Guide',    sub:'Full Johto Safari Zone including Crystal expanded Johto areas' }
-    ];
-  }
+  // Gen 2: Sevii Islands / Hoenn Trick House / RSE features don't exist.
+  // Extra cards intentionally empty until Gen-2-specific bonus guides are written.
   return [];
 }
 
