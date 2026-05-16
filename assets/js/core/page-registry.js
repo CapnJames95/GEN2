@@ -56,6 +56,10 @@ window.PAGE_REGISTRY = window.PAGE_REGISTRY || {
   bugcontest: {
     script: 'assets/js/pages/bugcontest.js',
     init: function() { if (!window._bugContestBuilt) { buildBugContestPage(); window._bugContestBuilt = true; } }
+  },
+  gymleaders: {
+    script: 'assets/js/pages/gymleaders.js',
+    init: function() { if (!window._gymLeadersBuilt) { buildGymLeadersPage(); window._gymLeadersBuilt = true; } }
   }
 };
 
