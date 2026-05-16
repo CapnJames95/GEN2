@@ -8934,43 +8934,49 @@ function runSearch(q) {
     });
   });
 
-  // ── Static guide pages (Speed Tiers, Contests, Battle Frontier, Missables, Berry Farming) ──
+  // ── Static guide pages (search index) — Gen 2 ──
   var staticGuidePages = [
     {
       icon:'🧭', label:'Beginner Essentials', tag:'Guide',
-      sub:'Grass, fishing, surfing, HMs, status, catching, money, and early-game flow',
-      keywords:'beginner essentials basics onboarding grass fishing surfing hm status catching money lost stuck new player',
+      sub:'Grass, fishing, surfing, HMs, status, catching, money, early-game flow',
+      keywords:'beginner essentials basics onboarding grass fishing surfing hm status catching money new player',
       action:function() { closeSearch(); var btn=document.getElementById('navEssentials'); closeNavDropdown('navGuidesDropdown'); showPage('essentials',btn); if(!window._essentialsBuilt){buildEssentialsPage();window._essentialsBuilt=true;} }
     },
     {
       icon:'⚡', label:'Speed Tiers', tag:'Guide',
-      sub:'Gen 2 Speed stat benchmarks for all 386 Pokémon',
+      sub:'Gen 2 Speed stat benchmarks for all 251 Pokémon',
       keywords:'speed tiers fast slow benchmark competitive ironmon outspeeds',
       action:function() { closeSearch(); var btn=document.getElementById('navSpeedTiers'); closeNavDropdown('navBattleDropdown'); showPage('speedtiers',btn); if(!window._speedtiersBuilt){buildSpeedTiersPage();window._speedtiersBuilt=true;} }
     },
     {
-      icon:'🎀', label:'Contest Guide', tag:'Guide',
-      sub:'Pokémon Contests — conditions, Pokéblocks, appeal/jamming, ribbons',
-      keywords:'contest normal cool cute smart tough ribbon pokéblock condition appeal jamming rank master',
-      action:function() { closeSearch(); var btn=document.getElementById('navContests'); closeNavDropdown('navGuidesDropdown'); showPage('contests',btn); if(!window._contestsBuilt){buildContestsPage();window._contestsBuilt=true;} }
+      icon:'🍎', label:'Apricorns & Kurt', tag:'Guide',
+      sub:'7 Apricorn colours → 7 custom Poké Balls (Heavy / Lure / Friend / Love / Moon / Fast / Level)',
+      keywords:'apricorn kurt azalea poke ball custom heavy lure friend love moon fast level',
+      action:function() { closeSearch(); openPage('apricorns','navApricorns','navGuidesDropdown'); }
     },
     {
-      icon:'🏆', label:'Battle Frontier Guide', tag:'Guide',
-      sub:'Crystal Battle Frontier — all 7 facilities, Frontier Brains, streaks',
-      keywords:'battle frontier tower dome factory pike pyramid arena palace brain streak emerald',
-      action:function() { closeSearch(); var btn=document.getElementById('navFrontier'); closeNavDropdown('navGuidesDropdown'); showPage('frontier',btn); if(!window._frontierBuilt){buildFrontierPage();window._frontierBuilt=true;} }
+      icon:'🗼', label:'Battle Tower', tag:'Guide',
+      sub:'Crystal post-game: 7-battle streaks, Lv 30/50/70/100 brackets',
+      keywords:'battle tower crystal post game endgame streak bracket',
+      action:function() { closeSearch(); openPage('battletower','navBattleTower','navGuidesDropdown'); }
+    },
+    {
+      icon:'🌅', label:'Day / Night Cycle', tag:'Guide',
+      sub:'Time-of-day mechanics, time-locked Pokémon, weekly events',
+      keywords:'day night morning clock time real time weekly event eevee espeon umbreon',
+      action:function() { closeSearch(); openPage('daynight','navDayNight','navGuidesDropdown'); }
+    },
+    {
+      icon:'🐛', label:'Bug-Catching Contest', tag:'Guide',
+      sub:'National Park, Tue/Thu/Sat — roster, prizes, scoring formula',
+      keywords:'bug catching contest national park tuesday thursday saturday sun stone everstone scyther pinsir heracross',
+      action:function() { closeSearch(); openPage('bugcontest','navBugContest','navGuidesDropdown'); }
     },
     {
       icon:'⚠', label:'Missables Checklist', tag:'Guide',
       sub:'Interactive checklist of missable Pokémon, items and one-time events',
       keywords:'missable missables one time event checklist permanent choice gift legendary',
       action:function() { closeSearch(); var btn=document.getElementById('navMissables'); closeNavDropdown('navProgressDropdown'); showPage('missables',btn); if(!window._missablesBuilt){buildMissablesPage();window._missablesBuilt=true;} }
-    },
-    {
-      icon:'🫐', label:'Berry Farming Guide', tag:'Guide',
-      sub:'Berry growth cycles, mutations, Berry Master phrases (RSE)',
-      keywords:'berry farming growth cycle mutation master phrase emerald oran sitrus lum wiki',
-      action:function() { closeSearch(); var btn=document.getElementById('navBerries'); closeNavDropdown('navGuidesDropdown'); showPage('berries',btn); if(!window._berriesBuilt){buildBerriesPage();window._berriesBuilt=true;} }
     }
   ];
   staticGuidePages.forEach(function(pg) {
