@@ -17767,8 +17767,10 @@ var KM_MAP_W = 7700;
 var KM_MAP_H = 6400;
 var KM_IMG_BASE = 'https://raw.githubusercontent.com/kelseyyoung/GSCIronmonMap/main/src/assets/FullKanto.png';
 var KM_IMG_PATHS = 'https://raw.githubusercontent.com/kelseyyoung/GSCIronmonMap/main/src/assets/FullKantoPaths.png';
-var KM_MAP_URL = './GSCIronmonMap/index.html';
-var EM_MAP_URL = './CrystalIronmonMap/index.html';
+// Local IronMON map folders don't exist in this repo; use the
+// simplyblgdev SPA maps via iframe instead.
+var KM_MAP_URL = 'https://simplyblgdev.github.io/pokemon/kanto';   // post-game Kanto
+var EM_MAP_URL = 'https://simplyblgdev.github.io/pokemon/Johto';   // Johto (G/S/C share)
 var KM_MAP_STORAGE_KEY = 'GSC_StorageKey';
 var EM_MAP_STORAGE_KEY = 'Crystal_StorageKey';
 
@@ -17873,7 +17875,7 @@ function buildKantoMapView() {
   iframe.onerror = function() {
     if (status) {
       status.classList.remove('hidden');
-      status.innerHTML = 'Kanto Map failed to load.<br><br>Check that <code>GSCIronmonMap/index.html</code> exists beside this file.';
+      status.innerHTML = 'Kanto Map failed to load.<br><br>Check your internet connection — it loads from <code>simplyblgdev.github.io</code>.';
     }
   };
   iframe.src = KM_MAP_URL + '?v=1';
@@ -17899,7 +17901,7 @@ function buildCrystalMapView() {
   iframe.onerror = function() {
     if (status) {
       status.classList.remove('hidden');
-      status.innerHTML = 'Crystal Map failed to load.<br><br>Check that <code>CrystalIronmonMap/index.html</code> exists beside this file.';
+      status.innerHTML = 'Johto Map failed to load.<br><br>Check your internet connection — it loads from <code>simplyblgdev.github.io</code>.';
     }
   };
   iframe.src = EM_MAP_URL + '?v=1';
