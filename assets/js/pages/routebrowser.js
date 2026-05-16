@@ -1,9 +1,9 @@
 function buildRouteBrowserPage() {
-  var _rbMap = {FR:'FR',LG:'LG',R:'R',S:'S',E:'E'};
+  var _rbMap = {FR:'FR',LG:'LG',E:'E'};
   var RB_GAME = (typeof GAME !== 'undefined' && GAME !== 'all' && _rbMap[GAME]) ? _rbMap[GAME] : 'FR';
-  var RB_GAMES = ['FR','LG','R','S','E'];
-  var RB_GAME_LABELS = {FR:'🔥 Gold',LG:'🌿 Silver',R:'💎 Ruby',S:'🔷 Sapphire',E:'💚 Crystal'};
-  var RB_GAME_COLORS = {FR:'var(--fire)',LG:'var(--leaf)',R:'#FF5555',S:'#5599FF',E:'#44DD88'};
+  var RB_GAMES = ['FR','LG','E'];
+  var RB_GAME_LABELS = {FR:'🌕 Gold',LG:'🪙 Silver',E:'💎 Crystal'};
+  var RB_GAME_COLORS = {FR:'#E5B928',LG:'#B0BEC5',E:'#7FB8E0'};
 
   var rbIndex = null;
   var rbSelectedArea = null;

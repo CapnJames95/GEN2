@@ -1,133 +1,29 @@
-var _encGame = null;
+// Wild encounters page — Gen 2 (Gold, Silver, Crystal)
+//
+// Stub: full Gen 2 encounter tables for every route + time-of-day slot
+// (morning / day / night) across all three games will be added in a
+// dedicated data pass. Gen 2's day/night system adds significant variation
+// — many Pokémon are exclusive to morning, day, or night encounters.
 
 function buildEncountersPage() {
-  var g = (typeof GAME !== 'undefined' && GAME !== 'all') ? GAME : 'FR';
-  _encGame = g;
-  var games = [
-    { id:'FR', label:'🔥 FR', color:'var(--fire)' },
-    { id:'LG', label:'🌿 LG', color:'var(--leaf)' },
-    { id:'R', label:'🔴 R', color:'#FF5555' },
-    { id:'S', label:'🔷 S', color:'#5599FF' },
-    { id:'E', label:'🟢 E', color:'var(--emerald)' }
-  ];
-  var btns = document.getElementById('enc-game-btns');
-  btns.innerHTML = games.map(function(gm) {
-    var active = gm.id === g ? 'border-color:'+gm.color+';color:'+gm.color+';' : '';
-    return '<button onclick="encSetGame(\''+gm.id+'\',this)" data-game="'+gm.id+'" style="font-family:\'Press Start 2P\',monospace;font-size:7px;padding:5px 10px;border-radius:4px;border:2px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);'+active+'">'+gm.label+'</button>';
-  }).join('');
-  encRender();
-  window._encountersBuilt = true;
-}
-
-function encSetGame(g) {
-  _encGame = g;
-  var games = { FR:'var(--fire)', LG:'var(--leaf)', R:'#FF5555', S:'#5599FF', E:'var(--emerald)' };
-  document.querySelectorAll('#enc-game-btns button').forEach(function(b) {
-    var bg = b.getAttribute('data-game');
-    if (bg === g) { b.style.borderColor = games[g]; b.style.color = games[g]; }
-    else { b.style.borderColor = 'var(--border)'; b.style.color = 'var(--muted)'; }
-  });
-  encRender();
-}
-
-function encRender() {
-  var g = _encGame || 'FR';
-  var isRSE = (g === 'R' || g === 'S' || g === 'E');
-  var rawLoc = (document.getElementById('enc-loc-search') || {}).value || '';
-  var locQ = _norm(rawLoc);
-  var _encPage = document.getElementById('page-encounters');
-  if (typeof setPageHash === 'function' && _encPage && _encPage.classList.contains('active')) {
-    setPageHash('encounters', { route: rawLoc, game: g });
-  }
-  var methodLabels = {
-    grass:'🌿 Grass', cave:'🕳 Cave', surf:'🏄 Surf', water:'🏄 Surf',
-    'old rod':'🎣 Old Rod', 'good rod':'🎣 Good Rod', 'super rod':'🎣 Super Rod',
-    fish:'🎣 Fishing', dive:'🤿 Dive', rock:'🪨 Rock Smash', headbutt:'🌳 Headbutt',
-    sky:'🌤 Sky', summit:'🏔 Summit', revive:'🦴 Fossil Revival'
-  };
-  var methodOrder = ['grass','cave','surf','water','old rod','good rod','super rod','fish','dive','rock','headbutt','sky','summit','revive'];
-  var routeMap = {};
-
-  Object.keys(GUIDE_DATA).forEach(function(sectionId) {
-    var isRseSection = sectionId.startsWith('rse_');
-    if (isRSE !== isRseSection) return;
-    var secData = GUIDE_DATA[sectionId] || {};
-    Object.keys(secData.wild || {}).forEach(function(routeName) {
-      var entries = secData.wild[routeName] || [];
-      var filtered = entries.filter(function(e) {
-        if (!e.version) return true;
-        var v = e.version;
-        if (v === 'both') return true;
-        return v.split('/').some(function(part) { return part.trim() === g; });
-      });
-      if (!filtered.length) return;
-      if (!routeMap[routeName]) routeMap[routeName] = {};
-      filtered.forEach(function(e) {
-        var method = (e.method || 'grass').toLowerCase();
-        if (!routeMap[routeName][method]) routeMap[routeName][method] = [];
-        routeMap[routeName][method].push(e);
-      });
-    });
-  });
-
-  var routeNames = Object.keys(routeMap).sort();
-  if (locQ) routeNames = routeNames.filter(function(r) { return _norm(r).includes(locQ); });
-  if (!routeNames.length) {
-    document.getElementById('enc-list').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:12px;">No encounter data found.</div>';
-    return;
-  }
-
-  var html = routeNames.map(function(routeName) {
-    var methods = routeMap[routeName];
-    var methodHtml = methodOrder.filter(function(m) { return methods[m]; }).map(function(m) {
-      var label = methodLabels[m] || m;
-      var rows = methods[m].map(function(e) {
-        var noteHtml = e.note ? '<span style="color:var(--muted);font-size:10px;margin-left:6px;">· '+e.note+'</span>' : '';
-        var pokeObj = POKE.find(function(p) { return p.name === e.name; });
-        var sprite = pokeObj ? '<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeObj.num+'.png" style="width:24px;height:24px;image-rendering:pixelated;vertical-align:middle;margin-right:4px;">' : '';
-        var nameHtml = pokeObj
-          ? '<span style="cursor:pointer;color:var(--text);" onclick="_openDexSearch(\''+e.name+'\','+pokeObj.num+')" onmouseover="this.style.color=gameColor()" onmouseout="this.style.color=\'var(--text)\'">'+sprite+e.name+'</span>'
-          : e.name;
-        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">'
-          +'<td style="padding:5px 10px;">'+nameHtml+noteHtml+'</td>'
-          +'<td style="padding:5px 10px;font-size:11px;color:var(--game-color,var(--gold));">'+e.levels+'</td>'
-          +'<td style="padding:5px 10px;font-size:11px;color:var(--game-color,var(--gold));text-align:right;font-weight:700;">'+e.rate+'</td>'
-          +'</tr>';
-      }).join('');
-      return '<div style="margin-bottom:10px;">'
-        +'<div style="font-size:10px;font-weight:700;color:var(--game-color,var(--gold));margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">'+label+'</div>'
-        +'<table style="width:100%;border-collapse:collapse;">'
-        +'<thead><tr style="border-bottom:1px solid var(--border);">'
-        +'<th style="padding:4px 10px;font-size:9px;color:var(--game-color,var(--gold));text-align:left;">Pokémon</th>'
-        +'<th style="padding:4px 10px;font-size:9px;color:var(--game-color,var(--gold));text-align:left;">Levels</th>'
-        +'<th style="padding:4px 10px;font-size:9px;color:var(--game-color,var(--gold));text-align:right;">Rate</th>'
-        +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
-    }).join('');
-
-    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;">'
-      +'<div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold));margin-bottom:10px;">'+routeName+'</div>'
-      +methodHtml+'</div>';
-  }).join('');
-
-  document.getElementById('enc-list').innerHTML = html;
-}
-
-function _openEncounters(routeName, game) {
-  closeSearch();
-  if (typeof setPageHash === 'function') setPageHash('encounters', { route: routeName || '', game: game || '' });
-  var btn = document.getElementById('navEncounters');
-  closeNavDropdown('navPokeDropdown');
-  showPage('encounters', btn);
-  if (!window._encountersBuilt) { buildEncountersPage(); }
-  if (game) {
-    setTimeout(function() {
-      encSetGame(game, document.querySelector('#enc-game-btns button[data-game="'+game+'"]'));
-    }, 80);
-  }
-  if (routeName) {
-    setTimeout(function() {
-      var inp = document.getElementById('enc-loc-search');
-      if (inp) { inp.value = routeName; encRender(); }
-    }, 120);
-  }
+  var el = document.getElementById('encounters-content') || document.getElementById('page-encounters');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="panel" style="padding:22px;max-width:900px;margin:0 auto;">' +
+      '<div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:var(--game-color,var(--gold));margin-bottom:14px;letter-spacing:1px;">WILD ENCOUNTERS — GEN 2</div>' +
+      '<div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:14px;">' +
+        'Gen 2 introduced a <strong>time-of-day</strong> system that varies wild encounters by morning, day, and night across every route. Each game (Gold, Silver, Crystal) has its own slight variations on availability — and Crystal adds the <strong>Bug-Catching Contest</strong> and the <strong>Headbutt-tree</strong> mechanic on top.' +
+      '</div>' +
+      '<ul style="font-size:12px;color:var(--muted);line-height:1.9;margin-left:18px;margin-bottom:14px;">' +
+        '<li>Grass: 4 slots × 3 time-of-day windows = 12 possible encounters per route</li>' +
+        '<li>Surf: 1 slot regardless of time</li>' +
+        '<li>Fishing: Old / Good / Super Rod slots</li>' +
+        '<li>Headbutt trees: Bug-types, sometimes rarer (e.g. Aipom, Heracross)</li>' +
+        '<li>Rock Smash: Geodude usually, occasionally Shuckle (Cianwood)</li>' +
+        '<li>Swarms: dynamic phone-call notifications swap a route\'s rare slot</li>' +
+      '</ul>' +
+      '<div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;color:var(--muted);line-height:1.7;">' +
+        '<strong style="color:var(--text);">Coming soon:</strong> per-route × per-game × per-time-of-day encounter tables, with level ranges, rarity percentages, swarm notes, and Bug-Catching-Contest pools.' +
+      '</div>' +
+    '</div>';
 }
