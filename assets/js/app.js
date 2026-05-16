@@ -240,7 +240,7 @@ function buildHomePage() {
         { icon:'🗺', label:'Easy Dex',    desc:'Route-by-route catch guide',         action:"closeNavDropdown('navPokeDropdown');showPage('easydex',document.getElementById('navEasydex'));renderEasyDexPage();window._easyDexBuilt=true;" },
         { icon:'🔀', label:'Exclusives',  desc:'Version exclusives comparison',       action:"closeNavDropdown('navPokeDropdown');showPage('excl',document.getElementById('navExcl'));if(!window._exclBuilt){buildExcl();window._exclBuilt=true;}" },
         { icon:'🔗', label:'Trade Evos',  desc:'Trade evolution requirements',        action:"closeNavDropdown('navPokeDropdown');showPage('tradeevo',document.getElementById('navTradeEvo'));if(!window._tradevoBuilt){renderTradeEvoPage();window._tradevoBuilt=true;}" },
-        { icon:'🤝', label:'NPC Trades',  desc:'Every in-game trade across all 5 games', action:"closeNavDropdown('navPokeDropdown');showPage('npctrades',document.getElementById('navNpcTrades'));if(!window._npcTradesBuilt){buildNpcTradesPage();window._npcTradesBuilt=true;}" },
+        { icon:'🤝', label:'NPC Trades',  desc:'Every in-game trade in Gold / Silver / Crystal', action:"closeNavDropdown('navPokeDropdown');showPage('npctrades',document.getElementById('navNpcTrades'));if(!window._npcTradesBuilt){buildNpcTradesPage();window._npcTradesBuilt=true;}" },
         { icon:'⚡', label:'Abilities',   desc:'Ability lookup with Pokémon list',    action:"return openPage('abilities','navAbilities','navPokeDropdown')" },
         { icon:'📋', label:'Learnsets',   desc:'Level-up, TM, egg & tutor moves',    action:"return openPage('learnsets','navLearnsets','navPokeDropdown')" },
         { icon:'🌿', label:'Encounters',  desc:'Wild encounters by route & method',  action:"return openPage('encounters','navEncounters','navPokeDropdown')" },
@@ -12896,8 +12896,19 @@ function buildNpcTradesPage() {
   var el = document.getElementById('npctrades-content');
   if (!el) return;
 
-  // [game[], location, give, receive, OT, level, held, notes]
-  var TRADES = [];
+  // Canonical Gen-2 in-game NPC trades (Gold/Silver/Crystal).
+  // Source: Bulbapedia "In-game trade" pages for GSC.
+  // FR slot = Gold, LG slot = Silver, E slot = Crystal.
+  var TRADES = [
+    { games:['FR','LG','E'], location:'Violet City — Pokémon Center', give:'Bellsprout', recv:'Onix', ot:'Mike', lv:'Player\'s', held:'—',
+      note:'First available NPC trade. Onix is a great Rock/Ground option for early Johto.' },
+    { games:['FR','LG','E'], location:'Goldenrod City — house north of Bike Shop', give:'Drowzee', recv:'Machop', ot:'Mike', lv:'Player\'s', held:'—',
+      note:'Machop evolves into Machoke at Lv28 and Machamp via further trade.' },
+    { games:['FR','LG','E'], location:'Olivine City — Pokémon Center', give:'Krabby', recv:'Voltorb', ot:'Tim', lv:'Player\'s', held:'—',
+      note:'One of the easier Electric-types to obtain before the Kanto Power Plant.' },
+    { games:['FR','LG','E'], location:'Blackthorn City — house west of gym', give:'Dragonair', recv:'Dodrio', ot:'Emy', lv:'Player\'s', held:'—',
+      note:'Bad value — Dragonair > Dodrio. Worth it only for the traded-OT 1.5× EXP bonus.' }
+  ];
 
   var GAME_COLORS = { FR:'#E5B928', LG:'#B0BEC5', E:'#7FB8E0' };
   var GAME_LABELS = { FR:'Gold', LG:'Silver', E:'Crystal' };
