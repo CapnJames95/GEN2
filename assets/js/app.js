@@ -1319,7 +1319,7 @@ function setGameFromHeader(g, btn) {
   var bulbaPage = document.getElementById('page-bulba');
   if (bulbaPage && bulbaPage.classList.contains('active')) {
     setTimeout(function() {
-      var bulbaTarget = (g === 'R' || g === 'S') ? 'rs' : (g === 'E') ? 'e' : (g === 'all') ? BULBA_GAME : 'frlg';
+      var bulbaTarget = (g === 'E') ? 'e' : (g === 'all') ? BULBA_GAME : 'frlg';
       // Always update accent colour for the specific game
       if (g !== 'all' && BULBA_COLORS[g]) document.documentElement.style.setProperty('--bulba-accent', BULBA_COLORS[g]);
       if (bulbaTarget !== BULBA_GAME) {
@@ -10563,11 +10563,15 @@ window.closeInMemoriam = function() {
 // ══════════════════════════════════════════════════════════════════
 //  BULBAPEDIA GUIDE
 // ══════════════════════════════════════════════════════════════════
-// Load walkthrough data from JSON script tags
+// Load walkthrough data. Gen 2 has two walkthroughs:
+//   Gold/Silver  → BULBA_STATIC_GS (loaded from assets/data/bulba-data-gs.js)
+//   Crystal      → BULBA_STATIC_C  (loaded from assets/data/bulba-data-c.js)
+// The page-builder code below was written against the older BULBA_STATIC /
+// BULBA_STATIC_E variable names, so we alias the Gen-2 globals into those.
 function _bulbaLoadData() {
-  window.BULBA_STATIC = window.BULBA_STATIC || {};
+  window.BULBA_STATIC    = window.BULBA_STATIC_GS || window.BULBA_STATIC || {};
+  window.BULBA_STATIC_E  = window.BULBA_STATIC_C  || window.BULBA_STATIC_E || {};
   window.BULBA_STATIC_RS = window.BULBA_STATIC_RS || {};
-  window.BULBA_STATIC_E = window.BULBA_STATIC_E || {};
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _bulbaLoadData);
@@ -10661,39 +10665,108 @@ function bulbaRenderContent(container, html) {
 
 var BULBA_CURRENT = 'index';
 
-var BULBA_PARTS = [];
+// Gen 2 Bulbapedia walkthrough parts.
+//   BULBA_PARTS (slot 'gs')      → Pokémon Gold / Silver
+//   BULBA_PARTS_E (slot 'c')     → Pokémon Crystal
+//   BULBA_PARTS_RS               → unused for Gen 2 (kept empty so legacy
+//                                  code that references it doesn't error)
+// Part metadata is canonical Bulbapedia walkthrough TOC; actual content is
+// loaded at runtime from window.BULBA_STATIC_GS / window.BULBA_STATIC_C.
+var BULBA_PARTS = [null,
+  { num:1,  title:"New Bark Town",        sub:"Choose your starter, meet Prof. Elm" },
+  { num:2,  title:"Cherrygrove City",     sub:"Route 29, first rival battle" },
+  { num:3,  title:"Mr. Pokémon's House",  sub:"Route 30, fetch the Egg" },
+  { num:4,  title:"Violet City",          sub:"Sprout Tower, Pokégear upgrade" },
+  { num:5,  title:"Falkner — Violet Gym", sub:"Flying-type Gym, Zephyr Badge" },
+  { num:6,  title:"Union Cave",           sub:"Route 32, Ruins of Alph entrance" },
+  { num:7,  title:"Azalea Town",          sub:"Slowpoke Well, Kurt & Apricorns" },
+  { num:8,  title:"Bugsy — Azalea Gym",   sub:"Bug-type Gym, Hive Badge" },
+  { num:9,  title:"Ilex Forest",          sub:"HM Cut, Headbutt tutor, Goldenrod path" },
+  { num:10, title:"Goldenrod City",       sub:"Bike, Radio Tower, Game Corner" },
+  { num:11, title:"Whitney — Goldenrod Gym", sub:"Normal-type Gym, Plain Badge" },
+  { num:12, title:"National Park",        sub:"Bug-Catching Contest (Tue/Thu/Sat)" },
+  { num:13, title:"Ecruteak City",        sub:"Burned Tower, Legendary Beasts" },
+  { num:14, title:"Morty — Ecruteak Gym", sub:"Ghost-type Gym, Fog Badge" },
+  { num:15, title:"Olivine City",         sub:"Olivine Lighthouse, sick Ampharos" },
+  { num:16, title:"Cianwood City",        sub:"Route 41 surf, Secret Medicine" },
+  { num:17, title:"Chuck — Cianwood Gym", sub:"Fighting-type Gym, Storm Badge" },
+  { num:18, title:"Jasmine — Olivine Gym",sub:"Steel-type Gym, Mineral Badge" },
+  { num:19, title:"Mahogany Town",        sub:"Routes 42/43, Lake of Rage Gyarados" },
+  { num:20, title:"Team Rocket HQ",       sub:"Mahogany Rocket Hideout" },
+  { num:21, title:"Pryce — Mahogany Gym", sub:"Ice-type Gym, Glacier Badge" },
+  { num:22, title:"Radio Tower Takeover", sub:"Rocket takeover, Goldenrod escape" },
+  { num:23, title:"Ice Path & Blackthorn",sub:"Ice Path puzzle, Dragon's Den" },
+  { num:24, title:"Clair — Blackthorn Gym",sub:"Dragon-type Gym, Rising Badge" },
+  { num:25, title:"Victory Road",         sub:"Route 27, Tohjo Falls, New Bark return" },
+  { num:26, title:"Elite Four",           sub:"Will / Koga / Bruno / Karen / Lance" },
+  { num:27, title:"S.S. Aqua to Kanto",   sub:"Vermilion arrival, post-game starts" },
+  { num:28, title:"Kanto Gym Tour",       sub:"Lt. Surge, Sabrina, Misty, Erika, Janine, Brock, Blaine, Blue" },
+  { num:29, title:"Mt. Silver — Red",     sub:"Secret final battle at the summit" },
+];
 
-var BULBA_PARTS_RS = [];
+var BULBA_PARTS_RS = []; // unused on Gen 2
 
-var BULBA_PARTS_E = [];
+var BULBA_PARTS_E = [null,
+  { num:1,  title:"New Bark Town",        sub:"Crystal: Kris (♀ option), starter" },
+  { num:2,  title:"Cherrygrove City",     sub:"Route 29, first rival" },
+  { num:3,  title:"Mr. Pokémon's House",  sub:"Route 30, Egg + Pokédex" },
+  { num:4,  title:"Violet City",          sub:"Sprout Tower" },
+  { num:5,  title:"Falkner — Violet Gym", sub:"Zephyr Badge" },
+  { num:6,  title:"Union Cave",           sub:"Crystal: Unown find" },
+  { num:7,  title:"Azalea Town",          sub:"Slowpoke Well, Kurt, Apricorns" },
+  { num:8,  title:"Bugsy — Azalea Gym",   sub:"Hive Badge" },
+  { num:9,  title:"Ilex Forest",          sub:"Crystal: Eusine appearance" },
+  { num:10, title:"Goldenrod City",       sub:"Radio Tower, Bike, Magnet Train station" },
+  { num:11, title:"Whitney — Goldenrod Gym", sub:"Plain Badge" },
+  { num:12, title:"National Park",        sub:"Crystal: extra Bug Contest prizes" },
+  { num:13, title:"Ecruteak — Wise Trio", sub:"Crystal: Suicune cutscene" },
+  { num:14, title:"Burned Tower",         sub:"Crystal: Suicune sighting" },
+  { num:15, title:"Morty — Ecruteak Gym", sub:"Fog Badge" },
+  { num:16, title:"Olivine City",         sub:"Lighthouse, Ampharos illness" },
+  { num:17, title:"Cianwood / Chuck",     sub:"Storm Badge, Secret Medicine" },
+  { num:18, title:"Jasmine — Olivine Gym",sub:"Mineral Badge" },
+  { num:19, title:"Mahogany / Lake of Rage", sub:"Red Gyarados, Rocket Hideout" },
+  { num:20, title:"Pryce — Mahogany Gym", sub:"Glacier Badge" },
+  { num:21, title:"Radio Tower Takeover", sub:"Crystal: Eusine + Suicune chase" },
+  { num:22, title:"Ice Path & Blackthorn",sub:"Dragon's Den, Crystal: Dragon Pokémon test" },
+  { num:23, title:"Clair — Blackthorn Gym",sub:"Rising Badge" },
+  { num:24, title:"Victory Road / E4",    sub:"Will/Koga/Bruno/Karen/Lance" },
+  { num:25, title:"Kanto — Vermilion",    sub:"Post-game, Magnet Train, Power Plant restore" },
+  { num:26, title:"Kanto Gym Tour",       sub:"Misty, Lt. Surge, Erika, Sabrina, Janine, Brock, Blaine, Blue" },
+  { num:27, title:"Pewter / Cerulean Cave", sub:"Crystal: rebuilt Cerulean Cave (no Mewtwo)" },
+  { num:28, title:"Battle Tower",         sub:"Crystal-exclusive: post-E4 endgame challenge" },
+  { num:29, title:"Mt. Silver — Red",     sub:"Secret final battle" },
+];
 
-var BULBA_GAME = 'frlg'; // current active guide: frlg | rs | e
+// Internal guide-key system. We re-use the existing 3-slot framework:
+//   'frlg' slot → Gen 2 Gold / Silver
+//   'rs'   slot → unused (kept so legacy code paths don't error)
+//   'e'    slot → Gen 2 Crystal
+var BULBA_GAME = 'frlg';
 
 var BULBA_BASES = {
   frlg: 'https://bulbapedia.bulbagarden.net/wiki/Walkthrough:Pok%C3%A9mon_Gold_and_Silver',
-  rs:   'https://bulbapedia.bulbagarden.net/wiki/Walkthrough:Pok%C3%A9mon_Ruby_and_Sapphire',
-  e:    'https://bulbapedia.bulbagarden.net/wiki/Walkthrough:Pok%C3%A9mon_Crystal'
+  rs:   '',  // unused
+  e:    'https://bulbapedia.bulbagarden.net/wiki/Walkthrough:Pok%C3%A9mon_Crystal',
 };
 
 var BULBA_BASE = BULBA_BASES['frlg'];
 
 var BULBA_LABELS = {
-  frlg: '🔥🌿 FR/LG WALKTHROUGH',
-  rs:   '🔴🔷 R/S WALKTHROUGH',
-  e:    '🟢 EMERALD WALKTHROUGH'
+  frlg: '🌕🪙 GOLD / SILVER WALKTHROUGH',
+  rs:   '',
+  e:    '💎 CRYSTAL WALKTHROUGH',
 };
 
 var BULBA_COLORS = {
-  // per-game (used when a specific game is active)
-  FR: 'var(--fire)',
-  LG: 'var(--leaf)',
-  R:  '#e05555',
-  S:  '#5599FF',
-  E:  '#44DD88',
+  // per-game accents (used when a specific game is active)
+  FR: '#E5B928',   // Gold accent
+  LG: '#B0BEC5',   // Silver accent
+  E:  '#7FB8E0',   // Crystal accent
   // guide-group fallbacks (used when no specific game is active)
-  frlg: '#5D9C00',
-  rs:   '#e05555',
-  e:    '#44DD88'
+  frlg: '#E5B928', // Gold/Silver group
+  rs:   '#666',    // unused
+  e:    '#7FB8E0', // Crystal
 };
 
 function bulbaSwitchGame(game, btn) {
@@ -10806,7 +10879,8 @@ function trkToggleSidebar() {
 
 function bulbaAutoSelectGame() {
   var g = (typeof GAME !== 'undefined') ? GAME : (localStorage.getItem('gen2-game') || 'all');
-  var target = (g === 'R' || g === 'S') ? 'rs' : (g === 'E') ? 'e' : (g === 'all') ? null : 'frlg';
+  // Gen 2 mapping: FR (Gold) / LG (Silver) → frlg slot = G/S walkthrough; E (Crystal) → e slot
+  var target = (g === 'E') ? 'e' : (g === 'all') ? null : 'frlg';
   // Always apply the correct accent colour immediately, before any early-return
   var _accent = (g !== 'all' && BULBA_COLORS[g]) ? BULBA_COLORS[g] : (target && BULBA_COLORS[target]) ? BULBA_COLORS[target] : '#5D9C00';
   document.documentElement.style.setProperty('--bulba-accent', _accent);
@@ -11153,7 +11227,7 @@ function _bulbaProgressKey() {
   if (g === 'all') return 'bulba-progress-guide-' + BULBA_GAME;
   // Ensure game belongs to current guide (prevent cross-guide bleed when
   // switching sidebar guide without changing game filter)
-  var guideForGame = (g==='R'||g==='S') ? 'rs' : (g==='E') ? 'e' : 'frlg';
+  var guideForGame = (g==='E') ? 'e' : 'frlg';  // Gen 2: G/S → frlg slot, Crystal → e slot
   if (guideForGame !== BULBA_GAME) return 'bulba-progress-guide-' + BULBA_GAME;
   return 'bulba-progress-' + g;
 }
@@ -11334,9 +11408,10 @@ function bulbaLoadPart(num, title) {
   var sd = BULBA_GAME==='rs' ? (typeof BULBA_STATIC_RS!=='undefined'?BULBA_STATIC_RS:null)
        : BULBA_GAME==='e'  ? (typeof BULBA_STATIC_E !=='undefined'?BULBA_STATIC_E :null)
        : (typeof BULBA_STATIC!=='undefined'?BULBA_STATIC:null);
-  // Chapter splash header
-  var gameLabel = {frlg:'FIRE RED & LEAF GREEN',rs:'RUBY & SAPPHIRE',e:'EMERALD'}[BULBA_GAME] || 'GEN 3';
-  var splashSprite = ({frlg:6,rs:257,e:254}[BULBA_GAME]||25);
+  // Chapter splash header — Gen 2
+  var gameLabel = {frlg:'GOLD & SILVER', e:'CRYSTAL'}[BULBA_GAME] || 'GEN 2';
+  // Splash sprite: Ho-Oh (#250) for Gold/Silver, Suicune (#245) for Crystal
+  var splashSprite = ({frlg:250, e:245}[BULBA_GAME]||250);
   var splashNum = num;
   var splash = '<div class="bulba-part-splash">'
     + '<div class="bps-eyebrow">'+gameLabel+' WALKTHROUGH</div>'
@@ -11347,9 +11422,11 @@ function bulbaLoadPart(num, title) {
     container.innerHTML = splash;
     bulbaRenderContent(container, sd[key]);
   } else {
-    container.innerHTML = splash + '<div style="padding:40px;text-align:center;">'
-      + '<p style="color:#666;">Part ' + num + ' not embedded.</p>'
-      + '<p><a href="' + partUrl + '" target="_blank" style="color:#5D9C00;">Open on Bulbapedia \u2197</a></p>'
+    // Gen 2 walkthrough data not yet embedded \u2014 friendly message + run-the-scraper hint
+    container.innerHTML = splash + '<div style="padding:40px;text-align:center;color:#202122;background:#fff;">'
+      + '<p style="color:#444;font-weight:600;margin-bottom:14px;">Part ' + num + ' isn&rsquo;t embedded yet.</p>'
+      + '<p style="color:#666;line-height:1.7;max-width:560px;margin:0 auto 14px;">The Gen 2 Gold / Silver / Crystal walkthroughs need to be scraped from Bulbapedia. Run <code>python3 scripts/scrape_bulba.py</code> from the repo root \u2014 it populates <code>assets/data/bulba-data-gs.js</code> and <code>assets/data/bulba-data-c.js</code>.</p>'
+      + '<p><a href="' + partUrl + '" target="_blank" rel="noopener" style="color:#1B8FE8;font-weight:600;">Open this part on Bulbapedia \u2197</a></p>'
       + '</div>';
   }
 }
