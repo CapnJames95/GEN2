@@ -7190,23 +7190,17 @@ function toggleTheme() {
       opt:         { btn:'navOpt',           init: null },
       essentials:  { btn:'navEssentials',    init: function(){ if(!window._essentialsBuilt){buildEssentialsPage();window._essentialsBuilt=true;} } },
       ivev:        { btn:'navIvev',          init: null },
-      natures:     { btn:'navNatures',       init: null },
       expcalc:     { btn:'navExpCalc',       init: function(){ ensureExpCalcPage(); } },
       breed:       { btn:'navBreed',         init: null },
       catchcalc:   { btn:'navCatchCalc',     init: null },
       happiness:   { btn:'navHappiness',     init: null },
       dexdash:     { btn:'navDexDash',       init: function(){ buildDexDashPage(); } },
       ribbons:     { btn:'navRibbons',       init: function(){ if(!window._ribbonsBuilt){buildRibbonPage();window._ribbonsBuilt=true;} } },
-      contests:    { btn:'navContests',      init: function(){ if(!window._contestsBuilt){buildContestsPage();window._contestsBuilt=true;} } },
-      frontier:    { btn:'navFrontier',      init: function(){ if(!window._frontierBuilt){buildFrontierPage();window._frontierBuilt=true;} } },
       missables:   { btn:'navMissables',     init: function(){ if(!window._missablesBuilt){buildMissablesPage();window._missablesBuilt=true;} } },
-      berries:     { btn:'navBerries',       init: function(){ if(!window._berriesBuilt){buildBerriesPage();window._berriesBuilt=true;} } },
       rng:         { btn:'navRng',           init: function(){ if(!window._rngBuilt){buildRngPage();window._rngBuilt=true;} } },
       distributions:{ btn:'navDistributions', init: function(){ if(typeof window.buildDistributionsPage === 'function') window.buildDistributionsPage(); } },
       distributionchecklist:{ btn:'navDistributions', init: function(){ showPage('distributions', document.getElementById('navDistributions')); if(typeof window.buildDistributionsPage === 'function') window.buildDistributionsPage(); } },
-      safarizone:  { btn:'navSafariZone',    init: function(){ if(window.ensurePageReady) window.ensurePageReady('safarizone'); } },
       statcalc:    { btn:'navStatCalc',      init: function(){ if(window.ensurePageReady) window.ensurePageReady('statcalc'); } },
-      pokeblock:   { btn:'navPokeblock',     init: function(){ if(window.ensurePageReady) window.ensurePageReady('pokeblock'); } },
       e4ref:       { btn:'navE4Ref',         init: function(){ if(window.ensurePageReady) window.ensurePageReady('e4ref'); } },
       rematches:   { btn:'navRematches',     init: function(){ if(window.ensurePageReady) window.ensurePageReady('rematches'); } },
       routebrowser:{ btn:'navRouteBrowser',  init: function(){ if(window.ensurePageReady) window.ensurePageReady('routebrowser'); } },
@@ -9789,55 +9783,13 @@ function optRenderEv() {
     + '</div>';
 }
 
-function optGetSafariMatches(query) {
-  var games = optResolveGames();
-  query = (query || '').trim().toLowerCase();
-  var results = [];
-  POKE.forEach(function(p) {
-    if (query && p.name.toLowerCase().indexOf(query) === -1) return;
-    games.forEach(function(g) {
-      parseLines((p.games || {})[g] || '').forEach(function(entry) {
-        if (entry.method !== 'safari') return;
-        results.push({
-          name:p.name,
-          game:g,
-          location:entry.location || 'Safari Zone',
-          level:entry.level || '—',
-          rate:entry.rate || 0
-        });
-      });
-    });
-  });
-  return results.sort(function(a,b) {
-    if (b.rate !== a.rate) return b.rate - a.rate;
-    return a.name.localeCompare(b.name);
-  }).slice(0, 18);
-}
+// Safari Zone is closed in original GSC — these helpers are dead in Gen 2
+// but kept as no-ops in case any legacy template still references them.
+function optGetSafariMatches() { return []; }
 
 function optRenderSafari() {
-  var rows = optGetSafariMatches(OPT_SAFARI_QUERY);
-  var controls = '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">'
-    + '<input id="opt-safari-query" type="text" value="' + OPT_SAFARI_QUERY.replace(/"/g, '&quot;') + '" placeholder="Search Safari Pokémon…"'
-    + ' style="flex:1;min-width:220px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px 12px;color:var(--text);font-size:12px;outline:none;"'
-    + ' oninput="OPT_SAFARI_QUERY=this.value;renderOptimizerPage()">'
-    + '<button type="button" class="filter-btn" onclick="OPT_SAFARI_QUERY=\'Chansey\';renderOptimizerPage()">Chansey</button>'
-    + '<button type="button" class="filter-btn" onclick="OPT_SAFARI_QUERY=\'Heracross\';renderOptimizerPage()">Heracross</button>'
-    + '<button type="button" class="filter-btn" onclick="OPT_SAFARI_QUERY=\'Kangaskhan\';renderOptimizerPage()">Kangaskhan</button>'
-    + '</div>';
-  var intro = optCard('<div style="font-size:12px;color:var(--muted);line-height:1.7;">Best Safari odds pulled directly from the encounter tables. Great for checking whether a mon is merely present or actually farmable.</div>');
-  if (!rows.length) return controls + intro + '<div style="margin-top:14px;color:var(--muted);font-size:12px;">No Safari entries match that Pokémon name.</div>';
-  return controls + intro + optCard(rows.map(function(row) {
-    return '<div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;">'
-      + '<div>'
-      + '<div style="font-size:13px;font-weight:800;color:var(--text);">' + row.name + '</div>'
-      + '<div style="font-size:11px;color:var(--muted);margin-top:4px;">' + optGameLabel(row.game) + ' · ' + row.location + ' · ' + row.level + '</div>'
-      + '</div>'
-      + '<div style="text-align:right;">'
-      + '<div style="font-size:12px;font-weight:800;color:var(--game-color,var(--gold));">' + row.rate + '%</div>'
-      + '<button type="button" class="filter-btn" style="margin-top:6px;" onclick="guideDex(\'' + row.name.replace(/'/g, "\\'") + '\')">Dex</button>'
-      + '</div>'
-      + '</div>';
-  }).join(''));
+  // No safari in Gen 2 — return an empty placeholder.
+  return '';
 }
 
 function renderOptimizerPage() {
