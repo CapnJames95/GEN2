@@ -500,7 +500,13 @@
         <button class="page-nav-dropdown-item" id="navBattleTower" data-games="E" onclick="return openPage('battletower','navBattleTower','navGuidesDropdown')">🗼 Battle Tower (Crystal)</button>
         <button class="page-nav-dropdown-item" id="navDayNight" onclick="return openPage('daynight','navDayNight','navGuidesDropdown')">🌅 Day / Night Cycle</button>
         <button class="page-nav-dropdown-item" id="navBugContest" onclick="return openPage('bugcontest','navBugContest','navGuidesDropdown')">🐛 Bug-Catching Contest</button>
-        <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">RNG Guide</button>
+        <button class="page-nav-dropdown-item" id="navRadio"      onclick="closeNavDropdown('navGuidesDropdown');showPage('radio',document.getElementById('navRadio'));buildRadioPage();window._radioBuilt=true;">📻 Radio Tower</button>
+        <button class="page-nav-dropdown-item" id="navHeadbutt"   onclick="closeNavDropdown('navGuidesDropdown');showPage('headbutt',document.getElementById('navHeadbutt'));buildHeadbuttPage();window._headbuttBuilt=true;">🌳 Headbutt Trees</button>
+        <button class="page-nav-dropdown-item" id="navRuins"      onclick="closeNavDropdown('navGuidesDropdown');showPage('ruins',document.getElementById('navRuins'));buildRuinsPage();window._ruinsBuilt=true;">🗿 Ruins of Alph</button>
+        <button class="page-nav-dropdown-item" id="navMtMortar"   onclick="closeNavDropdown('navGuidesDropdown');showPage('mtmortar',document.getElementById('navMtMortar'));buildMtMortarPage();window._mtMortarBuilt=true;">🥋 Mt. Mortar</button>
+        <button class="page-nav-dropdown-item" id="navTimeCapsule" onclick="closeNavDropdown('navGuidesDropdown');showPage('timecapsule',document.getElementById('navTimeCapsule'));buildTimeCapsulePage();window._tcBuilt=true;">📦 Time Capsule</button>
+        <button class="page-nav-dropdown-item" id="navMysteryGift" onclick="closeNavDropdown('navGuidesDropdown');showPage('mysterygift',document.getElementById('navMysteryGift'));buildMysteryGiftPage();window._mgBuilt=true;">🎁 Mystery Gift</button>
+        <button class="page-nav-dropdown-item" id="navRng" onclick="closeNavDropdown('navGuidesDropdown');showPage('rng',document.getElementById('navRng'));buildRngPage();window._rngBuilt=true;">🎲 RNG Guide</button>
       </div>
     </div>
   </div>
@@ -1733,6 +1739,62 @@
   </div>
 </div>
 
+<!-- ══ NEW GEN-2 FEATURE PAGES (Radio Tower / Headbutt / Ruins / Mt. Mortar / Time Capsule / Mystery Gift) ══ -->
+<div id="page-radio" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RADIO TOWER</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Goldenrod &amp; Lavender Radio Tower stations, swarm lures, Buena's Password, and the Pokégear cards.</div>
+      <div id="radio-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-headbutt" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">HEADBUTT TREES</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Every Headbutt-able tree route, what Pokémon spawn there, and where to learn the move.</div>
+      <div id="headbutt-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-ruins" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RUINS OF ALPH</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Unown puzzle walkthroughs, Crystal-exclusive ! and ? rooms, and the Sinjoh / item rewards.</div>
+      <div id="ruins-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-mtmortar" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">MT. MORTAR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Floor-by-floor map, Karate King &amp; the Tyrogue gift, and (Crystal) the Dragon Breath tutor.</div>
+      <div id="mtmortar-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-timecapsule" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">TIME CAPSULE</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Trade with Gen 1 (R/B/Y) — restrictions, how to unlock, and Mystery Gift's older sibling.</div>
+      <div id="timecapsule-content"></div>
+    </div>
+  </div>
+</div>
+<div id="page-mysterygift" class="page main">
+  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">MYSTERY GIFT</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Daily IR exchange — how to unlock, daily limit, and the full reward pool.</div>
+      <div id="mysterygift-content"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ GEN-2-SPECIFIC FEATURE PAGES ══ -->
 <div id="page-apricorns" class="page main">
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
@@ -2175,6 +2237,7 @@
 <script src="assets/js/pages/daynight.js"></script>
 <script src="assets/js/pages/bugcontest.js"></script>
 <script src="assets/js/pages/gymleaders.js"></script>
+<script src="assets/js/pages/gen2features.js"></script>
 <script>
 (function() {
   function bootFallback() {

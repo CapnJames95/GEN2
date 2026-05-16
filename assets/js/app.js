@@ -7290,6 +7290,13 @@ function toggleTheme() {
       e4ref:       { btn:'navE4Ref',         init: function(){ if(window.ensurePageReady) window.ensurePageReady('e4ref'); } },
       rematches:   { btn:'navRematches',     init: function(){ if(window.ensurePageReady) window.ensurePageReady('rematches'); } },
       routebrowser:{ btn:'navRouteBrowser',  init: function(){ if(window.ensurePageReady) window.ensurePageReady('routebrowser'); } },
+      // New Gen-2 feature pages
+      radio:       { btn:'navRadio',         init: function(){ if(typeof window.buildRadioPage==='function') window.buildRadioPage(); } },
+      headbutt:    { btn:'navHeadbutt',      init: function(){ if(typeof window.buildHeadbuttPage==='function') window.buildHeadbuttPage(); } },
+      ruins:       { btn:'navRuins',         init: function(){ if(typeof window.buildRuinsPage==='function') window.buildRuinsPage(); } },
+      mtmortar:    { btn:'navMtMortar',      init: function(){ if(typeof window.buildMtMortarPage==='function') window.buildMtMortarPage(); } },
+      timecapsule: { btn:'navTimeCapsule',   init: function(){ if(typeof window.buildTimeCapsulePage==='function') window.buildTimeCapsulePage(); } },
+      mysterygift: { btn:'navMysteryGift',   init: function(){ if(typeof window.buildMysteryGiftPage==='function') window.buildMysteryGiftPage(); } }
     };
 
     var entry = pageMap[pageId];
@@ -11601,7 +11608,10 @@ document.addEventListener('keydown', function(e) {
     missables:'navProgressGroup', distributions:'navProgressGroup',
     // GUIDES
     essentials:'navGuidesGroup', contests:'navGuidesGroup', frontier:'navGuidesGroup',
-    berries:'navGuidesGroup', rng:'navGuidesGroup', pokeblock:'navGuidesGroup'
+    berries:'navGuidesGroup', rng:'navGuidesGroup', pokeblock:'navGuidesGroup',
+    // New Gen-2 guide pages
+    radio:'navGuidesGroup', headbutt:'navGuidesGroup', ruins:'navGuidesGroup',
+    mtmortar:'navGuidesGroup', timecapsule:'navGuidesGroup', mysterygift:'navGuidesGroup'
   };
 
   function _navMenu(id) {
@@ -13116,7 +13126,13 @@ window.dexDashToggleGymBadge = function(gameId, badgeId) {
     frontier: { content:'frontier-content', build:function(){ buildFrontierPage(); window._frontierBuilt = true; } },
     missables: { content:'missables-content', build:function(){ buildMissablesPage(); window._missablesBuilt = true; } },
     berries: { content:'berries-content', build:function(){ buildBerriesPage(); window._berriesBuilt = true; } },
-    rng: { content:'rng-content', build:function(){ buildRngPage(); window._rngBuilt = true; } }
+    rng: { content:'rng-content', build:function(){ buildRngPage(); window._rngBuilt = true; } },
+    radio: { content:'radio-content', build:function(){ if(typeof buildRadioPage==='function') buildRadioPage(); } },
+    headbutt: { content:'headbutt-content', build:function(){ if(typeof buildHeadbuttPage==='function') buildHeadbuttPage(); } },
+    ruins: { content:'ruins-content', build:function(){ if(typeof buildRuinsPage==='function') buildRuinsPage(); } },
+    mtmortar: { content:'mtmortar-content', build:function(){ if(typeof buildMtMortarPage==='function') buildMtMortarPage(); } },
+    timecapsule: { content:'timecapsule-content', build:function(){ if(typeof buildTimeCapsulePage==='function') buildTimeCapsulePage(); } },
+    mysterygift: { content:'mysterygift-content', build:function(){ if(typeof buildMysteryGiftPage==='function') buildMysteryGiftPage(); } }
   };
 
   function recoverBuiltInPage() {
@@ -14190,6 +14206,7 @@ var NOTE_BTN_MAP={
   npctrades:'navNpcTrades',happiness:'navHappiness',typechart:'navTypeChart',
   safarizone:'navSafariZone',statcalc:'navStatCalc',
   distributions:'navDistributions',distributionchecklist:'navDistributions',pokeblock:'navPokeblock',e4ref:'navE4Ref',rematches:'navRematches',routebrowser:'navRouteBrowser',
+  radio:'navRadio',headbutt:'navHeadbutt',ruins:'navRuins',mtmortar:'navMtMortar',timecapsule:'navTimeCapsule',mysterygift:'navMysteryGift'
 };
 
 window.openTopLevelPage = function(pid) {
@@ -14205,7 +14222,13 @@ window.openTopLevelPage = function(pid) {
     frontier: function(){ if(!window._frontierBuilt){ buildFrontierPage(); window._frontierBuilt=true; } },
     missables: function(){ if(!window._missablesBuilt){ buildMissablesPage(); window._missablesBuilt=true; } },
     berries: function(){ if(!window._berriesBuilt){ buildBerriesPage(); window._berriesBuilt=true; } },
-    rng: function(){ if(!window._rngBuilt){ buildRngPage(); window._rngBuilt=true; } }
+    rng: function(){ if(!window._rngBuilt){ buildRngPage(); window._rngBuilt=true; } },
+    radio: function(){ if(typeof buildRadioPage==='function') buildRadioPage(); },
+    headbutt: function(){ if(typeof buildHeadbuttPage==='function') buildHeadbuttPage(); },
+    ruins: function(){ if(typeof buildRuinsPage==='function') buildRuinsPage(); },
+    mtmortar: function(){ if(typeof buildMtMortarPage==='function') buildMtMortarPage(); },
+    timecapsule: function(){ if(typeof buildTimeCapsulePage==='function') buildTimeCapsulePage(); },
+    mysterygift: function(){ if(typeof buildMysteryGiftPage==='function') buildMysteryGiftPage(); }
   };
   var navId=NOTE_BTN_MAP[pid];
   var btn=navId?document.getElementById(navId):null;
