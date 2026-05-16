@@ -1,0 +1,5 @@
+# Cookie file used by scripts/scrape_bulba.py — never commit
+scripts/.cf_clearance
+
+# OS junk
+.DS_Store

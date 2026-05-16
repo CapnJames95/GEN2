@@ -1,11 +1,29 @@
 #!/usr/bin/env python3
 """Scrape Bulbapedia walkthroughs for Pokémon Gold/Silver and Crystal.
-Uses curl (which has working UA negotiation with Bulbapedia) rather than urllib.
+
+Bulbapedia sits behind Cloudflare's JS challenge. Plain curl/urllib gets the
+"Just a moment..." page. To pass it, this script needs the `cf_clearance`
+cookie from a real browser session that has already passed the challenge.
+
+How to get the cookie (one-time, takes 60 seconds):
+  1. Open https://bulbapedia.bulbagarden.net/ in Chrome/Safari/Firefox.
+  2. Once the page actually loads (challenge passed), open DevTools:
+       - Chrome:  Application > Cookies > https://bulbapedia.bulbagarden.net
+       - Safari:  Develop > Show Web Inspector > Storage > Cookies
+       - Firefox: Storage > Cookies
+  3. Find the `cf_clearance` cookie. Copy its Value field.
+  4. Paste into scripts/.cf_clearance (no quotes, no whitespace).
+  5. Re-run this script.
+
+The cf_clearance cookie is valid for ~30 days. If the scraper starts hitting
+the challenge again, re-grab the cookie.
 """
+
 import json, os, sys, time, subprocess, urllib.parse, re
 
-OUT_DIR = '/Users/andrewlamb/Documents/Github/GEN2/assets/data'
-CACHE_FILE = '/tmp/bulba_cache_gen2.json'
+OUT_DIR     = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets/data'))
+CACHE_FILE  = '/tmp/bulba_cache_gen2.json'
+COOKIE_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), '.cf_clearance'))
 
 WALKTHROUGHS = {
     'gs': {
@@ -21,7 +39,20 @@ WALKTHROUGHS = {
 }
 
 API = 'https://bulbapedia.bulbagarden.net/w/api.php'
-UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36'
+UA  = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+
+def load_cookie():
+    if not os.path.exists(COOKIE_FILE):
+        print(f'\n❌ Cookie file missing: {COOKIE_FILE}')
+        print('   Open https://bulbapedia.bulbagarden.net/ in a browser, pass the')
+        print('   Cloudflare challenge, then copy the `cf_clearance` cookie value into')
+        print(f'   that file. See the docstring at the top of this script.\n')
+        sys.exit(1)
+    val = open(COOKIE_FILE).read().strip().strip('"').strip("'")
+    if not val or len(val) < 50:
+        print(f'❌ Cookie value in {COOKIE_FILE} looks empty / too short.')
+        sys.exit(1)
+    return val
 
 def load_cache():
     if os.path.exists(CACHE_FILE):
@@ -33,53 +64,44 @@ def save_cache(c):
     with open(CACHE_FILE, 'w') as f:
         json.dump(c, f)
 
-def fetch(page_title):
+def fetch(page_title, cookie):
     params = {'action':'parse','page':page_title,'format':'json','prop':'text'}
     url = API + '?' + urllib.parse.urlencode(params)
+    cmd = [
+        'curl','-s','--max-time','30','--compressed',
+        '-H', f'User-Agent: {UA}',
+        '-H', 'Accept: application/json',
+        '-H', 'Accept-Language: en-US,en;q=0.9',
+        '-H', f'Cookie: cf_clearance={cookie}',
+        '-H', 'Referer: https://bulbapedia.bulbagarden.net/',
+        url
+    ]
     try:
-        out = subprocess.run(
-            ['curl','-s','-A',UA,'--max-time','30',url],
-            capture_output=True, text=True, check=True
-        )
-        return json.loads(out.stdout)
+        out = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        raw = out.stdout
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            head = raw.strip()[:200]
+            return {'error':{'code':'cloudflare-block','info':head}}
     except subprocess.CalledProcessError as e:
         return {'error':{'code':'curl-error','info':str(e)}}
-    except json.JSONDecodeError as e:
-        return {'error':{'code':'json-error','info':str(e)}}
 
 def strip_html(html):
-    """Light cleanup. The MediaWiki API returns just the content body.
-    We remove a few standard elements that won't render correctly offline
-    (edit links, inline scripts, the top-of-page navigation infobox table,
-    and the bottom navigation footer)."""
-    # Remove edit-section links
     html = re.sub(r'<span class="mw-editsection".*?</span>', '', html, flags=re.DOTALL)
-    # Remove inline scripts
     html = re.sub(r'<script.*?</script>', '', html, flags=re.DOTALL)
-    # Remove the top "Walkthrough infobox" — Bulbapedia walkthrough parts start
-    # with a navigation infobox showing badges/parts. Style="float:right" table.
-    # Easier: remove the FIRST <table class="infobox"...> ... </table> if present
     html = re.sub(
         r'^\s*<table class="infobox"[^>]*>.*?</table>\s*',
         '', html, count=1, flags=re.DOTALL
     )
-    # Remove the bottom Part navigator (the "← Part N | Part N+1 →" footer)
-    # — recognizable as a div containing "Walkthrough" + "Part N" + "Part N+1"
-    # Simpler: strip the last <div class="WTName"> block to the end.
-    # The standard pattern is: <div ...><div ...>← Part N</div>...<div ...>Part N+1 →</div></div>
-    # MediaWiki output usually has these at the very end before category links.
-    # We'll trim everything after the last `<div class="WTName">` parent.
-    # Actually safest: leave as-is and rewrite Part_N links to use our handler.
     return html
 
 def fix_links(html, walkthrough_key):
-    """Rewrite same-walkthrough part links to use our bulbaLoadPart() handler."""
     page_path = WALKTHROUGHS[walkthrough_key]['page']
     pattern = re.compile(r'href="/wiki/' + page_path + r'/Part_(\d+)"')
     def repl(m):
         return f'href="javascript:void(0)" onclick="bulbaLoadPart({m.group(1)})"'
     html = pattern.sub(repl, html)
-    # Also rewrite the same-but-with-actual-é form
     page_path_decoded = page_path.replace('%C3%A9','é')
     pattern2 = re.compile(r'href="/wiki/' + re.escape(page_path_decoded) + r'/Part_(\d+)"')
     html = pattern2.sub(repl, html)
@@ -93,9 +115,10 @@ def wrap_body(html):
         '</div>\n</div>'
     )
 
-def scrape_walkthrough(key, info, cache):
+def scrape_walkthrough(key, info, cookie, cache):
     print(f'\n=== Scraping {key} ({info["page"]}) ===')
     parts = {}
+    cf_block_count = 0
     for p in range(0, info['parts'] + 1):
         page_title = info['page'].replace('%C3%A9','é') + f'/Part_{p}'
         cache_key = f'{key}:{p}'
@@ -103,11 +126,20 @@ def scrape_walkthrough(key, info, cache):
             parts[str(p)] = cache[cache_key]
             print(f'  Part {p}: cached ({len(cache[cache_key])} chars)')
             continue
-        resp = fetch(page_title)
+        resp = fetch(page_title, cookie)
         if 'error' in resp:
             err = resp['error'].get('code','?')
             if err == 'missingtitle':
                 print(f'  Part {p}: missing (404)')
+            elif err == 'cloudflare-block':
+                cf_block_count += 1
+                preview = resp['error'].get('info','')[:80]
+                print(f'  Part {p}: Cloudflare block — {preview}')
+                if cf_block_count >= 3:
+                    print('\n❌ Cookie is rejected or expired — Cloudflare keeps blocking.')
+                    print('   Visit Bulbapedia in your browser, grab a fresh cf_clearance,')
+                    print(f'   paste it into {COOKIE_FILE}, and re-run.\n')
+                    sys.exit(1)
             else:
                 print(f'  Part {p}: API error {err}')
             continue
@@ -122,7 +154,7 @@ def scrape_walkthrough(key, info, cache):
         cache[cache_key] = wrapped
         save_cache(cache)
         print(f'  Part {p}: {len(wrapped):,} chars')
-        time.sleep(0.4)
+        time.sleep(0.5)
     return parts
 
 def write_out(key, info, parts):
@@ -136,9 +168,11 @@ def write_out(key, info, parts):
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
+    cookie = load_cookie()
+    print(f'Using cf_clearance cookie ({len(cookie)} chars)')
     cache = load_cache()
     for key, info in WALKTHROUGHS.items():
-        parts = scrape_walkthrough(key, info, cache)
+        parts = scrape_walkthrough(key, info, cookie, cache)
         if parts:
             write_out(key, info, parts)
     print('\nDone.')
