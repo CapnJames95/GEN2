@@ -2102,11 +2102,6 @@ const ALL_ITEMS = [
   [307,"Teachy TV","Key","A TV that shows tutorials on how to use Pokémon moves and items.",{FR:"",LG:"",E:""}],
   [308,"Powder Jar","Key","A jar for storing Berry Powder, made on the Berry Crush machine via wireless.",{FR:"",LG:"",E:""}],
   // ── Key Items – Johto ──
-  [321,"Basement Key","Key","A key that opens the door to the generator room in New Mauville underground.",{FR:"",LG:"",E:""}],
-  [322,"Scanner","Key","A scanner found on the Abandoned Ship. Bring it to Captain Stern for Deep Sea items.",{FR:"",LG:"",E:""}],
-  [323,"Meteorite","Key","A meteorite from outer space found on Mt. Chimney.",{FR:"",LG:"",E:""}],
-  [325,"Root Fossil","Key","A Pokémon fossil. Revived into Lileep at the Devon Corp. lab in Rustboro City.",{FR:"",LG:"",E:""}],
-  [326,"Claw Fossil","Key","A Pokémon fossil. Revived into Anorith at the Devon Corp. lab in Rustboro City.",{FR:"",LG:"",E:""}],
   [327,"S.S. Ticket","Key","A ticket for boarding the S.S. Tidal between Lilycove and Slateport.",{FR:"",LG:"",E:""}],
   // ── Contest Scarves ──
   [331,"Red Scarf","Other","A Contest Scarf that boosts the Coolness condition. Worn in Super Rank Coolness Contests and above.",{FR:"",LG:"",E:""}],
@@ -15071,25 +15066,26 @@ var _TYPES=[
   {icon:'🐉',label:'Dragon', val:'[[type:Dragon]]'},{icon:'🌑',label:'Dark',    val:'[[type:Dark]]'},
   {icon:'⚙',label:'Steel',   val:'[[type:Steel]]'},
 ];
+// Gen 2 Gym Badges — Johto (8) + Kanto (8). All 16 obtainable in Gold/Silver/Crystal.
 var _BADGES=[
-  // Kanto
-  {icon:'🔴',label:'Boulder Badge',val:'Boulder Badge',sub:'Brock · Pewter City'},
-  {icon:'🔴',label:'Cascade Badge',val:'Cascade Badge',sub:'Misty · Cerulean City'},
-  {icon:'🔴',label:'Thunder Badge',val:'Thunder Badge',sub:'Lt. Surge · Vermilion City'},
-  {icon:'🔴',label:'Rainbow Badge',val:'Rainbow Badge',sub:'Erika · Celadon City'},
-  {icon:'🔴',label:'Soul Badge',   val:'Soul Badge',   sub:'Koga · Fuchsia City'},
-  {icon:'🔴',label:'Marsh Badge',  val:'Marsh Badge',  sub:'Sabrina · Saffron City'},
-  {icon:'🔴',label:'Volcano Badge',val:'Volcano Badge',sub:'Blaine · Cinnabar Island'},
-  {icon:'🔴',label:'Earth Badge',  val:'Earth Badge',  sub:'Giovanni · Viridian City'},
-  // Johto
-  {icon:'🔵',label:'Stone Badge',  val:'Stone Badge',  sub:'Roxanne · Rustboro City'},
-  {icon:'🔵',label:'Knuckle Badge',val:'Knuckle Badge',sub:'Brawly · Dewford Town'},
-  {icon:'🔵',label:'Dynamo Badge', val:'Dynamo Badge', sub:'Wattson · Mauville City'},
-  {icon:'🔵',label:'Heat Badge',   val:'Heat Badge',   sub:'Flannery · Lavaridge Town'},
-  {icon:'🔵',label:'Balance Badge',val:'Balance Badge',sub:'Norman · Petalburg City'},
-  {icon:'🔵',label:'Feather Badge',val:'Feather Badge',sub:'Winona · Fortree City'},
-  {icon:'🔵',label:'Mind Badge',   val:'Mind Badge',   sub:'Tate & Liza · Mossdeep City'},
-  {icon:'🔵',label:'Rain Badge',   val:'Rain Badge',   sub:'Wallace / Juan · Sootopolis'},
+  // ── Johto ──
+  {icon:'🟡',label:'Zephyr Badge', val:'Zephyr Badge', sub:'Falkner · Violet City (Flying)'},
+  {icon:'🟢',label:'Hive Badge',   val:'Hive Badge',   sub:'Bugsy · Azalea Town (Bug)'},
+  {icon:'🌸',label:'Plain Badge',  val:'Plain Badge',  sub:'Whitney · Goldenrod City (Normal)'},
+  {icon:'👻',label:'Fog Badge',    val:'Fog Badge',    sub:'Morty · Ecruteak City (Ghost)'},
+  {icon:'⚙️',label:'Mineral Badge',val:'Mineral Badge',sub:'Jasmine · Olivine City (Steel)'},
+  {icon:'👊',label:'Storm Badge',  val:'Storm Badge',  sub:'Chuck · Cianwood City (Fighting)'},
+  {icon:'❄️',label:'Glacier Badge',val:'Glacier Badge',sub:'Pryce · Mahogany Town (Ice)'},
+  {icon:'🐉',label:'Rising Badge', val:'Rising Badge', sub:'Clair · Blackthorn City (Dragon)'},
+  // ── Kanto (post-game) ──
+  {icon:'🌊',label:'Cascade Badge',val:'Cascade Badge',sub:'Misty · Cerulean City (Water)'},
+  {icon:'⚡',label:'Thunder Badge',val:'Thunder Badge',sub:'Lt. Surge · Vermilion City (Electric)'},
+  {icon:'🌿',label:'Rainbow Badge',val:'Rainbow Badge',sub:'Erika · Celadon City (Grass)'},
+  {icon:'☠️',label:'Soul Badge',   val:'Soul Badge',   sub:'Janine · Fuchsia City (Poison)'},
+  {icon:'🔮',label:'Marsh Badge',  val:'Marsh Badge',  sub:'Sabrina · Saffron City (Psychic)'},
+  {icon:'🪨',label:'Boulder Badge',val:'Boulder Badge',sub:'Brock · Pewter City (Rock)'},
+  {icon:'🔥',label:'Volcano Badge',val:'Volcano Badge',sub:'Blaine · Seafoam Islands (Fire)'},
+  {icon:'🌍',label:'Earth Badge',  val:'Earth Badge',  sub:'Blue · Viridian City (Mixed/Final)'},
 ];
 
 function _noteNorm(text){
