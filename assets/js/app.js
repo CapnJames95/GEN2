@@ -1988,7 +1988,6 @@ const ALL_ITEMS = [
   [43,"Max Elixir","Medicine","Fully restores PP of all moves.",{FR:"",LG:"",E:""}],
   [44,"Rare Candy","Medicine","Raises the holder's level by 1 when used.",{FR:"",LG:"",E:""}],
   [45,"Moomoo Milk","Medicine","Restores 100 HP to one Pokémon.",{FR:"",LG:"",E:""}],
-  [46,"Lava Cookie","Medicine","Full heal — cures all status conditions. Sold only in Lavaridge Town.",{FR:"",LG:"",E:""}],
   [47,"Berry Juice","Medicine","Restores 20 HP. Can be made by a Shuckle holding a Berry.",{FR:"",LG:"",E:""}],
   [48,"Sacred Ash","Medicine","Revives all fainted Pokémon and fully restores their HP. Very rare.",{FR:"",LG:"",E:""}],
   // ── Battle Items ──
@@ -2100,7 +2099,6 @@ const ALL_ITEMS = [
   [307,"Teachy TV","Key","A TV that shows tutorials on how to use Pokémon moves and items.",{FR:"",LG:"",E:""}],
   [308,"Powder Jar","Key","A jar for storing Berry Powder, made on the Berry Crush machine via wireless.",{FR:"",LG:"",E:""}],
   // ── Key Items – Johto ──
-  [327,"S.S. Ticket","Key","A ticket for boarding the S.S. Tidal between Lilycove and Slateport.",{FR:"",LG:"",E:""}],
   // ── Contest Scarves ──
   [331,"Red Scarf","Other","A Contest Scarf that boosts the Coolness condition. Worn in Super Rank Coolness Contests and above.",{FR:"",LG:"",E:""}],
   [332,"Blue Scarf","Other","A Contest Scarf that boosts the Beauty condition. Worn in Super Rank Beauty Contests and above.",{FR:"",LG:"",E:""}],
@@ -9429,7 +9427,6 @@ var OPT_ITEM_OVERRIDES = {
     { games:['FR','LG'], title:'Repeatable hidden item', location:'S.S. Anne kitchen', method:'Hidden item', heldRate:100, encounterRate:100, note:'Best guaranteed Leftovers route if you have post-game S.S. Anne access.' }
   ],
   'metal coat': [
-    { games:['R','S','E'], title:'Guaranteed reward', location:'Rustboro City Devon Researcher', method:'Gift', heldRate:100, encounterRate:100, note:'Faster than wild farming in Johto if you have not claimed it yet.' }
   ],
   'up-grade': [
     { games:['FR','LG'], title:'Guaranteed item', location:'Silph Co. 5F', method:'Floor item', heldRate:100, encounterRate:100, note:'One-time but immediate.' },
@@ -10363,7 +10360,6 @@ const TRADE_EVOS_GEN4 = [
   {fromNum:112,from:'Rhydon',toNum:464,to:'Rhyperior',item:'Protector',note:'Requires Gen 4 — not possible in Gen 2. Rhyhorn→Rhydon normally.'},
   {fromNum:176,from:'Togetic',toNum:468,to:'Togekiss',item:'Shiny Stone',note:'Togekiss does not exist in Gen 2. Togetic is the final evo.'},
   {fromNum:215,from:'Sneasel',toNum:461,to:'Weavile',item:'Razor Claw (night)',note:'Requires Gen 4 — also requires holding Razor Claw at night.'},
-  {fromNum:350,from:'Milotic',toNum:350,to:'Milotic (not trade)',item:'Max Beauty',note:'Feebas→Milotic in Gen 2 requires max Beauty stat via Pokéblocks, then level up. NOT a trade evolution.'},
 ];
 
 const TRADE_ITEM_LOCATIONS = [];
@@ -13225,10 +13221,11 @@ var PAGE_LIST=[
   {id:'happiness',icon:'💛',label:'Happiness Tracker'},
   {id:'dexdash',icon:'📊',label:'Dex Dashboard'},
   {id:'ribbons',icon:'🎀',label:'Ribbon Tracker'},
-  {id:'contests',icon:'🎀',label:'Contests'},
-  {id:'frontier',icon:'🏆',label:'Battle Frontier'},
+  {id:'apricorns',icon:'🍎',label:'Apricorns & Kurt'},
+  {id:'battletower',icon:'🗼',label:'Battle Tower'},
+  {id:'daynight',icon:'🌅',label:'Day / Night'},
+  {id:'bugcontest',icon:'🐛',label:'Bug-Catching Contest'},
   {id:'missables',icon:'⚠',label:'Missables'},
-  {id:'berries',icon:'🫐',label:'Berry Farming'},
   {id:'rng',icon:'🎲',label:'RNG Guide'},
   {id:'distributions',icon:'📦',label:'Distributions'},
   {id:'distributionchecklist',icon:'☑',label:'Distribution Checklist'},
@@ -14858,132 +14855,6 @@ requestAnimationFrame(function() {
     }
   });
 });
-
-// ── Pokéblock Calculator ─────────────────────────────────────
-var PB_BERRIES = {
-  // name: [spicy(Cool), dry(Beauty), sweet(Cute), bitter(Smart), sour(Tough), smoothness]
-  'Cheri':   [10, 0, 0, 0, 0, 25],
-  'Chesto':  [0, 10, 0, 0, 0, 25],
-  'Pecha':   [0, 0, 10, 0, 0, 25],
-  'Rawst':   [0, 0, 0, 10, 0, 25],
-  'Aspear':  [0, 0, 0, 0, 10, 25],
-  'Leppa':   [10, 0, 10, 0, 0, 20],
-  'Oran':    [0, 0, 10, 0, 10, 20],
-  'Persim':  [10, 0, 0, 0, 10, 20],
-  'Lum':     [10, 10, 10, 10, 10, 20],
-  'Sitrus':  [0, 0, 10, 10, 0, 20],
-  'Figy':    [15, 0, 0, 0, 0, 30],
-  'Wiki':    [0, 15, 0, 0, 0, 30],
-  'Mago':    [0, 0, 15, 0, 0, 30],
-  'Aguav':   [0, 0, 0, 15, 0, 30],
-  'Iapapa':  [0, 0, 0, 0, 15, 30],
-  'Razz':    [10, 0, 0, 0, 10, 20],
-  'Bluk':    [0, 10, 0, 0, 10, 20],
-  'Nanab':   [10, 0, 10, 0, 0, 20],
-  'Wepear':  [0, 10, 0, 10, 0, 20],
-  'Pinap':   [0, 0, 10, 10, 0, 20],
-  'Pomeg':   [10, 0, 0, 10, 0, 30],
-  'Kelpsy':  [0, 10, 0, 0, 10, 30],
-  'Qualot':  [10, 0, 10, 0, 0, 30],
-  'Hondew':  [0, 10, 0, 10, 0, 30],
-  'Grepa':   [0, 0, 10, 0, 10, 30],
-  'Tamato':  [20, 0, 0, 0, 0, 40],
-  'Cornn':   [0, 20, 0, 0, 0, 40],
-  'Magost':  [0, 0, 20, 0, 0, 40],
-  'Rabuta':  [0, 0, 0, 20, 0, 40],
-  'Nomel':   [0, 0, 0, 0, 20, 40],
-  'Spelon':  [25, 0, 0, 0, 0, 60],
-  'Pamtre':  [0, 25, 0, 0, 0, 60],
-  'Watmel':  [0, 0, 25, 0, 0, 60],
-  'Durin':   [0, 0, 0, 25, 0, 60],
-  'Belue':   [0, 0, 0, 0, 25, 60],
-  'Liechi':  [25, 10, 0, 0, 0, 60],
-  'Ganlon':  [0, 25, 10, 0, 0, 60],
-  'Salac':   [0, 0, 25, 10, 0, 60],
-  'Petaya':  [0, 0, 0, 25, 10, 60],
-  'Apicot':  [10, 0, 0, 0, 25, 60],
-  'Lansat':  [10, 10, 10, 10, 10, 60],
-  'Starf':   [25, 25, 25, 25, 25, 60],
-};
-
-var PB_COND_NAMES = ['Cool','Beauty','Cute','Smart','Tough'];
-var PB_COND_COLORS = ['#E8501A','#1B8FE8','#D070D0','#3DA83D','#9898A8'];
-var PB_BLOCK_COLORS = {
-  Cool: 'Red', Beauty: 'Blue', Cute: 'Pink', Smart: 'Green', Tough: 'Yellow',
-};
-
-function pbInit() {
-  var selects = ['pb-b1','pb-b2','pb-b3','pb-b4'];
-  var options = '<option value="">— None —</option>' +
-    Object.keys(PB_BERRIES).sort().map(function(name) {
-      return '<option value="' + name + '">' + name + ' Berry</option>';
-    }).join('');
-  selects.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.innerHTML = options;
-  });
-}
-
-function pbCalc() {
-  var ids = ['pb-b1','pb-b2','pb-b3','pb-b4'];
-  var selected = ids.map(function(id) {
-    var el = document.getElementById(id);
-    return el && el.value ? el.value : null;
-  }).filter(Boolean);
-
-  var resultEl = document.getElementById('pb-result');
-  if (!selected.length) {
-    resultEl.innerHTML = '<span style="color:var(--muted);font-style:italic">Select at least one berry.</span>';
-    return;
-  }
-
-  // Sum flavour values
-  var totals = [0,0,0,0,0];
-  var smoothTotal = 0;
-  selected.forEach(function(name) {
-    var b = PB_BERRIES[name];
-    if (!b) return;
-    for (var i=0;i<5;i++) totals[i] += b[i];
-    smoothTotal += b[5];
-  });
-
-  // Cancel opposite flavours (Spicy↔Dry, Sweet↔Bitter, Sour stands alone in Gen 2)
-  // Actually Gen 2 Pokéblock: highest flavour wins, others reduce based on opposite
-  // Simplified: dominant = highest, level = dominant value / smoothness * blenders
-  var maxVal = Math.max.apply(null, totals);
-  var domIdx = totals.indexOf(maxVal);
-
-  // Pokéblock level = floor(blendSpeed * dominant / avgSmoothness)
-  // Approximate: assume 4 blenders at avg speed → level ~= maxVal * 4 / smoothTotal * 4
-  var numBlenders = selected.length;
-  var avgSmooth = smoothTotal / numBlenders;
-  var pbLevel = Math.max(1, Math.min(50, Math.round(maxVal * numBlenders / avgSmooth * 3)));
-
-  // Determine colour/condition
-  var nonZero = totals.filter(function(v){ return v > 0; }).length;
-  var colour = nonZero > 2 ? 'Purple/Brown' : PB_BLOCK_COLORS[PB_COND_NAMES[domIdx]] || 'Mixed';
-
-  var html = '<div style="display:flex;flex-direction:column;gap:8px">'
-    + '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-    + '<span style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:var(--game-color,var(--gold))">'
-    + colour + ' Pokéblock</span>'
-    + '<span style="background:color-mix(in srgb,var(--game-color,var(--gold)) 10%,transparent);border:1px solid color-mix(in srgb,var(--game-color,var(--gold)) 30%,transparent);padding:2px 8px;border-radius:3px;font-size:10px;font-weight:800;color:var(--game-color,var(--gold))">Level ~' + pbLevel + '</span>'
-    + '</div>'
-    + '<div style="display:flex;gap:6px;flex-wrap:wrap">';
-
-  totals.forEach(function(v, i) {
-    if (v <= 0) return;
-    html += '<div style="text-align:center;background:' + PB_COND_COLORS[i] + '22;border:1px solid ' + PB_COND_COLORS[i] + '44;border-radius:5px;padding:5px 10px">'
-      + '<div style="font-size:10px;font-weight:800;color:' + PB_COND_COLORS[i] + '">' + PB_COND_NAMES[i] + '</div>'
-      + '<div style="font-size:14px;font-weight:800;color:' + PB_COND_COLORS[i] + '">+' + v + '</div>'
-      + '</div>';
-  });
-
-  html += '</div>';
-  html += '<div style="font-size:10px;color:var(--muted);font-style:italic">Condition boost per block — feed up to ~10 blocks to max out a condition for Master Rank. Level estimate assumes ' + numBlenders + ' blender' + (numBlenders>1?'s':'') + ' at average speed.</div>';
-  html += '</div>';
-  resultEl.innerHTML = html;
-}
 
 // ── KANTO MAP DATA ─────────────────────────────────────────────
 const KM_TRAINER_H = 22;
