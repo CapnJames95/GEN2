@@ -220,7 +220,7 @@ function buildHomePage() {
   var SECTIONS = [
     {
       label:'POKÉDEX', color:'var(--gold)', icon:'📖',
-      desc:'Full 386 Pokémon with stats, types, game locations, catch rates, abilities and evolution chains.',
+      desc:'Full 251 Pokémon with stats, types, per-game catch locations, DVs/Stat Exp, and evolution chains.',
       action:"showPage('dex',document.getElementById('navDex'))"
     },
     {
@@ -241,7 +241,6 @@ function buildHomePage() {
         { icon:'🔀', label:'Exclusives',  desc:'Version exclusives comparison',       action:"closeNavDropdown('navPokeDropdown');showPage('excl',document.getElementById('navExcl'));if(!window._exclBuilt){buildExcl();window._exclBuilt=true;}" },
         { icon:'🔗', label:'Trade Evos',  desc:'Trade evolution requirements',        action:"closeNavDropdown('navPokeDropdown');showPage('tradeevo',document.getElementById('navTradeEvo'));if(!window._tradevoBuilt){renderTradeEvoPage();window._tradevoBuilt=true;}" },
         { icon:'🤝', label:'NPC Trades',  desc:'Every in-game trade in Gold / Silver / Crystal', action:"closeNavDropdown('navPokeDropdown');showPage('npctrades',document.getElementById('navNpcTrades'));if(!window._npcTradesBuilt){buildNpcTradesPage();window._npcTradesBuilt=true;}" },
-        { icon:'⚡', label:'Abilities',   desc:'Ability lookup with Pokémon list',    action:"return openPage('abilities','navAbilities','navPokeDropdown')" },
         { icon:'📋', label:'Learnsets',   desc:'Level-up, TM, egg & tutor moves',    action:"return openPage('learnsets','navLearnsets','navPokeDropdown')" },
         { icon:'🌿', label:'Encounters',  desc:'Wild encounters by route & method',  action:"return openPage('encounters','navEncounters','navPokeDropdown')" },
       ]
@@ -254,7 +253,7 @@ function buildHomePage() {
         { icon:'🎒', label:'Items Dex',      desc:'All items with descriptions',       action:"closeNavDropdown('navMovesItemsDropdown');showPage('items',document.getElementById('navItems'));if(!window._itemsBuilt){buildItemDex();window._itemsBuilt=true;}" },
         { icon:'💎', label:'Held Items',     desc:'Held item effects',                 action:"closeNavDropdown('navMovesItemsDropdown');showPage('held',document.getElementById('navHeld'));if(!window._heldBuilt){buildHeldItems();window._heldBuilt=true;}" },
         { icon:'📍', label:'Item Locations', desc:'Find items by location',            action:"return openPage('itemlocs','navItemLocs','navMovesItemsDropdown')" },
-        { icon:'📀', label:'TM/HM Locator',  desc:'Find every TM and HM across all 5 games', action:"closeNavDropdown('navMovesItemsDropdown');showPage('tmhm',document.getElementById('navTmhm'));if(!window._tmhmBuilt){buildTmhmLocator();window._tmhmBuilt=true;}" },
+        { icon:'📀', label:'TM/HM Locator',  desc:'Find every TM and HM in Gold / Silver / Crystal', action:"closeNavDropdown('navMovesItemsDropdown');showPage('tmhm',document.getElementById('navTmhm'));if(!window._tmhmBuilt){buildTmhmLocator();window._tmhmBuilt=true;}" },
       ]
     },
     {
@@ -283,14 +282,12 @@ function buildHomePage() {
     {
       label:'TRAINING', color:'#81C784', icon:'📈', group:true,
       items:[
-        { icon:'📊', label:'IV / EV Calc',      desc:'Calculate perfect stat spreads',              action:"closeNavDropdown('navTrainingDropdown');showPage('ivev',document.getElementById('navIvev'));" },
-        { icon:'🌿', label:'Nature Chart',       desc:'All 25 natures — boosts, cuts, flavors',     action:"closeNavDropdown('navTrainingDropdown');showPage('natures',document.getElementById('navNatures'));if(!window._naturesBuilt){buildNaturesPage();window._naturesBuilt=true;}" },
+        { icon:'📊', label:'DV / Stat-Exp Calc',desc:'Calculate Gen-2 DVs (0–15) and Stat Experience',action:"closeNavDropdown('navTrainingDropdown');showPage('ivev',document.getElementById('navIvev'));" },
         { icon:'📈', label:'EXP Calculator',    desc:'EXP to next level, growth groups',            action:"closeNavDropdown('navTrainingDropdown');showPage('expcalc',document.getElementById('navExpCalc'));ensureExpCalcPage();" },
         { icon:'🥚', label:'Breeding Calc',     desc:'Egg move & IV breeding guide',                action:"closeNavDropdown('navTrainingDropdown');showPage('breed',document.getElementById('navBreed'));if(!window._breedBuilt){buildBreedCalc();window._breedBuilt=true;}" },
         { icon:'🎯', label:'Catch Rate Calc',   desc:'Per-ball catch % with best combos',           action:"closeNavDropdown('navTrainingDropdown');showPage('catchcalc',document.getElementById('navCatchCalc'));if(!window._catchCalcBuilt){buildCatchCalcPage();window._catchCalcBuilt=true;}" },
         { icon:'💛', label:'Happiness Tracker', desc:'Friendship evolution candidates',             action:"closeNavDropdown('navTrainingDropdown');showPage('happiness',document.getElementById('navHappiness'));if(!window._happinessBuilt){buildHappinessPage();window._happinessBuilt=true;}" },
-        { icon:'🧮', label:'Stat Calculator',   desc:'Compute all six stats at any level & nature', action:"return openPage('statcalc','navStatCalc','navTrainingDropdown')" },
-        { icon:'🌳', label:'Safari Zone Calc',  desc:'Step & ball tracker with per-strategy odds',  action:"return openPage('safarizone','navSafariZone','navTrainingDropdown')" },
+        { icon:'🧮', label:'Stat Calculator',   desc:'Compute all six stats at any level using DVs + Stat Exp', action:"return openPage('statcalc','navStatCalc','navTrainingDropdown')" },
       ]
     },
     {

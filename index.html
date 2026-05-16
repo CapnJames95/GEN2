@@ -1371,26 +1371,6 @@
   </div>
 
 
-  <!-- Nature Chart Reference -->
-  <div style="margin-top:24px;">
-    <button class="nature-chart-toggle" onclick="(function(btn){var w=document.getElementById('ivev-nature-chart');var open=w.style.display!=='none';w.style.display=open?'none':'block';btn.textContent=open?'🌿 NATURE REFERENCE CHART ▼':'🌿 NATURE REFERENCE CHART ▲';})(this)">🌿 NATURE REFERENCE CHART ▼</button>
-    <div id="ivev-nature-chart" style="display:none;">
-      <div class="nature-chart-wrap">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;">A neutral nature (same stat +/−) has no effect. All others give ×1.1 to one stat and ×0.9 to another.</div>
-        <table class="nature-chart-table">
-          <thead><tr>
-            <th>NATURE</th>
-            <th>BOOSTED (+10%)</th>
-            <th>LOWERED (−10%)</th>
-            <th>LIKES FLAVOR</th>
-            <th>DISLIKES FLAVOR</th>
-          </tr></thead>
-          <tbody id="nature-chart-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
 </div><!-- /ivev-wrap -->
 </div><!-- /page-ivev -->
 
@@ -1703,28 +1683,6 @@
   </div>
 </div>
 
-<!-- ══ CONTESTS PAGE ══ -->
-<div id="page-contests" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:900px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉMON CONTESTS</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Pokémon Contests are a Gen-3-only feature. Not available in Gen 2.</div>
-      <div id="contests-content"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ BATTLE FRONTIER PAGE ══ -->
-<div id="page-frontier" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:900px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BATTLE FRONTIER</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Battle Frontier is a Gen-3 feature (Emerald). Gen 2 Crystal has the Battle Tower instead — see Guides → Battle Tower (Crystal).</div>
-      <div id="frontier-content"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ BEGINNER ESSENTIALS PAGE ══ -->
 <div id="page-essentials" class="page main">
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
@@ -1757,23 +1715,12 @@
   </div>
 </div>
 
-<!-- ══ BERRY FARMING PAGE ══ -->
-<div id="page-berries" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:900px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">BERRY FARMING</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Berry-blending Pokéblocks are a Gen-3-only feature. Gen 2 has simpler berries (Berry, Gold Berry, Mint Berry, etc.) — see Items → Held Items.</div>
-      <div id="berries-content"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ RIBBON TRACKER PAGE ══ -->
 <div id="page-ribbons" class="page main">
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:960px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">RIBBON TRACKER</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All obtainable ribbons across Gen 2 GBA games. Check them off as you earn them — progress saved per-game.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">All obtainable ribbons in Gold, Silver and Crystal — including Crystal's Battle Tower ribbon. Check them off as you earn them; progress is saved per-game.</div>
       <div id="ribbon-game-btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
       <div id="ribbon-progress-bar" style="margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;">
@@ -1879,16 +1826,6 @@
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">GEN 2 DISTRIBUTIONS</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Pokémon Gold/Silver/Crystal event distributions: GS Ball / Celebi, Mystery Gift via Infrared, Pokémon News, and Stadium 2 unlocks.</div>
       <div id="distributions-content"></div>
-    </div>
-  </div>
-</div>
-
-<div id="page-natures" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:860px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">NATURE CHART</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Natures are a Gen-3-only mechanic. Gen 2 uses DVs (Determinant Values) for stat individuality — see Calculators → Stat Calculator.</div>
-      <div id="natures-content"></div>
     </div>
   </div>
 </div>
@@ -2212,35 +2149,13 @@
 
 
 
-<!-- ══ SAFARI ZONE CALCULATOR ══ -->
-<div id="page-safarizone" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:900px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">SAFARI ZONE CALCULATOR</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Track steps &amp; balls, calculate catch odds per strategy, and browse Pokémon by area.</div>
-      <div id="safari-content"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ STAT CALCULATOR ══ -->
 <div id="page-statcalc" class="page main">
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:900px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">STAT CALCULATOR</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Enter a Pokémon, level, nature, IVs, and EVs to compute all final stats using the Gen 2 formula.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Enter a Pokémon, level, DVs (0–15) and Stat Experience to compute all final stats using the Gen 2 formula.</div>
       <div id="statcalc-content"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ POKÉBLOCK OPTIMIZER ══ -->
-<div id="page-pokeblock" class="page main">
-  <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
-    <div style="max-width:900px;margin:0 auto;padding:24px;">
-      <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">POKÉBLOCK OPTIMIZER</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Find the best berries to blend for each contest condition. Reference for every Gen 2 berry flavor.</div>
-      <div id="pokeblock-content"></div>
     </div>
   </div>
 </div>
@@ -2250,7 +2165,7 @@
   <div style="height:calc(100vh - var(--page-top, 115px) - var(--ios-bar-h, 0px));overflow-y:auto;">
     <div style="max-width:1000px;margin:0 auto;padding:24px;">
       <div class="page-hd-title" style="font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px;">ELITE FOUR &amp; CHAMPION</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Full team rosters and type weaknesses for every E4 member and Champion across all 5 Gen 2 games.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.7;">Full team rosters and type weaknesses for the Johto Elite Four, Champion Lance, and Champion Red on Mt. Silver — for Gold, Silver and Crystal.</div>
       <div id="e4ref-content"></div>
     </div>
   </div>
