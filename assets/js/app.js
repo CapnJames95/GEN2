@@ -10652,6 +10652,15 @@ function bulbaRenderContent(container, html) {
       tbl.remove();
     }
   });
+
+  // 3) Drop the "[edit]" links Bulbapedia adds next to every heading.
+  //    The scraper's regex misses these because mw-editsection wraps
+  //    nested <span class="mw-editsection-bracket"> elements, so its
+  //    non-greedy .*?</span> terminates too early. Strip at render time.
+  Array.prototype.slice.call(container.querySelectorAll('.mw-editsection')).forEach(function(el) {
+    el.remove();
+  });
+
   // Wire part nav links (onclick rewrites from the scraper)
   container.querySelectorAll('a[onclick]').forEach(function(a) {
     var m = (a.getAttribute('onclick')||'').match(/bulbaShowSection\((\d+)\)/);
