@@ -8,7 +8,7 @@
  *     Google Drive auth) — fall back to cache if available.
  *   • Bump CACHE_VERSION on every site update to invalidate old caches.
  */
-const CACHE_VERSION = 'gen2-v20';  // bump on every site update to invalidate old caches
+const CACHE_VERSION = 'gen2-v21';  // bump on every site update to invalidate old caches
 const STATIC_CACHE  = 'gen2-static-' + CACHE_VERSION;
 const RUNTIME_CACHE = 'gen2-runtime-' + CACHE_VERSION;
 
