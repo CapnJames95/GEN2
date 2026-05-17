@@ -10654,12 +10654,22 @@ function bulbaRenderContent(container, html) {
   });
 
   // 3) Drop the "[edit]" links Bulbapedia adds next to every heading.
-  //    The scraper's regex misses these because mw-editsection wraps
-  //    nested <span class="mw-editsection-bracket"> elements, so its
-  //    non-greedy .*?</span> terminates too early. Strip at render time.
-  Array.prototype.slice.call(container.querySelectorAll('.mw-editsection')).forEach(function(el) {
-    el.remove();
-  });
+  //    The scraper's non-greedy regex stripped the OPENING <span class=
+  //    "mw-editsection"> and the first inner </span>, leaving the edit
+  //    <a> and the closing "]" bracket span orphaned in the DOM. Inside
+  //    each heading we now keep only the .mw-headline child.
+  Array.prototype.slice.call(container.querySelectorAll('.mw-editsection, .mw-editsection-bracket'))
+    .forEach(function(el) { el.remove(); });
+  Array.prototype.slice.call(container.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+    .forEach(function(h) {
+      Array.prototype.slice.call(h.children).forEach(function(c) {
+        // Edit link is an <a> with no class wrapping the word "edit".
+        var isEditLink = c.tagName === 'A'
+          && !c.className
+          && /^\s*edit\s*$/i.test(c.textContent);
+        if (isEditLink) c.remove();
+      });
+    });
 
   // Wire part nav links (onclick rewrites from the scraper)
   container.querySelectorAll('a[onclick]').forEach(function(a) {
