@@ -254,7 +254,14 @@
   body.light-theme .pgauth-menu-name{color:#202124;}\
   body.light-theme .pgauth-menu-email{color:#5f6368;}\
   body.light-theme .pgauth-menu-item{color:#202124;}\
-  body.light-theme .pgauth-menu-item:hover{background:rgba(0,0,0,0.05);}';
+  body.light-theme .pgauth-menu-item:hover{background:rgba(0,0,0,0.05);}\
+  @media(max-width:600px){\
+    .pgauth-chip-btn[data-state="out"]{padding:6px 8px;font-size:0;gap:0;}\
+    .pgauth-chip-btn[data-state="out"] .pgauth-chip-svg{width:18px;height:18px;}\
+    .pgauth-chip-btn[data-state="in"]{width:28px;height:28px;font-size:12px;}\
+    .pgauth-menu{max-width:calc(100vw - 16px);min-width:240px;}\
+    .pgauth-menu-name,.pgauth-menu-email{max-width:calc(100vw - 100px);}\
+  }';
 
   function injectCss() {
     if (document.getElementById('pgauth-chip-css')) return;
