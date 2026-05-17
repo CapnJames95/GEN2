@@ -13131,9 +13131,14 @@ function buildNpcTradesPage() {
     }
     tbl.innerHTML = renderTrades(currentFilter);
     document.querySelectorAll('.npc-filter-btn').forEach(function(b) {
-      var active = b.dataset.g === currentFilter;
-      b.style.background = active ? 'var(--game-color,var(--gold))' : 'var(--panel)';
+      var g = b.dataset.g;
+      var active = g === currentFilter;
+      // Active uses the *per-game* colour so Gold/Silver/Crystal stay visually distinct.
+      var activeBg = (g === 'ALL') ? 'var(--game-color,var(--gold))' : (GAME_COLORS[g] || 'var(--gold)');
+      b.style.background = active ? activeBg : 'var(--panel)';
       b.style.color = active ? '#000' : 'var(--text)';
+      b.style.borderColor = active ? activeBg : 'var(--border)';
+      b.style.fontWeight = active ? '800' : '600';
     });
   }
 
@@ -13143,20 +13148,22 @@ function buildNpcTradesPage() {
   };
 
   var BTN_LABELS = { ALL:'All', FR:'🌕 Gold', LG:'🪙 Silver', E:'💎 Crystal' };
+  // Sync the initial active filter with the global GAME header, so visiting
+  // the page while a specific game is selected auto-filters to that game.
+  if (typeof GAME !== 'undefined' && GAME && GAME !== 'all' && ALL_GAMES.indexOf(GAME) !== -1) {
+    currentFilter = GAME;
+  }
   var filterBtns = ['ALL'].concat(ALL_GAMES).map(function(g) {
-    var bg = g === 'ALL' ? 'var(--game-color,var(--gold))' : (GAME_COLORS[g] || 'var(--panel)');
-    var col = g === 'ALL' ? '#000' : '#000';
-    var inactiveBg = 'var(--panel)';
-    var inactiveCol = 'var(--text)';
-    var isActive = (g === 'ALL'); // default-active is ALL
+    // Initial styles are placeholders — rebuildTable() applies the real
+    // active styling immediately after the el.innerHTML assignment below.
     return '<button class="npc-filter-btn" data-g="' + g + '" onclick="npcTradeFilter(this,\'' + g + '\')"'
-      + ' style="font-size:10px;padding:5px 11px;background:' + (isActive?bg:inactiveBg) + ';color:' + (isActive?col:inactiveCol) + ';border:1px solid var(--border);border-radius:4px;cursor:pointer;">'
+      + ' style="font-size:11px;padding:6px 12px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .12s;">'
       + (BTN_LABELS[g] || g) + '</button>';
   }).join('');
 
   el.innerHTML = '<div class="panel" style="padding:16px;">'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">' + filterBtns + '</div>'
-    + '<div id="npctrades-table" style="overflow-x:auto;">' + renderTrades('ALL') + '</div>'
+    + '<div id="npctrades-table" style="overflow-x:auto;">' + renderTrades(currentFilter) + '</div>'
     + '<div style="font-size:10px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--border);line-height:1.8;">'
     + '<strong style="color:var(--game-color,var(--gold))">Lucky Egg OT trick:</strong> Traded Pokémon (OT ≠ yours) gain 1.5× EXP. '
     + 'If you receive a Pokémon via NPC trade, its OT will never match yours — it always gets the EXP boost. '
@@ -13165,6 +13172,8 @@ function buildNpcTradesPage() {
     + '</div>'
     + '</div>';
 
+  // Apply the active-button styling now that the buttons exist in the DOM.
+  rebuildTable();
   window._npcTradesBuilt = true;
 }
 
