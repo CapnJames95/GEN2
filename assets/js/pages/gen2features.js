@@ -427,6 +427,13 @@
   function bccSave(o) {
     try { localStorage.setItem('gen2-bcc-best', JSON.stringify(o)); } catch(_){}
   }
+  function bccForceRebuild() {
+    // Drop the pageRoot built-flag so the build re-runs even though
+    // content currently has text.
+    var el = document.getElementById('bcc-content');
+    if (el) el.removeAttribute('data-built');
+    window.buildBccPage();
+  }
   window.bccSaveBest = function(game) {
     var inp = document.getElementById('bcc-score-' + game);
     var sp  = document.getElementById('bcc-poke-' + game);
@@ -436,13 +443,13 @@
     var data = bccLoad();
     data[game] = { score: score, poke: sp.value || '—', when: new Date().toISOString().slice(0,10) };
     bccSave(data);
-    window.buildBccPage();
+    bccForceRebuild();
   };
   window.bccClearBest = function(game) {
     var data = bccLoad();
     delete data[game];
     bccSave(data);
-    window.buildBccPage();
+    bccForceRebuild();
   };
   function renderBccBest() {
     var data = bccLoad();
