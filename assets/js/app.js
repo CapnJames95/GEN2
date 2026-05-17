@@ -10650,9 +10650,11 @@ function bulbaLightboxWheel(e) {
 // Wire pointer-based drag-to-pan and pinch-to-zoom on the lightbox overlay.
 function _bulbaWireLightbox(ov) {
   ov.addEventListener('wheel', bulbaLightboxWheel, { passive: false });
+  // Track whether a pointer interaction included a drag so the click that
+  // browsers synthesise on pointerup doesn't dismiss the lightbox mid-pan.
+  var _bulbaDragged = false;
   ov.addEventListener('click', function(e){
-    // Click outside the image (or on the close button) dismisses. Don't dismiss
-    // on image clicks — that's reserved for drag start.
+    if (_bulbaDragged) { _bulbaDragged = false; return; }
     if (e.target === ov || e.target.id === 'bulba-lightbox-close') ov.classList.remove('open');
   });
   ov.addEventListener('dblclick', function(e){
@@ -10670,7 +10672,7 @@ function _bulbaWireLightbox(ov) {
     var p = pts();
     if (p.length === 1) {
       _bulbaMeasure();
-      dragStart = { x: e.clientX, y: e.clientY, tx: _bulbaLB.tx, ty: _bulbaLB.ty };
+      dragStart = { x: e.clientX, y: e.clientY, tx: _bulbaLB.tx, ty: _bulbaLB.ty, moved: false };
       ov.classList.add('dragging');
     } else if (p.length === 2) {
       var dx = p[0].x - p[1].x, dy = p[0].y - p[1].y;
@@ -10692,8 +10694,13 @@ function _bulbaWireLightbox(ov) {
       }
       pinchPrev.dist = dist;
     } else if (p.length === 1 && dragStart && _bulbaLB.z > 1) {
-      _bulbaLB.tx = dragStart.tx + (e.clientX - dragStart.x);
-      _bulbaLB.ty = dragStart.ty + (e.clientY - dragStart.y);
+      var dxm = e.clientX - dragStart.x, dym = e.clientY - dragStart.y;
+      if (!dragStart.moved && (dxm*dxm + dym*dym) > 9) {
+        dragStart.moved = true;
+        _bulbaDragged = true;
+      }
+      _bulbaLB.tx = dragStart.tx + dxm;
+      _bulbaLB.ty = dragStart.ty + dym;
       _bulbaApplyT();
     }
   });
