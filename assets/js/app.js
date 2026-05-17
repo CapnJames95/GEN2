@@ -13122,7 +13122,14 @@ function buildNpcTradesPage() {
   }
 
   function rebuildTable() {
-    document.getElementById('npctrades-table').innerHTML = renderTrades(currentFilter);
+    var tbl = document.getElementById('npctrades-table');
+    if (!tbl) {
+      // Page DOM was wiped (e.g. by a page-switch) — re-render from scratch.
+      window._npcTradesBuilt = false;
+      buildNpcTradesPage();
+      return;
+    }
+    tbl.innerHTML = renderTrades(currentFilter);
     document.querySelectorAll('.npc-filter-btn').forEach(function(b) {
       var active = b.dataset.g === currentFilter;
       b.style.background = active ? 'var(--game-color,var(--gold))' : 'var(--panel)';
@@ -14159,7 +14166,8 @@ window.openTopLevelPage = function(pid) {
     apricorntracker: function(){ if(typeof buildApricornPage==='function') buildApricornPage(); },
     berrymap: function(){ if(typeof buildBerryMapPage==='function') buildBerryMapPage(); },
     btopp: function(){ if(typeof buildBattleTowerOppPage==='function') buildBattleTowerOppPage(); },
-    crystalex: function(){ if(typeof buildCrystalExclusivesPage==='function') buildCrystalExclusivesPage(); }
+    crystalex: function(){ if(typeof buildCrystalExclusivesPage==='function') buildCrystalExclusivesPage(); },
+    npctrades: function(){ if(!window._npcTradesBuilt){ buildNpcTradesPage(); window._npcTradesBuilt = true; } else if (typeof buildNpcTradesPage === 'function') { buildNpcTradesPage(); } }
   };
   var navId=NOTE_BTN_MAP[pid];
   var btn=navId?document.getElementById(navId):null;
