@@ -26,12 +26,15 @@ CACHE = '/tmp/pokeapi_gen2_encounters.json'
 VER_TO_SLOT = {'gold': 'FR', 'silver': 'LG', 'crystal': 'E'}
 
 # Method labels — convert PokéAPI's slug to a short, human-readable tag
+# Method labels — must NOT contain parentheses, since the format string
+# is "<Method> (<Location>, Level X) - Y%" and downstream parsers split
+# on the first '('. Use ' — ' or single words instead.
 METHOD_LABEL = {
     'walk':              'Wild',
     'surf':              'Surf',
-    'old-rod':           'Fish (Old Rod)',
-    'good-rod':          'Fish (Good Rod)',
-    'super-rod':         'Fish (Super Rod)',
+    'old-rod':           'Old Rod',
+    'good-rod':          'Good Rod',
+    'super-rod':         'Super Rod',
     'rock-smash':        'Rock Smash',
     'headbutt':          'Headbutt',
     'headbutt-low':      'Headbutt',
@@ -44,8 +47,8 @@ METHOD_LABEL = {
     'fishing':           'Fish',
     'seaweed':           'Seaweed',
     'dark-grass':        'Dark Grass',
-    'pokeflute':         'Static (PokéFlute)',
-    'squirt-bottle':     'Static (SquirtBottle)',
+    'pokeflute':         'PokéFlute',
+    'squirt-bottle':     'SquirtBottle',
     'wailmer-pail':      'Static',
     'devon-scope':       'Static',
 }
