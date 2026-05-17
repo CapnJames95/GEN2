@@ -413,11 +413,52 @@
         + '<li>Save before entering — re-roll on losses.</li>'
         + '<li>Sun Stone prize is otherwise extremely rare (only at Cliff Cave hidden item) — Bug Contest is the reliable source.</li>'
         + '</ul>')
-      + '<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-top:16px;font-size:11px;color:var(--muted);line-height:1.7;">'
-      + '<strong style="color:var(--text);">Personal Best tracker:</strong> not implemented yet — Gen 2 saves your best in the cartridge under the player\'s name. Compare your in-game stats to the tiers above.'
-      + '</div>'
+      + section('🏆 Personal best (per game)', renderBccBest())
     );
   };
+  function bccLoad() {
+    try { return JSON.parse(localStorage.getItem('gen2-bcc-best') || '{}'); }
+    catch(_){ return {}; }
+  }
+  function bccSave(o) {
+    try { localStorage.setItem('gen2-bcc-best', JSON.stringify(o)); } catch(_){}
+  }
+  window.bccSaveBest = function(game) {
+    var inp = document.getElementById('bcc-score-' + game);
+    var sp  = document.getElementById('bcc-poke-' + game);
+    if (!inp || !sp) return;
+    var score = parseInt(inp.value, 10);
+    if (!score || score < 0) return;
+    var data = bccLoad();
+    data[game] = { score: score, poke: sp.value || '—', when: new Date().toISOString().slice(0,10) };
+    bccSave(data);
+    window.buildBccPage();
+  };
+  window.bccClearBest = function(game) {
+    var data = bccLoad();
+    delete data[game];
+    bccSave(data);
+    window.buildBccPage();
+  };
+  function renderBccBest() {
+    var data = bccLoad();
+    var games = [['FR','🌕 Gold'],['LG','🪙 Silver'],['E','💎 Crystal']];
+    return games.map(function(g) {
+      var key = g[0], label = g[1];
+      var d = data[key] || null;
+      var current = d ? (d.score + ' pts · ' + d.poke + ' · ' + d.when) : 'No score saved';
+      return '<div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
+        + '<strong style="color:var(--text);min-width:90px;">' + label + '</strong>'
+        + '<span style="font-size:11px;color:var(--muted);flex:1;">' + current + '</span>'
+        + '<input id="bcc-score-' + key + '" type="number" min="0" max="370" placeholder="Score"'
+        + ' style="width:80px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-size:11px;">'
+        + '<input id="bcc-poke-' + key + '" type="text" placeholder="Pokémon"'
+        + ' style="width:110px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-size:11px;">'
+        + '<button onclick="bccSaveBest(\'' + key + '\')" style="font-size:10px;padding:4px 10px;background:var(--game-color,var(--gold));color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:700;">Save</button>'
+        + (d ? '<button onclick="bccClearBest(\'' + key + '\')" style="font-size:10px;padding:4px 8px;background:var(--panel);color:var(--muted);border:1px solid var(--border);border-radius:4px;cursor:pointer;">×</button>' : '')
+        + '</div>';
+    }).join('');
+  }
 
   // ──────────────────────────────────────────────────────────────
   //  APRICORN tree tracker (daily check-off, localStorage)
