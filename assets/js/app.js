@@ -761,7 +761,7 @@ function renderSingleGameCells(text) {
 }
 
 function renderAllGamesCell(p) {
-  const GS = { FR:{cls:'gl-fr',lbl:'🔥 FR'}, LG:{cls:'gl-lg',lbl:'🌿 LG'}, R:{cls:'gl-r',lbl:'🔴 R'}, S:{cls:'gl-s',lbl:'🔷 S'}, E:{cls:'gl-e',lbl:'💚 E'} };
+  const GS = { FR:{cls:'gl-fr',lbl:'🌕 Gold'}, LG:{cls:'gl-lg',lbl:'🪙 Silver'}, E:{cls:'gl-e',lbl:'💎 Crystal'} };
   let html = '<div class="all-games-cell">';
   for (const [gk,gs] of Object.entries(GS)) {
     const txt = p.games[gk]||''; if (!txt||txt==='nan') continue;
@@ -818,7 +818,7 @@ function pokeMatchesFilters(p) {
     if (!nameMatch && !typeMatch && !dataMatch && !chainMatch) return false;
   }
   if (TYPE_FILTER.size > 0 && ![...TYPE_FILTER].every(t => p.types.includes(t))) return false;
-  const gamesToCheck = GAME==='all'?['FR','LG','R','S','E']:[GAME];
+  const gamesToCheck = GAME==='all'?['FR','LG','E']:[GAME];
   if (!gamesToCheck.some(g => {
     if (!p.games[g] || p.games[g] === 'nan') return false;
     const entries = parseLines(p.games[g] || '');
@@ -1082,10 +1082,7 @@ function buildTable() {
   if (!SORT_KEY) {
     filtered = [...filtered].sort((a, b) => {
       const getSortNum = p => {
-        if (!USE_NATIVE_DEX && ['R','S','E'].includes(GAME)) {
-          const e = DEX_MAP[p.num];
-          if (e && e.rse) return e.rse;
-        }
+        // Gen 2 — only national dex applies. (Gen-3 region dex stripped.)
         return p.num;
       };
       return getSortNum(a) - getSortNum(b);
@@ -1338,7 +1335,7 @@ function setGameFromHeader(g, btn) {
   var homePage = document.getElementById('page-home');
   if (homePage && homePage.classList.contains('active')) buildHomePage();
   _applyGameFilter(g);
-  const clsMap = {all:'active-all',FR:'active-fr',LG:'active-lg',R:'active-r',S:'active-s',E:'active-e'};
+  const clsMap = {all:'active-all',FR:'active-fr',LG:'active-lg',E:'active-e'};
   document.querySelectorAll('.game-tab').forEach(b => { b.className = 'game-tab'; });
   const tab = document.querySelector(`.game-tab[onclick*="'${g}'"]`);
   if (tab) tab.className = 'game-tab ' + (clsMap[g]||'active-all');
@@ -1371,12 +1368,13 @@ function setGameFromHeader(g, btn) {
   }
   // Sync Exclusives mode to match selected game
   if (window._exclBuilt) {
-    if (g==='FR'||g==='LG') EXCL_MODE='FR_LG';
-    else if (g==='R') EXCL_MODE='RS';
-    else if (g==='S') EXCL_MODE='RS';
-    else if (g==='E') EXCL_MODE='E_ONLY';
+    // Gen 2 exclusives modes: GS (Gold vs Silver), GC (Gold vs Crystal),
+    // SC (Silver vs Crystal), C_ONLY (Crystal unique).
+    if (g==='FR') EXCL_MODE='GS';        // default for Gold
+    else if (g==='LG') EXCL_MODE='GS';   // default for Silver
+    else if (g==='E') EXCL_MODE='C_ONLY';
     document.querySelectorAll('.excl-mode-btn').forEach(function(b){ b.classList.remove('active'); });
-    var modeLabels={FR_LG:'FR vs LG',RS:'R vs S',RE:'R vs E',SE:'S vs E',E_ONLY:'E UNIQUE'};
+    var modeLabels={GS:'G vs S',GC:'G vs C',SC:'S vs C',C_ONLY:'C UNIQUE'};
     document.querySelectorAll('.excl-mode-btn').forEach(function(b){
       if(b.textContent.trim()===modeLabels[EXCL_MODE]) b.classList.add('active');
     });
@@ -1434,7 +1432,7 @@ function setGame(g, btn) {
   if (window._applyGameClass) window._applyGameClass(g);
   _applyGameFilter(g);
   document.querySelectorAll('.game-tab').forEach(b => { b.className = 'game-tab'; });
-  const clsMap = {all:'active-all',FR:'active-fr',LG:'active-lg',R:'active-r',S:'active-s',E:'active-e'};
+  const clsMap = {all:'active-all',FR:'active-fr',LG:'active-lg',E:'active-e'};
   btn.className = 'game-tab ' + (clsMap[g]||'active-all');
   syncHeaderBadges(g);
   updateDiveFilterVisibility(g);
@@ -2186,7 +2184,7 @@ function getItemLocation(it) {
     // Show a compact multi-game view: only unique location strings
     const seen = new Set();
     const lines = [];
-    [['🔥 FR','FR'],['🌿 LG','LG'],['🔴 R','R'],['🔷 S','S'],['💚 E','E']].forEach(([label,g])=>{
+    [['🌕 Gold','FR'],['🪙 Silver','LG'],['💎 Crystal','E']].forEach(([label,g])=>{
       const v = locs[g]||'';
       if(!v) return;
       if(!seen.has(v)) { seen.add(v); lines.push(`<span style="color:var(--muted);font-size:10px">${label}</span> ${v}`); }
@@ -2202,7 +2200,7 @@ function getItemLocationShort(it) {
   if (!locs) return '';
   if (GAME === 'all') {
     // find first non-empty
-    const v = locs.FR || locs.LG || locs.R || locs.S || locs.E || '';
+    const v = locs.FR || locs.LG || locs.E || '';
     return v.length > 65 ? v.slice(0,65)+'…' : v;
   }
   const v = locs[GAME]||'';
