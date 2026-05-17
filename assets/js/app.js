@@ -10610,7 +10610,7 @@ function bulbaRenderContent(container, html) {
   bulbaInjectCSS();
   container.innerHTML = html;
   container.scrollTop = 0;
-  // Wire part nav links
+  // Wire part nav links (onclick rewrites from the scraper)
   container.querySelectorAll('a[onclick]').forEach(function(a) {
     var m = (a.getAttribute('onclick')||'').match(/bulbaShowSection\((\d+)\)/);
     if (m) {
@@ -10619,6 +10619,41 @@ function bulbaRenderContent(container, html) {
       a.addEventListener('click',function(e){e.preventDefault();bulbaShowSection(n);});
     }
   });
+
+  // ── Wire intra-page anchor links (e.g. table-of-contents at the top of
+  //    a part). Bulbapedia uses <a href="#Route_31"> targeting heading IDs
+  //    further down the same part. Browser-default scroll doesn't work
+  //    here because the content lives in a scroll container (#bulba-content)
+  //    and clicking would also change the URL hash, triggering our app
+  //    router. Intercept, scroll the container, no hash change.
+  container.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var href = a.getAttribute('href') || '';
+      var id = decodeURIComponent(href.slice(1));
+      if (!id) return;
+      // Heading IDs in Bulbapedia content use the raw name (sometimes
+      // HTML-encoded apostrophes). Try id, then unescaped variants.
+      var tgt = container.querySelector('#' + CSS.escape(id))
+             || container.querySelector('[id="' + id.replace(/"/g,'\\"') + '"]')
+             || container.querySelector('a[name="' + id.replace(/"/g,'\\"') + '"]');
+      if (!tgt) return;
+      e.preventDefault();
+      // Scroll the bulba-content container so the target sits near the top.
+      var contRect = container.getBoundingClientRect();
+      var tgtRect  = tgt.getBoundingClientRect();
+      container.scrollBy({ top: (tgtRect.top - contRect.top) - 8, behavior: 'smooth' });
+    });
+  });
+
+  // ── Send /wiki/ links out to Bulbapedia in a new tab instead of
+  //    trying to load pkmnguide.com/wiki/... (which 404s).
+  container.querySelectorAll('a[href^="/wiki/"]').forEach(function(a) {
+    var href = a.getAttribute('href');
+    a.setAttribute('href', 'https://bulbapedia.bulbagarden.net' + href);
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener');
+  });
+
   // Image lightbox - get full-res URL and block parent <a>
   container.querySelectorAll('img').forEach(function(img){
     if(!img.src || img.width < 32) return; // skip tiny icons
