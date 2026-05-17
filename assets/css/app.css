@@ -1782,6 +1782,16 @@ body.strong-focus :focus-visible{outline:2px solid var(--gold)!important;outline
   #settingsBtn .cog-icon{display:inline-block;transform:translateY(-3px);font-size:26px;}
   .evo-toggle,.dex-toggle{display:none;}
   #featuresBtn,#printBtn{display:none;}
+  /* Prevent the right-aligned action group from overflowing past the viewport */
+  header{padding-right:max(8px, env(safe-area-inset-right));}
+  header > div[style*="margin-left:auto"]{flex-shrink:1!important;min-width:0;gap:4px!important;}
+  /* Lift the in-app iOS tab bar above mobile Safari's bottom URL bar.
+     --bulba-bottom-bar is set from window.visualViewport in index.html. */
+  .ios-tab-bar{bottom:var(--bulba-bottom-bar, 0px) !important;}
+}
+@media(max-width:420px){
+  .game-switcher-mobile{font-size:7px;padding:3px 14px 3px 5px;}
+  header{gap:6px;padding:4px 6px;}
 }
 
 /* ── 3. Sidebars — auto-hide on small screens ── */

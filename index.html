@@ -14,6 +14,23 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Gen 2 eGuide">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>
+// Track the bottom chrome of mobile Safari (URL bar) and expose it as
+// --bulba-bottom-bar so fixed bars/menus can lift above it.
+(function(){
+  function update(){
+    var vv = window.visualViewport;
+    var gap = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+    document.documentElement.style.setProperty('--bulba-bottom-bar', gap + 'px');
+  }
+  update();
+  window.addEventListener('resize', update);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', update);
+    window.visualViewport.addEventListener('scroll', update);
+  }
+})();
+</script>
 </head>
 <body>
 <header>
