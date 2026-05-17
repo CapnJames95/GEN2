@@ -10721,7 +10721,10 @@ function bulbaRenderContent(container, html) {
     img.style.cursor='zoom-in';
     // Derive full-res URL: strip /thumb/ path and trailing size suffix
     function fullRes(src) {
-      // e.g. .../thumb/a/ab/File.png/200px-File.png -> .../a/ab/File.png
+      // Local mirror: .../assets/img/bulba/200px-File.png -> .../assets/img/bulba/File.png
+      var m = src.match(/^(.*\/assets\/img\/bulba\/)\d+px-(.+)$/);
+      if (m) return m[1] + m[2];
+      // Legacy Bulbagarden CDN
       return src.replace(/\/thumb\/([a-f0-9]\/[a-f0-9]{2}\/[^/]+)\/[^/]+$/, '/$1');
     }
     img.addEventListener('click',function(e){
