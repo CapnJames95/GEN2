@@ -10659,14 +10659,25 @@ function _bulbaWireLightbox(ov) {
   // Track whether a pointer interaction included a drag so the click that
   // browsers synthesise on pointerup doesn't dismiss the lightbox mid-pan.
   var _bulbaDragged = false;
+  // Manual double-click detection on the image — browser-native dblclick
+  // was unreliable inside the overlay's pointer-capture flow.
+  var _lastImgClick = 0;
   ov.addEventListener('click', function(e){
-    if (_bulbaDragged) { _bulbaDragged = false; return; }
-    if (e.target === ov || e.target.id === 'bulba-lightbox-close') ov.classList.remove('open');
-  });
-  ov.addEventListener('dblclick', function(e){
-    if (e.target.id === 'bulba-lightbox-close') return;
-    e.preventDefault();
-    bulbaToggleLightboxZoom(e);
+    if (_bulbaDragged) { _bulbaDragged = false; _lastImgClick = 0; return; }
+    if (e.target === ov || e.target.id === 'bulba-lightbox-close') {
+      ov.classList.remove('open');
+      _lastImgClick = 0;
+      return;
+    }
+    if (e.target.id === 'bulba-lightbox-img') {
+      var now = Date.now();
+      if (now - _lastImgClick < 400) {
+        bulbaToggleLightboxZoom(e);
+        _lastImgClick = 0;
+      } else {
+        _lastImgClick = now;
+      }
+    }
   });
   var pointers = Object.create(null);
   var dragStart = null, pinchPrev = null;
