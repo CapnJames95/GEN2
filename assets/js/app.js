@@ -10610,6 +10610,51 @@ function bulbaRenderContent(container, html) {
   bulbaInjectCSS();
   container.innerHTML = html;
   container.scrollTop = 0;
+
+  // ── Trim Bulbapedia framing not relevant to our embedded view ──
+
+  // 1) Drop the "This is the Bulbapedia walkthrough for ... HeartGold..." notice
+  //    at the top of every part. Lives in a <center><i>…</i></center> immediately
+  //    followed by an <hr />. Remove both.
+  var topNote = container.querySelector('center > i');
+  if (topNote) {
+    var centerEl = topNote.closest('center');
+    if (centerEl) {
+      // Also strip the <hr> right after it
+      var sibling = centerEl.nextElementSibling;
+      while (sibling && (sibling.tagName === 'HR' || (sibling.tagName === 'DIV' && !sibling.textContent.trim()))) {
+        var nx = sibling.nextElementSibling;
+        sibling.remove();
+        sibling = nx;
+      }
+      centerEl.remove();
+    }
+  }
+
+  // 2) Drop everything after the previous/next part-nav. The nav is the LAST
+  //    onclick="bulbaLoadPart(...)" link in the page. After that there's a big
+  //    "Project Walkthroughs" promo table + MediaWiki parser comments — none
+  //    useful to a player reading inside this app. Find the parent that holds
+  //    the last part-nav link and drop every later sibling.
+  var partLinks = container.querySelectorAll('a[onclick*="bulbaLoadPart"]');
+  if (partLinks.length) {
+    var lastLink = partLinks[partLinks.length - 1];
+    // Walk up until we find the outer container for the prev/next nav box.
+    // It typically lives a few divs above the link. Use the highest ancestor
+    // whose nextElementSibling isn't itself another part-link's container.
+    var navBox = lastLink;
+    while (navBox.parentElement && navBox.parentElement !== container) {
+      navBox = navBox.parentElement;
+    }
+    // navBox is now a direct child of the container. Remove every sibling
+    // that comes after it.
+    var nxt = navBox.nextElementSibling;
+    while (nxt) {
+      var after = nxt.nextElementSibling;
+      nxt.remove();
+      nxt = after;
+    }
+  }
   // Wire part nav links (onclick rewrites from the scraper)
   container.querySelectorAll('a[onclick]').forEach(function(a) {
     var m = (a.getAttribute('onclick')||'').match(/bulbaShowSection\((\d+)\)/);
