@@ -49,10 +49,10 @@
     <button class="gbadge gbadge-e" id="hbadge-e" onclick="setGameFromHeader('E',this)" title="Crystal">C</button>
   </div>
   <select id="gameSwitcherMobile" class="game-switcher-mobile" onchange="setGameFromHeader(this.value,null)">
-    <option value="all">✦ All Games</option>
-    <option value="FR">🌕 Gold</option>
-    <option value="LG">🪙 Silver</option>
-    <option value="E">💎 Crystal</option>
+    <option value="all">All Games</option>
+    <option value="FR">Gold</option>
+    <option value="LG">Silver</option>
+    <option value="E">Crystal</option>
   </select>
   <div id="header-sprites"></div>
   <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0">
@@ -609,10 +609,10 @@
       <button onclick="clearTypeFilter()" style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:3px;border:2px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;margin-left:6px;font-family:'Nunito',sans-serif;" title="Clear type filter">✕ Clear</button>
   </div>
   <div class="game-tabs">
-    <button class="game-tab active-all" onclick="setGame('all',this)"><span class="gt-full">✦ ALL GAMES</span><span class="gt-short">✦ ALL</span></button>
-    <button class="game-tab" onclick="setGame('FR',this)"><span class="gt-full">🌕 GOLD</span><span class="gt-short">🌕 G</span></button>
-    <button class="game-tab" onclick="setGame('LG',this)"><span class="gt-full">🪙 SILVER</span><span class="gt-short">🪙 S</span></button>
-    <button class="game-tab" onclick="setGame('E',this)"><span class="gt-full">💎 CRYSTAL</span><span class="gt-short">💎 C</span></button>
+    <button class="game-tab active-all" onclick="setGame('all',this)"><span class="gt-full">ALL GAMES</span><span class="gt-short">ALL</span></button>
+    <button class="game-tab" onclick="setGame('FR',this)"><span class="gt-full">GOLD</span><span class="gt-short">G</span></button>
+    <button class="game-tab" onclick="setGame('LG',this)"><span class="gt-full">SILVER</span><span class="gt-short">S</span></button>
+    <button class="game-tab" onclick="setGame('E',this)"><span class="gt-full">CRYSTAL</span><span class="gt-short">C</span></button>
     <div class="game-tabs-extras">
       <button id="shinyToggle" class="shiny-toggle" onclick="toggleShinyMode(this)" title="Show shiny sprites">✨ Shiny</button>
       <span id="dex-poke-count" class="section-count"></span>
@@ -845,9 +845,9 @@
     </div>
   </div>
   <div class="trk-save-tabs" id="trk-save-tabs">
-    <button class="trk-save-tab active" onclick="trkSetSave('FR',this)"><span class="gt-full">🌕 Gold</span><span class="gt-short">🌕 G</span></button>
-    <button class="trk-save-tab" onclick="trkSetSave('LG',this)"><span class="gt-full">🪙 Silver</span><span class="gt-short">🪙 S</span></button>
-    <button class="trk-save-tab" onclick="trkSetSave('E',this)"><span class="gt-full">💎 Crystal</span><span class="gt-short">💎 C</span></button>
+    <button class="trk-save-tab active" onclick="trkSetSave('FR',this)"><span class="gt-full">Gold</span><span class="gt-short">G</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('LG',this)"><span class="gt-full">Silver</span><span class="gt-short">S</span></button>
+    <button class="trk-save-tab" onclick="trkSetSave('E',this)"><span class="gt-full">Crystal</span><span class="gt-short">C</span></button>
   </div>
   <div class="trk-body">
     <div class="trk-sidebar">
@@ -2119,9 +2119,9 @@
 
   <div style="display:flex;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;overflow-x:auto;">
     <button class="notes-game-tab active" data-game="ALL" onclick="notesSetGame('ALL')">ALL</button>
-    <button class="notes-game-tab" data-game="FR" onclick="notesSetGame('FR')">🌕 G</button>
-    <button class="notes-game-tab" data-game="LG" onclick="notesSetGame('LG')">🪙 S</button>
-    <button class="notes-game-tab" data-game="E" onclick="notesSetGame('E')">💎 C</button>
+    <button class="notes-game-tab" data-game="FR" onclick="notesSetGame('FR')">G</button>
+    <button class="notes-game-tab" data-game="LG" onclick="notesSetGame('LG')">S</button>
+    <button class="notes-game-tab" data-game="E" onclick="notesSetGame('E')">C</button>
   </div>
 
   <div id="notes-list-view" style="display:flex;flex-direction:column;flex:1;min-height:0;">
@@ -2165,19 +2165,19 @@
       <div>
         <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">PRIMARY GAME</div>
         <select id="ne-game" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;">
-          <option value="ALL">🌐 All Games</option>
-          <option value="FR">🌕 Gold</option>
-          <option value="LG">🪙 Silver</option>
-          <option value="E">💎 Crystal</option>
+          <option value="ALL">All Games</option>
+          <option value="FR">Gold</option>
+          <option value="LG">Silver</option>
+          <option value="E">Crystal</option>
         </select>
       </div>
 
       <div>
         <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:.5px;">ALSO SHOW IN</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="ne-tag-btn note-tag-chip" data-game="FR" onclick="this.classList.toggle('active')">🌕 Gold</button>
-          <button class="ne-tag-btn note-tag-chip" data-game="LG" onclick="this.classList.toggle('active')">🪙 Silver</button>
-          <button class="ne-tag-btn note-tag-chip" data-game="E" onclick="this.classList.toggle('active')">💎 Crystal</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="FR" onclick="this.classList.toggle('active')">Gold</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="LG" onclick="this.classList.toggle('active')">Silver</button>
+          <button class="ne-tag-btn note-tag-chip" data-game="E" onclick="this.classList.toggle('active')">Crystal</button>
         </div>
       </div>
 
