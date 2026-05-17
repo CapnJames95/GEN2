@@ -10734,17 +10734,16 @@ function _bulbaWireLightbox(ov) {
 
 // Pin the current lightbox image as a draggable, resizable floating panel
 // over the guide. Closing the lightbox after pinning lets the reader keep
-// the map visible while scrolling through the walkthrough.
+// the map visible while scrolling through the walkthrough. The panel locks
+// its proportions to the image's aspect ratio while you drag the resize
+// handle, so the picture always fills the panel without letterboxing.
 function bulbaPinImage(src) {
   var lb = document.getElementById('bulba-lightbox');
   if (lb) lb.classList.remove('open');
+  var HEADER_H = 26;
   var panel = document.createElement('div');
   panel.className = 'bulba-pinned';
-  var w = 360, h = 280;
-  panel.style.left = Math.max(20, window.innerWidth - w - 24) + 'px';
   panel.style.top = '80px';
-  panel.style.width = w + 'px';
-  panel.style.height = h + 'px';
   var title = (src.split('/').pop().split('?')[0] || 'pinned').replace(/^\d+px-/, '');
   panel.innerHTML = ''
     + '<div class="bulba-pinned-header">'
@@ -10753,11 +10752,70 @@ function bulbaPinImage(src) {
     + '</div>'
     + '<div class="bulba-pinned-body"><img alt=""></div>';
   panel.querySelector('.bulba-pinned-title').textContent = title;
-  panel.querySelector('.bulba-pinned-body img').src = src;
+  var img = panel.querySelector('.bulba-pinned-body img');
+  img.src = src;
   document.body.appendChild(panel);
+
+  function setSize(w, h) {
+    panel.style.width  = Math.round(w) + 'px';
+    panel.style.height = Math.round(h) + 'px';
+    panel.dataset.lastW = Math.round(w);
+    panel.dataset.lastH = Math.round(h);
+  }
+  function initFromImage() {
+    var ar = img.naturalWidth / img.naturalHeight;
+    if (!ar || !isFinite(ar)) ar = 4/3;
+    panel.dataset.aspect = ar;
+    // Pick a default panel size that fits the viewport and matches aspect.
+    var maxW = Math.min(420, Math.max(220, Math.round(window.innerWidth * 0.4)));
+    var maxBodyH = Math.max(160, Math.round(window.innerHeight * 0.55)) - HEADER_H;
+    var w = maxW;
+    var bodyH = w / ar;
+    if (bodyH > maxBodyH) { bodyH = maxBodyH; w = bodyH * ar; }
+    setSize(w, bodyH + HEADER_H);
+    panel.style.left = Math.max(20, window.innerWidth - panel.offsetWidth - 24) + 'px';
+  }
+  if (img.complete && img.naturalWidth) initFromImage();
+  else img.addEventListener('load', initFromImage);
+
+  // Snap back to image aspect whenever the user drags the resize corner.
+  if (typeof ResizeObserver !== 'undefined') {
+    var ro = new ResizeObserver(function(){
+      var ar = parseFloat(panel.dataset.aspect);
+      if (!ar) return;
+      if (panel._snapping) return;
+      var w = panel.offsetWidth;
+      var h = panel.offsetHeight;
+      var lastW = +panel.dataset.lastW || w;
+      var lastH = +panel.dataset.lastH || h;
+      var dw = Math.abs(w - lastW);
+      var dh = Math.abs(h - lastH);
+      var nw, nh;
+      if (dh > dw) {           // user dragged vertically: derive width from height
+        nh = h;
+        nw = (h - HEADER_H) * ar;
+      } else {                  // otherwise drive height from width
+        nw = w;
+        nh = (w / ar) + HEADER_H;
+      }
+      if (Math.abs(nw - w) < 1 && Math.abs(nh - h) < 1) {
+        panel.dataset.lastW = w; panel.dataset.lastH = h;
+        return;
+      }
+      panel._snapping = true;
+      setSize(nw, nh);
+      requestAnimationFrame(function(){ panel._snapping = false; });
+    });
+    ro.observe(panel);
+  }
+
   var header = panel.querySelector('.bulba-pinned-header');
   var closeBtn = panel.querySelector('.bulba-pinned-close');
-  closeBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.remove(); });
+  closeBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (ro) ro.disconnect();
+    panel.remove();
+  });
   var drag = null;
   header.addEventListener('pointerdown', function(e){
     if (e.target === closeBtn) return;
@@ -10766,7 +10824,6 @@ function bulbaPinImage(src) {
   });
   header.addEventListener('pointermove', function(e){
     if (!drag) return;
-    // Keep the panel mostly on-screen (allow a sliver off so resize handle stays reachable)
     var nx = drag.px + e.clientX - drag.sx;
     var ny = drag.py + e.clientY - drag.sy;
     nx = Math.max(-panel.offsetWidth + 80, Math.min(window.innerWidth - 60, nx));
