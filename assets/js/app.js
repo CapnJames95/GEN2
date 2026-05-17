@@ -10769,7 +10769,8 @@ function bulbaPinImage(src) {
     if (!ar || !isFinite(ar)) ar = 4/3;
     panel.dataset.aspect = ar;
     // Pick a default panel size that fits the viewport and matches aspect.
-    var maxW = Math.min(420, Math.max(220, Math.round(window.innerWidth * 0.4)));
+    var natW = img.naturalWidth || 1024;
+    var maxW = Math.min(420, natW, Math.max(220, Math.round(window.innerWidth * 0.4)));
     var maxBodyH = Math.max(160, Math.round(window.innerHeight * 0.55)) - HEADER_H;
     var w = maxW;
     var bodyH = w / ar;
@@ -10803,10 +10804,12 @@ function bulbaPinImage(src) {
     } else {
       nw = (rz.h + dy - HEADER_H) * ar;
     }
-    nw = Math.max(140, Math.min(window.innerWidth - panel.offsetLeft - 4, nw));
+    var natW = img.naturalWidth || Infinity;
+    var natH = img.naturalHeight || Infinity;
+    nw = Math.max(140, Math.min(window.innerWidth - panel.offsetLeft - 4, natW, nw));
     var nh = (nw / ar) + HEADER_H;
     if (nh < 100) { nh = 100; nw = (nh - HEADER_H) * ar; }
-    var maxH = window.innerHeight - panel.offsetTop - 4;
+    var maxH = Math.min(window.innerHeight - panel.offsetTop - 4, natH + HEADER_H);
     if (nh > maxH) { nh = maxH; nw = (nh - HEADER_H) * ar; }
     setSize(nw, nh);
   });
