@@ -36,9 +36,13 @@
   function itemLink(name) {
     return '<span class="guide-item-link" onclick="openItemByName(\''+name.replace(/'/g,"\\'")+'\')">'+name+'</span>';
   }
+  // Return the element if it exists AND it either hasn't been built yet
+  // OR its content has been wiped. This allows re-rendering after the
+  // built-in recovery system clears innerHTML on a page-switch.
   function pageRoot(id) {
     var el = document.getElementById(id);
-    if (!el || el.dataset.built === '1') return null;
+    if (!el) return null;
+    if (el.dataset.built === '1' && el.innerHTML.trim().length > 0) return null;
     el.dataset.built = '1';
     return el;
   }
