@@ -13133,10 +13133,16 @@ function buildNpcTradesPage() {
     rebuildTable();
   };
 
+  var BTN_LABELS = { ALL:'All', FR:'🌕 Gold', LG:'🪙 Silver', E:'💎 Crystal' };
   var filterBtns = ['ALL'].concat(ALL_GAMES).map(function(g) {
+    var bg = g === 'ALL' ? 'var(--game-color,var(--gold))' : (GAME_COLORS[g] || 'var(--panel)');
+    var col = g === 'ALL' ? '#000' : '#000';
+    var inactiveBg = 'var(--panel)';
+    var inactiveCol = 'var(--text)';
+    var isActive = (g === 'ALL'); // default-active is ALL
     return '<button class="npc-filter-btn" data-g="' + g + '" onclick="npcTradeFilter(this,\'' + g + '\')"'
-      + ' style="font-size:10px;padding:5px 11px;background:' + (g==='ALL'?'var(--game-color,var(--gold))':'var(--panel)') + ';color:' + (g==='ALL'?'#000':'var(--text)') + ';border:1px solid var(--border);border-radius:4px;cursor:pointer;">'
-      + g + '</button>';
+      + ' style="font-size:10px;padding:5px 11px;background:' + (isActive?bg:inactiveBg) + ';color:' + (isActive?col:inactiveCol) + ';border:1px solid var(--border);border-radius:4px;cursor:pointer;">'
+      + (BTN_LABELS[g] || g) + '</button>';
   }).join('');
 
   el.innerHTML = '<div class="panel" style="padding:16px;">'
